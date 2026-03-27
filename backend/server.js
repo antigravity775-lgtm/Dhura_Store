@@ -22,6 +22,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // Images are now served from Cloudinary, no local /uploads serving needed
 
+// Health check / root route
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'Yemeni Store API is running' });
+});
+
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/account', accountRoutes);
