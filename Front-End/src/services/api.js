@@ -1,0 +1,291 @@
+// In production (Vercel), set VITE_API_URL to your backend URL e.g. https://your-backend.vercel.app/api
+// In development, the Vite proxy forwards /api to localhost:5000
+const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
+// ─── Token Management ───
+export const getToken = () => localStorage.getItem('auth_token');
+export const setToken = (token) => localStorage.setItem('auth_token', token);
+export const removeToken = () => localStorage.removeItem('auth_token');
+
+const authHeaders = () => {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+const jsonHeaders = () => ({
+  'Content-Type': 'application/json',
+  ...authHeaders(),
+});
+
+async function request(url, options = {}) {
+  const res = await fetch(`${BASE_URL}${url}`, options);
+
+  if (!res.ok) {
+    let message = `خطأ ${res.status}`;
+    try {
+      const text = await res.text();
+      if (text) {
+        try {
+          const body = JSON.parse(text);
+          // Handle FluentValidation errors
+          if (body.errors) {
+            const firstErr = Object.values(body.errors).flat()[0];
+            message = firstErr || body.title || message;
+          } else {
+            message = body.error || body.message || body.title || body.detail || text;
+          }
+        } catch {
+          message = text;
+        }
+      }
+    } catch { /* empty */ }
+    throw new Error(message);
+  }
+
+  if (res.status === 204) return null;
+
+  const text = await res.text();
+  if (!text) return null;
+  return JSON.parse(text);
+}
+
+// ─── Account ───
+export async function login(email, password) {
+  return request('/account/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export async function register({ fullName, phoneNumber, email = '', password, city, role = 3 }) {
+  return request('/account/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fullName, phoneNumber, email, password, city, role }),
+  });
+}
+
+export async function getProfile() {
+  return request('/account/profile', { headers: jsonHeaders() });
+}
+
+export async function updateProfile(data) {
+  return request('/account/profile', {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+// ─── Products ───
+export async function getProducts({ city, maxPriceUsd, condition, pageNumber = 1, pageSize = 20 } = {}) {
+  const params = new URLSearchParams();
+  if (city) params.set('city', city);
+  if (maxPriceUsd) params.set('maxPriceUsd', maxPriceUsd);
+  if (condition !== undefined && condition !== null) params.set('condition', condition);
+  params.set('pageNumber', pageNumber);
+  params.set('pageSize', pageSize);
+  return request(`/products?${params.toString()}`, { headers: jsonHeaders() });
+}
+
+export async function getProductById(id) {
+  return request(`/products/${id}`, { headers: jsonHeaders() });
+}
+
+export async function createProduct(data) {
+  return request('/products', {
+    method: 'POST',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateProduct(id, data) {
+  return request(`/products/${id}`, {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ id, ...data }),
+  });
+}
+
+export async function deleteProduct(id) {
+  return request(`/products/${id}`, {
+    method: 'DELETE',
+    headers: jsonHeaders(),
+  });
+}
+
+export async function toggleProductVisibility(id) {
+  return request(`/products/${id}/toggle-visibility`, {
+    method: 'PATCH',
+    headers: jsonHeaders(),
+  });
+}
+
+export async function getMyProducts() {
+  return request('/products/my-products', { headers: jsonHeaders() });
+}
+
+// ─── Image Upload (Local API) ───
+export async function uploadImageToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch(`${BASE_URL}/products/upload-image`, {
+    method: 'POST',
+    body: formData,
+    headers: authHeaders(),
+  });
+
+  if (!res.ok) {
+    throw new Error('فشل رفع الصورة');
+  }
+
+  const data = await res.json();
+  return data.secure_url;
+}
+
+// ─── Categories ───
+export async function getCategories() {
+  return request('/categories', { headers: jsonHeaders() });
+}
+
+export async function getProductsByCategory(categoryId) {
+  return request(`/categories/${categoryId}/products`, { headers: jsonHeaders() });
+}
+
+export async function uploadCategoryIcon(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch(`${BASE_URL}/categories/upload-icon`, {
+    method: 'POST',
+    body: formData,
+    headers: authHeaders(),
+  });
+
+  if (!res.ok) {
+    throw new Error('فشل رفع أيقونة التصنيف');
+  }
+
+  const data = await res.json();
+  return data.url;
+}
+
+// ─── Orders ───
+export async function createOrder(data) {
+  return request('/orders', {
+    method: 'POST',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function getMyOrders() {
+  return request('/orders/my-orders', { headers: jsonHeaders() });
+}
+
+export async function getSales() {
+  return request('/orders/sales', { headers: jsonHeaders() });
+}
+
+export async function updateOrderStatus(orderId, status) {
+  return request(`/orders/${orderId}/status`, {
+    method: 'PATCH',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ orderId, status }),
+  });
+}
+
+// ─── Admin ───
+export async function getAdminDashboard() {
+  return request('/admin/dashboard', { headers: jsonHeaders() });
+}
+
+export async function getAdminUsers() {
+  return request('/admin/users', { headers: jsonHeaders() });
+}
+
+export async function blockUser(id) {
+  return request(`/admin/users/${id}/block`, {
+    method: 'PATCH',
+    headers: jsonHeaders(),
+  });
+}
+
+export async function changeUserRole(id, newRole) {
+  return request(`/admin/users/${id}/role`, {
+    method: 'PATCH',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ newRole }),
+  });
+}
+
+export async function deleteUser(id) {
+  return request(`/admin/users/${id}`, {
+    method: 'DELETE',
+    headers: jsonHeaders(),
+  });
+}
+
+export async function getAdminProducts() {
+  return request('/admin/products', { headers: jsonHeaders() });
+}
+
+export async function deleteAdminProduct(id) {
+  return request(`/admin/products/${id}`, {
+    method: 'DELETE',
+    headers: jsonHeaders(),
+  });
+}
+
+export async function createCategory(data) {
+  return request('/categories', {
+    method: 'POST',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateCategory(id, data) {
+  return request(`/categories/${id}`, {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ id, ...data }),
+  });
+}
+
+export async function deleteCategory(id) {
+  return request(`/categories/${id}`, {
+    method: 'DELETE',
+    headers: jsonHeaders(),
+  });
+}
+
+export async function getExchangeRates() {
+  return request('/SystemSettings/exchange-rates', { headers: jsonHeaders() });
+}
+
+export async function updateExchangeRates(data) {
+  return request('/SystemSettings/exchange-rates', {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+// ─── Enum Helpers ───
+export const CurrencyMap = { 1: 'ريال (صنعاء)', 2: 'ريال (عدن)', 3: 'دولار' };
+export const CurrencySymbol = {
+  YER_Sanaa: 'ريال (صنعاء)',
+  YER_Aden: 'ريال (عدن)',
+  USD: '$',
+  SAR: 'ر.س',
+  EUR: '€',
+};
+
+export const ConditionMap = { 1: 'جديد', 2: 'مستعمل', 3: 'مجدد' };
+export const ConditionEn = { 1: 'New', 2: 'Used', 3: 'Refurbished' };
+export const RoleMap = { 1: 'Admin', 2: 'Seller', 3: 'Buyer' };
+
