@@ -2,7 +2,8 @@ const path = require('path');
 const fs = require('fs');
 
 // Store exchange rates in a simple JSON file (no DB migration needed)
-const RATES_FILE = path.join(__dirname, '../../data/exchange-rates.json');
+// Use /tmp on Vercel (read-only filesystem) or local data folder otherwise
+const RATES_FILE = process.env.VERCEL ? '/tmp/exchange-rates.json' : path.join(__dirname, '../../data/exchange-rates.json');
 
 function ensureDataDir() {
   const dir = path.dirname(RATES_FILE);
