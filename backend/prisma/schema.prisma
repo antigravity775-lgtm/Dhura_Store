@@ -1,0 +1,148 @@
+// Prisma schema for Yemeni E-commerce store
+// Migrated from SQL Server (Entity Framework Core) to PostgreSQL (Supabase)
+// Using Prisma ORM
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Enums to match C# versions
+enum Role {
+  Admin
+  Seller
+  Buyer
+}
+
+enum Condition {
+  New
+  Used
+  Refurbished
+}
+
+enum Currency {
+  YER_Sanaa
+  YER_Aden
+  USD
+  SAR
+  EUR
+}
+
+enum OrderStatus {
+  Pending
+  Processing
+  Shipped
+  Delivered
+  Cancelled
+}
+
+enum PaymentMethod {
+  COD
+  BankTransfer
+  CreditCard
+  CashOnDelivery
+}
+
+// Models
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  fullName     String
+  phoneNumber  String?
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(Buyer)
+  city         String?
+  isVerified   Boolean  @default(false)
+  isBlocked    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  products Product[] @relation("SellerProducts")
+  orders   Order[]   @relation("BuyerOrders")
+
+  @@index([phoneNumber])
+}
+
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  iconUrl   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  products Product[] @relation("CategoryProducts")
+
+  @@index([name])
+}
+
+model Product {
+  id            String    @id @default(uuid()) @db.Uuid
+  title         String
+  description   String
+  price         Decimal   @db.Decimal(18, 2)
+  currency      Currency  @default(YER_Sanaa)
+  condition     Condition @default(New)
+  stockQuantity Int
+  mainImageUrl  String?
+  isHidden      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  categoryId String   @db.Uuid
+  category   Category @relation("CategoryProducts", fields: [categoryId], references: [id])
+  sellerId   String   @db.Uuid
+  seller     User     @relation("SellerProducts", fields: [sellerId], references: [id])
+  OrderItem  OrderItem[]
+
+  @@index([categoryId])
+  @@index([sellerId])
+  @@index([isHidden])
+}
+
+// Note: We handle soft delete (isHidden) in queries by adding WHERE NOT isHidden
+// In the repository, we will always filter out hidden products unless explicitly requested.
+
+model Order {
+  id              String        @id @default(uuid()) @db.Uuid
+  totalAmount     Decimal       @db.Decimal(18, 2)
+  currency        Currency      @default(YER_Sanaa)
+  status          OrderStatus   @default(Pending)
+  shippingAddress String
+  paymentMethod   PaymentMethod @default(COD)
+  orderDate       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  buyerId    String   @db.Uuid
+  buyer      User     @relation("BuyerOrders", fields: [buyerId], references: [id])
+  orderItems OrderItem[] @relation("OrderItems")
+
+  @@index([buyerId])
+  @@index([status])
+  @@index([orderDate])
+}
+
+model OrderItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  quantity  Int
+  unitPrice Decimal  @db.Decimal(18, 2)
+  createdAt DateTime @default(now())
+
+  // Relations
+  orderId   String   @db.Uuid
+  order     Order    @relation("OrderItems", fields: [orderId], references: [id])
+  productId String   @db.Uuid
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
