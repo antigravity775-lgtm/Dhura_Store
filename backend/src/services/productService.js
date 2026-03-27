@@ -1,5 +1,5 @@
 const prisma = require('../prismaClient');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID } = require('crypto');
 const { uploadBuffer } = require('../utils/cloudinaryClient');
 
 class ProductService {
@@ -12,7 +12,7 @@ class ProductService {
    */
   async createProduct(productData) {
     // Generate UUID for Id (to match C# Guid)
-    productData.id = uuidv4();
+    productData.id = randomUUID();
     // Set CreatedAt to current UTC time
     productData.createdAt = new Date();
     // Set IsHidden to false by default
