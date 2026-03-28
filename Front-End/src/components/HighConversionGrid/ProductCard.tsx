@@ -100,9 +100,15 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
   }
 
   const { title, image, price, currencySymbol = '$', originalPrice, rating, reviewCount, badge, isPromoted, discountPrice, promotionLabel } = product;
-  const hasDiscount = discountPrice !== undefined && discountPrice !== null;
-  const displayPrice = hasDiscount ? discountPrice : price;
-  const discountPercentage = hasDiscount ? Math.round(((price - discountPrice) / price) * 100) : (originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0);
+  const numPrice = Number(price) || 0;
+  const numDiscountPrice = (discountPrice !== undefined && discountPrice !== null && String(discountPrice) !== '') ? Number(discountPrice) : null;
+  const numOriginalPrice = (originalPrice !== undefined && originalPrice !== null) ? Number(originalPrice) : null;
+
+  const hasDiscount = numDiscountPrice !== null && !isNaN(numDiscountPrice);
+  const displayPrice = hasDiscount ? numDiscountPrice : numPrice;
+  const discountPercentage = hasDiscount 
+    ? Math.round(((numPrice - numDiscountPrice) / numPrice) * 100) 
+    : (numOriginalPrice ? Math.round(((numOriginalPrice - numPrice) / numOriginalPrice) * 100) : 0);
   const hasPromoRibbon = isPromoted || !!promotionLabel;
 
   // Split price into whole and fractional parts for Amazon-style prominent display
@@ -212,18 +218,18 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
             {hasDiscount && (
               <div className="flex items-center text-[11px] mb-0.5 space-x-1.5">
                 <span className="text-gray-400 dark:text-slate-500 line-through">
-                  {price.toFixed(2)} {currencySymbol}
+                  {numPrice.toFixed(2)} {currencySymbol}
                 </span>
               </div>
             )}
             {/* Legacy Sale badge pricing */}
-            {!hasDiscount && badge === 'Sale' && originalPrice && (
+            {!hasDiscount && badge === 'Sale' && numOriginalPrice !== null && (
               <div className="flex items-center text-[11px] mb-0.5 space-x-1.5">
                 <span className="text-[#CC0C39] font-medium bg-red-50 px-1 py-0.5 rounded-sm whitespace-nowrap">
                   {discountPercentage}% off
                 </span>
                 <span className="text-gray-500 line-through">
-                  {originalPrice.toFixed(2)} {currencySymbol}
+                  {numOriginalPrice.toFixed(2)} {currencySymbol}
                 </span>
               </div>
             )}
