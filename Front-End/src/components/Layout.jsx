@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useTheme } from '../context/ThemeContext';
+import * as api from '../services/api';
 
 const Layout = ({ children }) => {
   const { user, isAuthenticated, isSeller, isAdmin, logout } = useAuth();
@@ -16,10 +17,17 @@ const Layout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [storeInfo, setStoreInfo] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Fetch dynamic store info for footer
+    api.getStoreInfo()
+      .then(data => setStoreInfo(data))
+      .catch(err => console.error('Failed to load store info:', err));
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -51,13 +59,13 @@ const Layout = ({ children }) => {
           <div className="flex items-center justify-between h-16">
 
             {/* الشعار / Logo */}
-            <Link to="/" className="flex-shrink-0 flex items-center gap-2 cursor-pointer group select-none">
-              <div className="relative">
-                <ShoppingBag className="h-8 w-8 text-indigo-600 dark:text-indigo-400 transition-transform group-hover:scale-110 duration-300" />
-                <div className="absolute -top-0.5 -left-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white dark:border-slate-900 animate-pulse"></div>
+            <Link to="/" className="flex-shrink-0 flex items-center gap-3 cursor-pointer group select-none">
+              <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center p-0.5 overflow-hidden shadow-md">
+                <img src="/Logo.png" alt="شعار متجر الجعدي" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-300" />
+                <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white animate-pulse hidden md:block"></div>
               </div>
-              <span className="font-extrabold text-2xl tracking-tight bg-gradient-to-l from-indigo-700 to-slate-800 dark:from-indigo-400 dark:to-slate-200 bg-clip-text text-transparent">
-                Al-gaadi store
+              <span className="font-extrabold text-xl md:text-2xl tracking-tight text-slate-900 dark:text-white dark:drop-shadow-sm">
+                متجر الجعدي
               </span>
             </Link>
 
@@ -281,17 +289,43 @@ const Layout = ({ children }) => {
             <div>
               <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4">الشركة</h4>
               <ul className="space-y-2.5 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">من نحن</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">كيف يعمل</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">تواصل معنا</a></li>
+                <li>
+                  <a 
+                    href="#" 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (storeInfo?.aboutUsText) alert('من نحن:\n\n' + storeInfo.aboutUsText);
+                    }}
+                    className="hover:text-white transition-colors"
+                  >
+                    من نحن
+                  </a>
+                </li>
+                {storeInfo?.contactEmail && (
+                  <li><a href={`mailto:${storeInfo.contactEmail}`} className="hover:text-white transition-colors">راسلنا (إيميل)</a></li>
+                )}
+                {storeInfo?.contactPhone && (
+                  <li><a href={`tel:${storeInfo.contactPhone.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">اتصل بنا</a></li>
+                )}
               </ul>
             </div>
             <div>
               <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4">الدعم</h4>
               <ul className="space-y-2.5 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">مركز المساعدة</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">نصائح الأمان</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">الإبلاغ عن مشكلة</a></li>
+                {storeInfo?.whatsappUrl ? (
+                  <li><a href={storeInfo.whatsappUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-2">دعم واتساب</a></li>
+                ) : (
+                  <li><a href="#" className="hover:text-white transition-colors">مركز المساعدة</a></li>
+                )}
+                {storeInfo?.facebookUrl && (
+                  <li><a href={storeInfo.facebookUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">فيسبوك</a></li>
+                )}
+                {storeInfo?.twitterUrl && (
+                  <li><a href={storeInfo.twitterUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">إكس (تويتر)</a></li>
+                )}
+                {storeInfo?.instagramUrl && (
+                  <li><a href={storeInfo.instagramUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">إنستغرام</a></li>
+                )}
               </ul>
             </div>
             <div>
@@ -306,8 +340,8 @@ const Layout = ({ children }) => {
 
           <div className="py-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-indigo-400" />
-              <span className="font-bold text-slate-300">Al-gaadi store</span>
+              <img src="/Logo.png" alt="شعار المتجر" className="w-6 h-6 rounded-full bg-white object-cover shadow-sm" />
+              <span className="font-bold text-slate-300">متجر الجعدي</span>
               <span>&copy; {new Date().getFullYear()} جميع الحقوق محفوظة.</span>
             </div>
             <span className="text-xs">صُنع بـ ❤️ في اليمن</span>

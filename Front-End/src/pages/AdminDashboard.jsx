@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, Package, Tag, DollarSign, Home,
   Loader2, AlertCircle, CheckCircle, X, Trash2, ShieldBan, ShieldCheck,
   UserCog, Plus, Edit3, Save, RefreshCw, TrendingUp, ShoppingCart,
-  UserPlus, Ban, Crown
+  UserPlus, Ban, Crown, Info, Phone, Mail, Link as LinkIcon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import * as api from '../services/api';
@@ -45,6 +45,14 @@ const AdminDashboard = () => {
   const [rates, setRates] = useState({ USD_to_YER_Sanaa: 0, USD_to_YER_Aden: 0 });
   const [ratesLoading, setRatesLoading] = useState(false);
   const [ratesSaving, setRatesSaving] = useState(false);
+
+  // ─── Store Info ───
+  const [storeInfo, setStoreInfo] = useState({
+    aboutUsText: '', contactEmail: '', contactPhone: '',
+    facebookUrl: '', twitterUrl: '', whatsappUrl: '', instagramUrl: ''
+  });
+  const [storeInfoLoading, setStoreInfoLoading] = useState(false);
+  const [storeInfoSaving, setStoreInfoSaving] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated || !isAdmin) {
@@ -244,6 +252,37 @@ const AdminDashboard = () => {
     setRatesSaving(false);
   };
 
+  // ─── Store Info ───
+  async function loadStoreInfo() {
+    setStoreInfoLoading(true);
+    try {
+      const data = await api.getStoreInfo();
+      setStoreInfo({
+        aboutUsText: data.aboutUsText || '',
+        contactEmail: data.contactEmail || '',
+        contactPhone: data.contactPhone || '',
+        facebookUrl: data.facebookUrl || '',
+        twitterUrl: data.twitterUrl || '',
+        whatsappUrl: data.whatsappUrl || '',
+        instagramUrl: data.instagramUrl || '',
+      });
+    } catch (err) {
+      setError('تعذر تحميل معلومات المتجر: ' + (err.message || ''));
+    }
+    setStoreInfoLoading(false);
+  }
+
+  const handleUpdateStoreInfo = async () => {
+    setStoreInfoSaving(true);
+    try {
+      await api.updateStoreInfo(storeInfo);
+      showSuccess('تم تحديث معلومات المتجر بنجاح ✅');
+    } catch (err) {
+      setError('فشل تحديث معلومات المتجر: ' + (err.message || ''));
+    }
+    setStoreInfoSaving(false);
+  };
+
   // ─── Tab Change ───
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -251,6 +290,7 @@ const AdminDashboard = () => {
     if (tab === 'products' && products.length === 0) loadProducts();
     if (tab === 'categories' && categories.length === 0) loadCategories();
     if (tab === 'rates') loadRates();
+    if (tab === 'storeInfo' && !storeInfo.aboutUsText) loadStoreInfo();
   };
 
   const tabItems = [
@@ -259,6 +299,7 @@ const AdminDashboard = () => {
     { id: 'products', label: 'المحتوى', icon: Package },
     { id: 'categories', label: 'التصنيفات', icon: Tag },
     { id: 'rates', label: 'أسعار الصرف', icon: DollarSign },
+    { id: 'storeInfo', label: 'معلومات المتجر', icon: Info },
   ];
 
   const getRoleBadge = (role) => {
@@ -282,8 +323,8 @@ const AdminDashboard = () => {
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-600/20">
-              <Crown className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-0.5 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700">
+               <img src="/Logo.png" alt="شعار متجر الجعدي" className="w-full h-full object-cover" />
             </div>
             <div>
               <h1 className="font-extrabold text-slate-900 dark:text-white text-lg leading-none">لوحة المسؤول</h1>
@@ -817,6 +858,154 @@ const AdminDashboard = () => {
                       )}
                       {ratesSaving ? 'جاري التحديث...' : 'تحديث أسعار الصرف'}
                     </button>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+
+            {/* ─── Store Info Tab ─── */}
+            {activeTab === 'storeInfo' && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                  <div>
+                    <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">معلومات المتجر الأساسية</h2>
+                    <p className="text-sm text-slate-500 mt-1">تحديث معلومات "من نحن" وروابط التواصل الاجتماعي التي تظهر في الفوتر.</p>
+                  </div>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden"
+                >
+                  <div className="p-6 space-y-6 max-w-2xl">
+                    {/* About Us */}
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                        <Info className="w-4 h-4 inline ml-1.5" />
+                        من نحن
+                      </label>
+                      <textarea
+                        value={storeInfo.aboutUsText}
+                        onChange={(e) => setStoreInfo({ ...storeInfo, aboutUsText: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 min-h-[120px] resize-y"
+                        placeholder="نبذة عن المتجر ورؤيته..."
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Email */}
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                          <Mail className="w-4 h-4 inline ml-1.5" />
+                          الايميل الخاص بالمتجر
+                        </label>
+                        <input
+                          type="email"
+                          value={storeInfo.contactEmail}
+                          onChange={(e) => setStoreInfo({ ...storeInfo, contactEmail: e.target.value })}
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                          dir="ltr"
+                          placeholder="info@store.com"
+                        />
+                      </div>
+
+                      {/* Phone */}
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                          <Phone className="w-4 h-4 inline ml-1.5" />
+                          رقم التواصل السريع
+                        </label>
+                        <input
+                          type="text"
+                          value={storeInfo.contactPhone}
+                          onChange={(e) => setStoreInfo({ ...storeInfo, contactPhone: e.target.value })}
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                          dir="ltr"
+                          placeholder="+967 77..."
+                        />
+                      </div>
+
+                      {/* WhatsApp */}
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                          <LinkIcon className="w-4 h-4 inline ml-1.5" />
+                          رابط واتساب
+                        </label>
+                        <input
+                          type="url"
+                          value={storeInfo.whatsappUrl}
+                          onChange={(e) => setStoreInfo({ ...storeInfo, whatsappUrl: e.target.value })}
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                          dir="ltr"
+                          placeholder="https://wa.me/..."
+                        />
+                      </div>
+
+                      {/* Facebook */}
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                          <LinkIcon className="w-4 h-4 inline ml-1.5" />
+                          رابط فيسبوك
+                        </label>
+                        <input
+                          type="url"
+                          value={storeInfo.facebookUrl}
+                          onChange={(e) => setStoreInfo({ ...storeInfo, facebookUrl: e.target.value })}
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                          dir="ltr"
+                          placeholder="https://facebook.com/..."
+                        />
+                      </div>
+
+                      {/* Twitter */}
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                          <LinkIcon className="w-4 h-4 inline ml-1.5" />
+                          رابط إكس (تويتر)
+                        </label>
+                        <input
+                          type="url"
+                          value={storeInfo.twitterUrl}
+                          onChange={(e) => setStoreInfo({ ...storeInfo, twitterUrl: e.target.value })}
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                          dir="ltr"
+                          placeholder="https://x.com/..."
+                        />
+                      </div>
+
+                      {/* Instagram */}
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                          <LinkIcon className="w-4 h-4 inline ml-1.5" />
+                          رابط إنستغرام
+                        </label>
+                        <input
+                          type="url"
+                          value={storeInfo.instagramUrl}
+                          onChange={(e) => setStoreInfo({ ...storeInfo, instagramUrl: e.target.value })}
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                          dir="ltr"
+                          placeholder="https://instagram.com/..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* Save Button */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                      <button
+                        onClick={handleUpdateStoreInfo}
+                        disabled={storeInfoSaving}
+                        className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:from-indigo-500 hover:to-purple-500 transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-60 active:scale-[0.98]"
+                      >
+                        {storeInfoSaving ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <Save className="w-5 h-5" />
+                        )}
+                        {storeInfoSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               </div>

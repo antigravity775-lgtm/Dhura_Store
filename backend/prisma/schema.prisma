@@ -147,3 +147,15 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
 }
+
+model SystemSetting {
+  id           String   @id @default("global") // We only need one row with id "global"
+  aboutUsText  String   @default("سوق إلكتروني يمني يوفر أفضل المنتجات...")
+  contactEmail String   @default("info@al-gaadi.com")
+  contactPhone String   @default("+967 77X XXX XXX")
+  facebookUrl  String?
+  twitterUrl   String?
+  whatsappUrl  String?
+  instagramUrl String?
+  updatedAt    DateTime @updatedAt
+}

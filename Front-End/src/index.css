@@ -151,3 +151,18 @@
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+/* ========== Offer Belt Marquee / حزام العروض المتحرك ========== */
+@keyframes offer-belt-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.offer-belt-track {
+  animation: offer-belt-scroll 25s linear infinite;
+  will-change: transform;
+}
+
+.offer-belt-track:hover {
+  animation-play-state: paused;
+}

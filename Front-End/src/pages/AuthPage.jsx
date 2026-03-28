@@ -137,12 +137,12 @@ const AuthPage = () => {
       >
         {/* الشعار */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2.5 group">
-            <div className="relative">
-              <ShoppingBag className="h-10 w-10 text-indigo-400 group-hover:scale-110 transition-transform" />
-              <div className="absolute -top-0.5 -left-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-slate-950 animate-pulse"></div>
+          <Link to="/" className="inline-flex items-center gap-3 group">
+            <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0.5 overflow-hidden shadow-2xl">
+              <img src="/Logo.png" alt="شعار متجر الجعدي" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-300" />
+              <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
             </div>
-            <span className="font-extrabold text-3xl text-white tracking-tight">Al-gaadi store</span>
+            <span className="font-extrabold text-3xl text-white tracking-tight drop-shadow-md">متجر الجعدي</span>
           </Link>
           <p className="text-indigo-200/60 text-sm mt-3 font-medium">
             {isLogin ? 'مرحباً بعودتك! سجّل دخولك للمتابعة' : 'أنشئ حسابك وابدأ التسوق'}
