@@ -15,7 +15,8 @@ class ProductController {
       const filters = {
         city: req.query.city,
         maxPriceUsd: req.query.maxPriceUsd ? parseFloat(req.query.maxPriceUsd) : undefined,
-        condition: req.query.condition ? parseInt(req.query.condition) : undefined
+        condition: req.query.condition ? parseInt(req.query.condition) : undefined,
+        specialOffers: req.query.specialOffers === 'true',
       };
       
       const pagination = {

@@ -48,22 +48,36 @@ const BeltCard: React.FC<{
       onFavorite?.(product, newState);
     }
   };
-  const { title, image, price, currencySymbol = '$', originalPrice, rating, badge } = product;
+  const { title, image, price, currencySymbol = '$', originalPrice, rating, badge, isPromoted, discountPrice, promotionLabel } = product;
+  const hasDiscount = discountPrice !== undefined && discountPrice !== null;
+  const displayPrice = hasDiscount ? discountPrice : price;
+  const hasPromoRibbon = isPromoted || !!promotionLabel;
 
   return (
     <div
-      className="group relative flex-shrink-0 w-[160px] sm:w-[190px] bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-100 dark:border-slate-700 overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 mx-2"
+      className={`group relative flex-shrink-0 w-[160px] sm:w-[190px] bg-white dark:bg-slate-800 rounded-2xl shadow-md border overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 mx-2 ${
+        isPromoted
+          ? 'border-indigo-300 dark:border-indigo-600 ring-2 ring-indigo-400/30 dark:ring-indigo-500/20 shadow-indigo-500/10'
+          : 'border-gray-100 dark:border-slate-700'
+      }`}
       style={{ userSelect: 'none' }}
       onClick={() => onClick?.(product)}
     >
       {/* Badge */}
-      {badge && (
+      {badge && !hasPromoRibbon && (
         <span
           className={`absolute top-2 left-2 z-10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white rounded-full shadow ${
             badge === 'Sale' ? 'bg-rose-500' : 'bg-emerald-500'
           }`}
         >
           {badge}
+        </span>
+      )}
+
+      {/* Promotion Ribbon — Glassmorphism */}
+      {hasPromoRibbon && (
+        <span className="absolute top-2 left-2 z-10 px-2 py-0.5 text-[10px] font-bold text-white rounded-full shadow-lg bg-gradient-to-r from-indigo-600/90 via-purple-600/90 to-pink-500/90 backdrop-blur-md border border-white/20">
+          {promotionLabel || '⭐ مميز'}
         </span>
       )}
 
@@ -110,13 +124,18 @@ const BeltCard: React.FC<{
         {/* Price row */}
         <div className="flex items-center justify-between" dir="ltr">
           <div>
-            {originalPrice !== undefined && originalPrice !== null && (
+            {hasDiscount && (
+              <span className="text-[10px] text-gray-400 line-through block">
+                {Number(price).toFixed(0)} {currencySymbol}
+              </span>
+            )}
+            {!hasDiscount && originalPrice !== undefined && originalPrice !== null && (
               <span className="text-[10px] text-gray-400 line-through block">
                 {Number(originalPrice).toFixed(0)} {currencySymbol}
               </span>
             )}
-            <span className="text-sm font-extrabold text-gray-900 dark:text-white">
-              {Number(price || 0).toFixed(0)} {currencySymbol}
+            <span className={`text-sm font-extrabold ${hasDiscount ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'}`}>
+              {Number(displayPrice || 0).toFixed(0)} {currencySymbol}
             </span>
           </div>
           <button

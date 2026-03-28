@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Upload, X, Loader2, ImagePlus, AlertCircle, Cloud, CheckCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Upload, X, Loader2, ImagePlus, AlertCircle, Cloud, CheckCircle, Sparkles } from 'lucide-react';
 import * as api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -31,6 +31,9 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
     stockQuantity: editProduct?.stockQuantity || 1,
     categoryId: editProduct?.categoryId || '',
     mainImageUrl: editProduct?.mainImageUrl || '',
+    isPromoted: editProduct?.isPromoted || false,
+    discountPrice: editProduct?.discountPrice?.toString() || '',
+    promotionLabel: editProduct?.promotionLabel || '',
   });
 
   useEffect(() => {
@@ -101,6 +104,12 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
       return;
     }
 
+    // Validate discount price
+    if (form.discountPrice && parseFloat(form.discountPrice) >= parseFloat(form.price)) {
+      setError('سعر الخصم يجب أن يكون أقل من السعر الأصلي');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -113,6 +122,9 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           stockQuantity: parseInt(form.stockQuantity),
           condition: parseInt(form.condition),
           mainImageUrl: form.mainImageUrl || null,
+          isPromoted: form.isPromoted,
+          discountPrice: form.discountPrice ? parseFloat(form.discountPrice) : null,
+          promotionLabel: form.promotionLabel || null,
         });
       } else {
         await api.createProduct({
@@ -125,6 +137,9 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           categoryId: form.categoryId,
           sellerId: user?.id,
           mainImageUrl: form.mainImageUrl || null,
+          isPromoted: form.isPromoted,
+          discountPrice: form.discountPrice ? parseFloat(form.discountPrice) : null,
+          promotionLabel: form.promotionLabel || null,
         });
       }
       onSuccess?.();
@@ -187,6 +202,79 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             <option value="YER_Sanaa">ريال (صنعاء)</option>
             <option value="YER_Aden">ريال (عدن)</option>
           </select>
+        </div>
+      </div>
+
+      {/* ── ترويج المنتج / Promotion Section ── */}
+      <div className="bg-gradient-to-br from-indigo-50/50 via-purple-50/30 to-pink-50/30 dark:from-indigo-900/20 dark:via-purple-900/10 dark:to-pink-900/10 rounded-2xl border border-indigo-100 dark:border-indigo-800/40 p-4 space-y-3">
+        <div className="flex items-center gap-2 mb-1">
+          <Sparkles className="w-4 h-4 text-indigo-500" />
+          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">إعدادات الترويج</span>
+        </div>
+
+        {/* Toggle Switch for isPromoted */}
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">منتج مُروّج (مميز)</label>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={form.isPromoted}
+            onClick={() => setForm(prev => ({ ...prev, isPromoted: !prev.isPromoted }))}
+            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 ${
+              form.isPromoted
+                ? 'bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg shadow-indigo-500/25'
+                : 'bg-slate-200 dark:bg-slate-600'
+            }`}
+          >
+            <span
+              className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${
+                form.isPromoted ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+
+        {/* Discount Price */}
+        <div>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">سعر الخصم (اختياري)</label>
+          <input
+            type="number"
+            name="discountPrice"
+            value={form.discountPrice}
+            onChange={handleChange}
+            min="0"
+            step="0.01"
+            placeholder="أقل من السعر الأصلي"
+            className={`w-full px-4 py-3 border rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 ${
+              form.discountPrice && form.price && parseFloat(form.discountPrice) >= parseFloat(form.price)
+                ? 'border-red-400 dark:border-red-500 ring-2 ring-red-400/30'
+                : 'border-slate-200 dark:border-slate-600'
+            }`}
+          />
+          {form.discountPrice && form.price && parseFloat(form.discountPrice) >= parseFloat(form.price) && (
+            <p className="mt-1 text-xs text-red-500 font-medium flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              سعر الخصم يجب أن يكون أقل من السعر الأصلي
+            </p>
+          )}
+          {form.discountPrice && form.price && parseFloat(form.discountPrice) < parseFloat(form.price) && (
+            <p className="mt-1 text-xs text-emerald-500 font-medium">
+              خصم {Math.round(((parseFloat(form.price) - parseFloat(form.discountPrice)) / parseFloat(form.price)) * 100)}%
+            </p>
+          )}
+        </div>
+
+        {/* Promotion Label */}
+        <div>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">نص الترويج (اختياري)</label>
+          <input
+            type="text"
+            name="promotionLabel"
+            value={form.promotionLabel}
+            onChange={handleChange}
+            placeholder='مثال: "عرض محدود" أو "الأكثر مبيعاً"'
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
+          />
         </div>
       </div>
 

@@ -92,10 +92,13 @@ model Product {
   currency      Currency  @default(YER_Sanaa)
   condition     Condition @default(New)
   stockQuantity Int
-  mainImageUrl  String?
-  isHidden      Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  mainImageUrl    String?
+  isHidden        Boolean   @default(false)
+  isPromoted      Boolean   @default(false)
+  discountPrice   Decimal?  @db.Decimal(18, 2)
+  promotionLabel  String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   // Relations
   categoryId String   @db.Uuid
@@ -107,6 +110,7 @@ model Product {
   @@index([categoryId])
   @@index([sellerId])
   @@index([isHidden])
+  @@index([isPromoted])
 }
 
 // Note: We handle soft delete (isHidden) in queries by adding WHERE NOT isHidden

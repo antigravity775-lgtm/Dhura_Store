@@ -23,6 +23,18 @@ class ProductService {
     if (productData.condition) {
       productData.condition = conditionMap[productData.condition] || productData.condition;
     }
+
+    // Handle promotion fields
+    if (productData.isPromoted === undefined) productData.isPromoted = false;
+    if (productData.discountPrice !== undefined && productData.discountPrice !== null) {
+      productData.discountPrice = parseFloat(productData.discountPrice);
+      if (productData.price && productData.discountPrice >= parseFloat(productData.price)) {
+        throw new Error('سعر الخصم يجب أن يكون أقل من السعر الأصلي');
+      }
+    } else {
+      productData.discountPrice = null;
+    }
+    if (!productData.promotionLabel) productData.promotionLabel = null;
     
     return await prisma.product.create({ 
       data: productData,
@@ -48,16 +60,13 @@ class ProductService {
    * @returns {Promise<Array>} List of products
    */
   async getProducts(filters, pagination) {
-    const { city, maxPriceUsd, condition } = filters;
+    const { city, maxPriceUsd, condition, specialOffers } = filters;
     const { pageNumber = 1, pageSize = 10 } = pagination;
     
     // Build where clause
     const where = { isHidden: false };
     
     if (city) {
-      // Note: This requires joining with User table
-      // We'll handle this in the query by using findMany with include and filtering
-      // For better performance, we'd do this in a raw query or with proper joins
       where.seller = { 
         city: { 
           mode: 'insensitive', 
@@ -71,15 +80,16 @@ class ProductService {
     if (condition !== undefined) {
       where.condition = conditionMap[condition] || condition;
     }
-    
-    // Note: Price filtering with currency conversion would require a raw query or computed field
-    // For now, we'll fetch all products and filter in memory (as in the original implementation)
-    // In a production app, you might want to store prices in a base currency or use a computed field
+
+    // Filter for special offers (products with a discount price)
+    if (specialOffers) {
+      where.discountPrice = { not: null };
+    }
     
     // Get total count for pagination metadata
     const totalCount = await prisma.product.count({ where });
     
-    // Get products with pagination
+    // Get products with pagination — promoted products first, then by date
     const products = await prisma.product.findMany({
       where,
       include: {
@@ -94,33 +104,26 @@ class ProductService {
           }
         }
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { isPromoted: 'desc' },
+        { createdAt: 'desc' }
+      ],
       skip: (pageNumber - 1) * pageSize,
       take: pageSize
     });
     
     // Apply price filter in memory (to match original behavior)
-    // This is not ideal for large datasets but maintains compatibility with original logic
     let filteredProducts = products;
     if (maxPriceUsd !== undefined) {
-      // We'll need a currency converter service for proper filtering
-      // For now, we'll just return products as-is and note that price filtering needs improvement
-      // In a real implementation, we'd either:
-      // 1. Store all prices in a base currency (e.g., USD) 
-      // 2. Use a database function/computed field for conversion
-      // 3. Filter in memory as we're doing here (not scalable)
       filteredProducts = products.filter(product => {
-        // Simplified: if product is in USD, direct comparison
         if (product.currency === 'USD') {
           return product.price <= maxPriceUsd;
         }
-        // For other currencies, we would need to convert - skipping for now
-        // This is a limitation of the current approach
         return true;
       });
     }
     
-    // Add categoryName field for frontend compatibility (products include category object)
+    // Add categoryName field for frontend compatibility
     return filteredProducts.map(p => ({
       ...p,
       categoryName: p.category?.name || null
@@ -159,6 +162,23 @@ class ProductService {
     if (dataToUpdate.condition) {
       dataToUpdate.condition = conditionMap[dataToUpdate.condition] || dataToUpdate.condition;
     }
+
+    // Handle promotion fields
+    if (dataToUpdate.discountPrice !== undefined) {
+      if (dataToUpdate.discountPrice !== null && dataToUpdate.discountPrice !== '') {
+        dataToUpdate.discountPrice = parseFloat(dataToUpdate.discountPrice);
+        // Validate discount price against original price
+        const originalPrice = dataToUpdate.price !== undefined
+          ? parseFloat(dataToUpdate.price)
+          : (await prisma.product.findUnique({ where: { id }, select: { price: true } }))?.price;
+        if (originalPrice && dataToUpdate.discountPrice >= parseFloat(originalPrice)) {
+          throw new Error('سعر الخصم يجب أن يكون أقل من السعر الأصلي');
+        }
+      } else {
+        dataToUpdate.discountPrice = null;
+      }
+    }
+    if (dataToUpdate.promotionLabel === '') dataToUpdate.promotionLabel = null;
     
     return await prisma.product.update({
       where: { id },

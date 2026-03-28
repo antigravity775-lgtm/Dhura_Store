@@ -79,11 +79,12 @@ export async function updateProfile(data) {
 }
 
 // ─── Products ───
-export async function getProducts({ city, maxPriceUsd, condition, pageNumber = 1, pageSize = 20 } = {}) {
+export async function getProducts({ city, maxPriceUsd, condition, specialOffers, pageNumber = 1, pageSize = 20 } = {}) {
   const params = new URLSearchParams();
   if (city) params.set('city', city);
   if (maxPriceUsd) params.set('maxPriceUsd', maxPriceUsd);
   if (condition !== undefined && condition !== null) params.set('condition', condition);
+  if (specialOffers) params.set('specialOffers', 'true');
   params.set('pageNumber', pageNumber);
   params.set('pageSize', pageSize);
   return request(`/products?${params.toString()}`, { headers: jsonHeaders() });
