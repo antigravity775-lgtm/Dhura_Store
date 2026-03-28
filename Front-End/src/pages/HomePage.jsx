@@ -1,4 +1,24 @@
-import React, { useState, useEffect, useCallback } from 'react';
+/**
+ * HomePage — الصفحة الرئيسية (المُحسَّنة)
+ * 
+ * EN: Optimized with SWR caching, memoization, and Cloudinary URL optimization.
+ *     Key improvements:
+ *     1. SWR replaces manual fetch → instant load from cache on revisit
+ *     2. useMemo prevents recalculating filtered products on every render
+ *     3. Cloudinary URLs optimized at mapping layer (f_auto, q_auto, width)
+ *     4. keepPreviousData prevents layout shift during filter changes
+ *     5. Skeleton only shows on true first load — never on cached revisits
+ * 
+ * AR: محسّنة بتخزين SWR المؤقت، التحفيظ في الذاكرة، وتحسين روابط Cloudinary.
+ *     التحسينات الرئيسية:
+ *     1. SWR يستبدل الجلب اليدوي → عرض فوري من الكاش عند العودة
+ *     2. useMemo يمنع إعادة حساب المنتجات المفلترة في كل عرض
+ *     3. روابط Cloudinary محسّنة في طبقة التعيين (f_auto, q_auto, العرض)
+ *     4. keepPreviousData يمنع تحول التخطيط أثناء تغيير الفلاتر
+ *     5. الهيكل العظمي يظهر فقط في التحميل الأول الحقيقي — أبداً في الزيارات المخزنة
+ */
+
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Search, LayoutGrid, TrendingUp, Star, Loader2, SlidersHorizontal, MapPin, DollarSign, Package, X } from 'lucide-react';
@@ -8,6 +28,14 @@ import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import * as api from '../services/api';
 
+// EN: SWR hooks — replaces manual useState/useEffect data fetching
+// AR: خطافات SWR — تستبدل جلب البيانات اليدوي بـ useState/useEffect
+import { useProducts, useCategories } from '../hooks/useProducts';
+
+// EN: Cloudinary URL optimizer — ensures images are served at optimal size/format
+// AR: مُحسّن روابط Cloudinary — يضمن تقديم الصور بالحجم والصيغة المثالية
+import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../utils/cloudinaryUrl';
+
 const cities = ['صنعاء', 'عدن', 'تعز', 'إب', 'المكلا', 'الحديدة', 'ذمار', 'حجة', 'صعدة', 'مأرب'];
 
 const stats = [
@@ -16,7 +44,8 @@ const stats = [
   { label: 'مدينة مغطاة', value: '22', icon: LayoutGrid },
 ];
 
-// Fallback products when API is down
+// EN: Fallback products when API is down (unchanged)
+// AR: منتجات احتياطية عندما يكون الـ API معطلاً (بدون تغيير)
 const fallbackProducts = [
   { id: 'fb1', title: 'انفرتر طاقة شمسية Growatt 5kW برو', price: 950000, currency: 1, condition: 1, categoryName: 'الطاقة الشمسية', mainImageUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80' },
   { id: 'fb2', title: 'ماك بوك برو M2 شاشة 14 انش', price: 1850, currency: 3, condition: 2, categoryName: 'لابتوبات', mainImageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80' },
@@ -42,11 +71,51 @@ function formatPrice(price, currency) {
   return `${formatted} ${symbol}`;
 }
 
+/**
+ * mapToProduct — تحويل بيانات الـ API إلى شكل بطاقة المنتج
+ * 
+ * EN: Maps raw API data to the Product shape expected by ProductGrid.
+ *     Now includes Cloudinary URL optimization — images are served at
+ *     exactly the size needed for the 2-column mobile grid.
+ * 
+ * AR: يحوّل بيانات الـ API الخام إلى شكل المنتج المتوقع من ProductGrid.
+ *     الآن يتضمن تحسين روابط Cloudinary — الصور تُقدَّم بالحجم المطلوب
+ *     بالضبط لشبكة العمودين على الموبايل.
+ */
 function mapToProduct(p) {
+  const rawImage = p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
+  
   return {
     id: p.id,
     title: p.title,
-    image: p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80',
+    // EN: Optimize Cloudinary URL for grid card size (400px for 2-col mobile × 2dpr)
+    // AR: تحسين رابط Cloudinary لحجم بطاقة الشبكة (400 بكسل لعمودين موبايل × 2dpr)
+    image: getOptimizedImageUrl(rawImage, IMAGE_WIDTHS.GRID_CARD),
+    price: p.price,
+    currency: p.currency,
+    currencySymbol: api.CurrencySymbol[p.currency] || 'ريال',
+    rating: p.rating ?? (3.5 + Math.abs(String(p.id).charCodeAt(0) % 15) / 10),
+    reviewCount: p.reviewCount ?? Math.floor(Math.abs(String(p.id).charCodeAt(0) * 37) % 900 + 50),
+    badge: p.condition === 'New' ? null : p.condition === 'Used' ? 'Sale' : 'Local',
+  };
+}
+
+/**
+ * mapToProductForBelt — تحويل بيانات الـ API لحزام المنتجات
+ * 
+ * EN: Same as mapToProduct but uses BELT_CARD width (380px) for the
+ *     horizontally scrolling belt — slightly smaller than grid cards.
+ * 
+ * AR: نفس mapToProduct لكن يستخدم عرض BELT_CARD (380 بكسل)
+ *     للحزام الأفقي — أصغر قليلاً من بطاقات الشبكة.
+ */
+function mapToProductForBelt(p) {
+  const rawImage = p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
+  
+  return {
+    id: p.id,
+    title: p.title,
+    image: getOptimizedImageUrl(rawImage, IMAGE_WIDTHS.BELT_CARD),
     price: p.price,
     currency: p.currency,
     currencySymbol: api.CurrencySymbol[p.currency] || 'ريال',
@@ -63,70 +132,129 @@ const HomePage = () => {
   const [searchParams] = useSearchParams();
   const searchFromUrl = searchParams.get('search') || '';
 
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState('الكل');
-  const [loading, setLoading] = useState(true);
-  const [usingFallback, setUsingFallback] = useState(false);
 
-  // فلاتر
+  // فلاتر / Filters
   const [searchText, setSearchText] = useState(searchFromUrl);
   const [filterCity, setFilterCity] = useState('');
   const [filterCondition, setFilterCondition] = useState('');
   const [filterMaxPrice, setFilterMaxPrice] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Sync search from URL
+  // EN: Sync search from URL query params
+  // AR: مزامنة البحث من معاملات الاستعلام في الرابط
   useEffect(() => {
     setSearchText(searchFromUrl);
   }, [searchFromUrl]);
 
-  const loadProducts = useCallback(async (city, condition, maxPrice) => {
-    setLoading(true);
-    try {
-      const params = { pageSize: 50 };
-      if (city) params.city = city;
-      if (condition) params.condition = parseInt(condition);
-      if (maxPrice) params.maxPriceUsd = parseFloat(maxPrice);
+  // ─── SWR Data Fetching (replaces manual useState + useEffect) ───
+  // ─── جلب البيانات بـ SWR (يستبدل useState + useEffect اليدوي) ───
+  
+  /**
+   * EN: useProducts returns cached data instantly on revisit.
+   *     - isLoading: true ONLY on first load (no cache exists)
+   *     - isValidating: true during ANY fetch (including background revalidation)
+   *     - data: the products array (from cache or fresh)
+   *     - error: any fetch error
+   * 
+   * AR: useProducts يرجع البيانات المخزنة فوراً عند العودة.
+   *     - isLoading: صحيح فقط في التحميل الأول (لا يوجد كاش)
+   *     - isValidating: صحيح أثناء أي جلب (بما في ذلك التحديث في الخلفية)
+   *     - data: مصفوفة المنتجات (من الكاش أو جديدة)
+   *     - error: أي خطأ في الجلب
+   */
+  const { 
+    data: products, 
+    isLoading: productsLoading, 
+    isValidating: productsValidating,
+    error: productsError 
+  } = useProducts({ 
+    city: filterCity, 
+    condition: filterCondition, 
+    maxPriceUsd: filterMaxPrice 
+  });
 
-      const [productsData, categoriesData] = await Promise.all([
-        api.getProducts(params),
-        api.getCategories(),
-      ]);
-      setProducts(productsData || []);
-      setCategories(categoriesData || []);
-      setUsingFallback(false);
-    } catch {
-      setProducts(fallbackProducts);
-      setCategories([]);
-      setUsingFallback(true);
+  const { data: categories } = useCategories();
+
+  // EN: Use fallback products if API fails
+  // AR: استخدم المنتجات الاحتياطية إذا فشل الـ API
+  const activeProducts = productsError ? fallbackProducts : products;
+  const usingFallback = !!productsError;
+
+  /**
+   * EN: CRITICAL — Show skeleton ONLY when truly loading for the first time.
+   *     If SWR has cached data (productsLoading = false), we skip the skeleton
+   *     entirely. This is the key UX win: instant UI on revisit.
+   * 
+   * AR: حرج — اعرض الهيكل العظمي فقط عند التحميل لأول مرة فعلاً.
+   *     إذا كان لدى SWR بيانات مخزنة (productsLoading = false)، نتخطى
+   *     الهيكل العظمي تماماً. هذا هو المكسب الرئيسي: واجهة فورية عند العودة.
+   */
+  const showSkeleton = productsLoading && activeProducts.length === 0;
+
+  // ─── Memoized Computed Values ───
+  // ─── القيم المحسوبة المحفوظة في الذاكرة ───
+
+  const categoryNames = useMemo(() => {
+    return ['الكل', ...new Set(
+      categories.length > 0
+        ? categories.map(c => c.name)
+        : activeProducts.map(p => p.categoryName).filter(Boolean)
+    )];
+  }, [categories, activeProducts]);
+
+  /**
+   * EN: useMemo prevents recalculating filtered products on every render.
+   *     Only recalculates when activeProducts, activeCategory, or searchText changes.
+   *     This is important because the parent component re-renders for many reasons
+   *     (hover states, scroll events, etc.) that don't affect the filter result.
+   * 
+   * AR: useMemo يمنع إعادة حساب المنتجات المفلترة في كل عرض.
+   *     يعيد الحساب فقط عندما تتغير activeProducts أو activeCategory أو searchText.
+   *     هذا مهم لأن المكون الأب يُعاد رسمه لأسباب كثيرة
+   *     (حالات التمرير، أحداث التمرير، إلخ) لا تؤثر على نتيجة الفلتر.
+   */
+  const filteredProducts = useMemo(() => {
+    let result = activeCategory === 'الكل'
+      ? activeProducts
+      : activeProducts.filter(p => p.categoryName === activeCategory);
+
+    if (searchText.trim()) {
+      const q = searchText.trim().toLowerCase();
+      result = result.filter(p =>
+        p.title?.toLowerCase().includes(q) ||
+        p.categoryName?.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q)
+      );
     }
-    setLoading(false);
-  }, []);
 
-  useEffect(() => {
-    loadProducts(filterCity, filterCondition, filterMaxPrice);
-  }, [filterCity, filterCondition, filterMaxPrice, loadProducts]);
+    return result;
+  }, [activeProducts, activeCategory, searchText]);
 
-  const categoryNames = ['الكل', ...new Set(
-    categories.length > 0
-      ? categories.map(c => c.name)
-      : products.map(p => p.categoryName).filter(Boolean)
-  )];
+  /**
+   * EN: Memoize the mapped product arrays to prevent re-creating objects
+   *     on every render. Only recalculates when filteredProducts or
+   *     isFavorite function changes.
+   * 
+   * AR: حفظ مصفوفات المنتجات المحوّلة لمنع إعادة إنشاء الكائنات
+   *     في كل عرض. يعيد الحساب فقط عندما تتغير filteredProducts
+   *     أو دالة isFavorite.
+   */
+  const mappedGridProducts = useMemo(() => {
+    return filteredProducts.map(p => {
+      const mapped = mapToProduct(p);
+      mapped.isFavorite = isFavorite(p.id);
+      return mapped;
+    });
+  }, [filteredProducts, isFavorite]);
 
-  // Apply client-side filters (text search + category)
-  let filteredProducts = activeCategory === 'الكل'
-    ? products
-    : products.filter(p => p.categoryName === activeCategory);
-
-  if (searchText.trim()) {
-    const q = searchText.trim().toLowerCase();
-    filteredProducts = filteredProducts.filter(p =>
-      p.title?.toLowerCase().includes(q) ||
-      p.categoryName?.toLowerCase().includes(q) ||
-      p.description?.toLowerCase().includes(q)
-    );
-  }
+  const mappedBeltProducts = useMemo(() => {
+    return activeProducts.slice(0, 10).map(p => {
+      const mapped = mapToProductForBelt(p);
+      mapped.isFavorite = isFavorite(p.id);
+      return mapped;
+    });
+  }, [activeProducts, isFavorite]);
 
   const activeFiltersCount = [filterCity, filterCondition, filterMaxPrice].filter(Boolean).length + (searchText.trim() ? 1 : 0);
 
@@ -139,7 +267,7 @@ const HomePage = () => {
   };
 
   const handleQuickAdd = (p) => {
-    const originalProduct = products.find(prod => String(prod.id) === String(p.id));
+    const originalProduct = activeProducts.find(prod => String(prod.id) === String(p.id));
     if (originalProduct) {
       addToCart(originalProduct, 1);
     } else {
@@ -151,11 +279,10 @@ const HomePage = () => {
         mainImageUrl: p.image
       }, 1);
     }
-    // optionally could alert("Added to cart!")
   };
 
   const handleFavoriteToggle = (p) => {
-    const originalProduct = products.find(prod => String(prod.id) === String(p.id));
+    const originalProduct = activeProducts.find(prod => String(prod.id) === String(p.id));
     if (originalProduct) {
       toggleFavorite(originalProduct);
     }
@@ -163,7 +290,7 @@ const HomePage = () => {
 
   return (
     <Layout>
-      {/* ========== قسم البطل ========== */}
+      {/* ========== قسم البطل / Hero Section ========== */}
       <section className="relative w-full bg-slate-900 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-bl from-slate-900 via-indigo-950 to-slate-900"></div>
 
@@ -242,7 +369,7 @@ const HomePage = () => {
             </button>
           </motion.div>
 
-          {/* صف الإحصائيات */}
+          {/* صف الإحصائيات / Stats Row */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -264,13 +391,13 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ========== قسم المنتجات ========== */}
+      {/* ========== قسم المنتجات / Products Section ========== */}
       <section id="products-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
 
-        {/* شريط البحث والفلاتر */}
+        {/* شريط البحث والفلاتر / Search & Filters Bar */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row gap-3 mb-4">
-            {/* حقل البحث */}
+            {/* حقل البحث / Search Field */}
             <div className="relative flex-1">
               <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                 <Search className="w-5 h-5 text-slate-400" />
@@ -291,7 +418,7 @@ const HomePage = () => {
                 </button>
               )}
             </div>
-            {/* زر الفلاتر */}
+            {/* زر الفلاتر / Filter Button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl border text-sm font-bold transition-all ${
@@ -310,7 +437,7 @@ const HomePage = () => {
             </button>
           </div>
 
-          {/* لوحة الفلترة */}
+          {/* لوحة الفلترة / Filter Panel */}
           <AnimatePresence>
             {showFilters && (
               <motion.div
@@ -323,7 +450,7 @@ const HomePage = () => {
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-                    {/* المدينة */}
+                    {/* المدينة / City */}
                     <div>
                       <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
                         <MapPin className="w-3.5 h-3.5 inline ml-1" />
@@ -341,7 +468,7 @@ const HomePage = () => {
                       </select>
                     </div>
 
-                    {/* الحالة */}
+                    {/* الحالة / Condition */}
                     <div>
                       <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
                         <Package className="w-3.5 h-3.5 inline ml-1" />
@@ -359,7 +486,7 @@ const HomePage = () => {
                       </select>
                     </div>
 
-                    {/* السعر الأقصى */}
+                    {/* السعر الأقصى / Max Price */}
                     <div>
                       <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
                         <DollarSign className="w-3.5 h-3.5 inline ml-1" />
@@ -377,7 +504,7 @@ const HomePage = () => {
                     </div>
                   </div>
 
-                  {/* مسح الفلاتر */}
+                  {/* مسح الفلاتر / Clear Filters */}
                   {activeFiltersCount > 0 && (
                     <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
                       <span className="text-xs text-slate-500 font-medium">{activeFiltersCount} فلتر نشط</span>
@@ -395,7 +522,7 @@ const HomePage = () => {
           </AnimatePresence>
         </div>
 
-        {/* عنوان القسم */}
+        {/* عنوان القسم / Section Title */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
@@ -406,12 +533,17 @@ const HomePage = () => {
             <p className="text-slate-500 mt-1.5 text-base">اكتشف أفضل العروض بالقرب منك</p>
           </div>
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-400 bg-slate-100 px-4 py-2 rounded-xl w-fit">
+            {/* EN: Show a subtle spinning indicator during background revalidation
+                AR: إظهار مؤشر تدوير خفيف أثناء التحديث في الخلفية */}
+            {productsValidating && !showSkeleton && (
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+            )}
             <LayoutGrid className="w-4 h-4" />
             {filteredProducts.length} منتج
           </div>
         </div>
 
-        {/* أزرار الأقسام */}
+        {/* أزرار الأقسام / Category Buttons */}
         <div className="relative mb-10 w-full overflow-hidden">
           <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 to-transparent pointer-events-none md:hidden z-10"></div>
 
@@ -435,16 +567,12 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* حزام المنتجات المميزة (يظهر فقط في الصفحة الرئيسية بدون فلاتر) */}
-        {!loading && filteredProducts.length > 0 && activeCategory === 'الكل' && !searchText.trim() && (
+        {/* حزام المنتجات المميزة / Featured Products Belt */}
+        {!showSkeleton && filteredProducts.length > 0 && activeCategory === 'الكل' && !searchText.trim() && (
           <div className="mb-12 rounded-3xl overflow-hidden border border-slate-100 shadow-sm bg-white">
             <ProductBelt 
               title="⚡ صفقات مميزة لفترة محدودة" 
-              products={products.slice(0, 10).map(p => {
-                const mapped = mapToProduct(p);
-                mapped.isFavorite = isFavorite(p.id);
-                return mapped;
-              })}
+              products={mappedBeltProducts}
               onQuickAdd={handleQuickAdd}
               onClick={(p) => navigate(`/product/${p.id}`)}
               onFavorite={handleFavoriteToggle}
@@ -453,8 +581,8 @@ const HomePage = () => {
           </div>
         )}
 
-        {/* شبكة المنتجات */}
-        {loading ? (
+        {/* شبكة المنتجات / Product Grid */}
+        {showSkeleton ? (
           <ProductGrid isLoading={true} loadingCount={8} />
         ) : (
           <AnimatePresence mode="popLayout">
@@ -468,11 +596,7 @@ const HomePage = () => {
                 key={activeCategory + searchText}
               >
                 <ProductGrid 
-                  products={filteredProducts.map(p => {
-                    const mapped = mapToProduct(p);
-                    mapped.isFavorite = isFavorite(p.id);
-                    return mapped;
-                  })}
+                  products={mappedGridProducts}
                   onQuickAdd={handleQuickAdd}
                   onClick={(p) => navigate(`/product/${p.id}`)}
                   onFavorite={handleFavoriteToggle}

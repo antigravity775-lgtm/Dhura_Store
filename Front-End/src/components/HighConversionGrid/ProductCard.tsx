@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { Star, Plus, Heart } from 'lucide-react';
 
+/**
+ * EN: Import Cloudinary URL optimizer as a safety net.
+ *     Images should already be optimized in mapToProduct(), but this
+ *     catches any cases where raw URLs slip through.
+ * AR: استيراد مُحسّن روابط Cloudinary كطبقة أمان.
+ *     الصور يجب أن تكون محسّنة بالفعل في mapToProduct()، لكن هذا
+ *     يلتقط أي حالات تمر فيها روابط خام.
+ */
+import { getOptimizedImageUrl } from '../../utils/cloudinaryUrl';
+
 export interface Product {
   id: string | number;
   title: string;
@@ -22,7 +32,17 @@ interface ProductCardProps {
   onFavorite?: (product: Product, isFavorite: boolean) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({
+/**
+ * EN: React.memo prevents this component from re-rendering when the parent
+ *     re-renders but the props haven't changed. This is critical for the
+ *     "Load More" pattern — when new products are appended, existing cards
+ *     should NOT re-render.
+ * 
+ * AR: React.memo يمنع إعادة رسم هذا المكون عندما يُعاد رسم الأب
+ *     لكن الخصائص لم تتغير. هذا حرج لنمط "تحميل المزيد" — عند إضافة
+ *     منتجات جديدة، البطاقات الموجودة يجب ألا تُعاد رسمها.
+ */
+export const ProductCard: React.FC<ProductCardProps> = React.memo(({
   product,
   isLoading = false,
   onQuickAdd,
@@ -95,7 +115,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* Image Container with Badge */}
       <div className="relative aspect-square w-full mb-3 bg-white rounded-lg overflow-hidden flex items-center justify-center border border-gray-50">
         <img
-          src={image}
+          src={getOptimizedImageUrl(image, 400)}
           alt={title}
           className="w-full h-full object-contain p-2 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
@@ -195,4 +215,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       </div>
     </div>
   );
-};
+});
+
+// EN: Display name for React DevTools debugging
+// AR: اسم العرض لتصحيح أخطاء React DevTools
+ProductCard.displayName = 'ProductCard';
