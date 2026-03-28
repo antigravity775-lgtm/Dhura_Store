@@ -22,6 +22,9 @@ export interface Product {
   reviewCount: number;
   badge?: 'Sale' | 'Local' | null;
   isFavorite?: boolean;
+  isPromoted?: boolean;
+  discountPrice?: number;
+  promotionLabel?: string;
 }
 
 interface ProductCardProps {
@@ -96,17 +99,24 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
     );
   }
 
-  const { title, image, price, currencySymbol = '$', originalPrice, rating, reviewCount, badge } = product;
-  const discountPercentage = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+  const { title, image, price, currencySymbol = '$', originalPrice, rating, reviewCount, badge, isPromoted, discountPrice, promotionLabel } = product;
+  const hasDiscount = discountPrice !== undefined && discountPrice !== null;
+  const displayPrice = hasDiscount ? discountPrice : price;
+  const discountPercentage = hasDiscount ? Math.round(((price - discountPrice) / price) * 100) : (originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0);
+  const hasPromoRibbon = isPromoted || !!promotionLabel;
 
   // Split price into whole and fractional parts for Amazon-style prominent display
-  const priceWhole = Math.floor(price);
-  const priceFraction = (price % 1).toFixed(2).substring(2);
+  const priceWhole = Math.floor(displayPrice);
+  const priceFraction = (displayPrice % 1).toFixed(2).substring(2);
 
   return (
     <div
       dir="ltr"
-      className="group flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-3 h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] cursor-pointer"
+      className={`group flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-sm border p-3 h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] cursor-pointer ${
+        isPromoted
+          ? 'border-indigo-300 dark:border-indigo-600 ring-2 ring-indigo-400/30 dark:ring-indigo-500/20 shadow-md shadow-indigo-500/10'
+          : 'border-gray-100 dark:border-slate-700'
+      }`}
       role="button"
       tabIndex={0}
       aria-label={`View details for ${title}`}
@@ -122,11 +132,29 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         />
 
         {/* Absolute Banner/Badge */}
-        {badge && (
+        {badge && !hasPromoRibbon && (
           <div className="absolute top-0 left-0 z-10 w-full flex justify-start pointer-events-none">
             <span className={`px-2 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-white rounded-br-lg shadow-sm ${badge === 'Sale' ? 'bg-[#CC0C39]' : 'bg-emerald-600'
               }`}>
               {badge}
+            </span>
+          </div>
+        )}
+
+        {/* Promotion Ribbon — Glassmorphism */}
+        {hasPromoRibbon && (
+          <div className="absolute top-0 left-0 z-10 w-full flex justify-start pointer-events-none">
+            <span className="px-2.5 py-1 text-[10px] sm:text-xs font-bold text-white rounded-br-xl shadow-lg bg-gradient-to-r from-indigo-600/90 via-purple-600/90 to-pink-500/90 backdrop-blur-md border-b border-r border-white/20">
+              {promotionLabel || '⭐ مميز'}
+            </span>
+          </div>
+        )}
+
+        {/* Discount Badge */}
+        {hasDiscount && (
+          <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
+            <span className="px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-500 rounded-md shadow-sm">
+              -{discountPercentage}%
             </span>
           </div>
         )}
@@ -180,8 +208,16 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         {/* Pricing Layout & Quick Add Action */}
         <div className="mt-auto flex items-end justify-between relative pt-2">
           <div className="flex flex-col">
-            {/* Crossed-out original price & savings pill */}
-            {badge === 'Sale' && originalPrice && (
+            {/* Discount pricing: show original with strikethrough */}
+            {hasDiscount && (
+              <div className="flex items-center text-[11px] mb-0.5 space-x-1.5">
+                <span className="text-gray-400 dark:text-slate-500 line-through">
+                  {price.toFixed(2)} {currencySymbol}
+                </span>
+              </div>
+            )}
+            {/* Legacy Sale badge pricing */}
+            {!hasDiscount && badge === 'Sale' && originalPrice && (
               <div className="flex items-center text-[11px] mb-0.5 space-x-1.5">
                 <span className="text-[#CC0C39] font-medium bg-red-50 px-1 py-0.5 rounded-sm whitespace-nowrap">
                   {discountPercentage}% off
@@ -193,7 +229,9 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
             )}
 
             {/* Prominent Price Display */}
-            <div className="flex items-start text-gray-900 dark:text-slate-100 leading-none">
+            <div className={`flex items-start leading-none ${
+              hasDiscount ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-slate-100'
+            }`}>
               <span className="text-xs font-semibold mt-[2px] ml-1">{currencySymbol}</span>
               <span className="text-xl sm:text-2xl font-bold">{priceWhole}</span>
               <span className="text-xs font-semibold mt-[2px]">.{priceFraction}</span>

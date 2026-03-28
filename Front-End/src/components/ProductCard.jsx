@@ -16,6 +16,13 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
 
   const conditionText = condition === 'New' ? 'جديد' : 'مستعمل';
 
+  // Promotion fields
+  const isPromoted = product?.isPromoted;
+  const discountPrice = product?.discountPrice;
+  const promotionLabel = product?.promotionLabel;
+  const hasDiscount = discountPrice !== undefined && discountPrice !== null && discountPrice !== '';
+  const hasPromoRibbon = isPromoted || !!promotionLabel;
+
   const handleToggleFavorite = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -28,7 +35,11 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
     <motion.div variants={cardVariants}>
       <Link
         to={`/product/${id}`}
-        className="group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col cursor-pointer border border-gray-100/80 dark:border-slate-700 block h-full"
+        className={`group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col cursor-pointer border block h-full ${
+          isPromoted
+            ? 'border-indigo-300 dark:border-indigo-600 ring-2 ring-indigo-400/30 dark:ring-indigo-500/20 shadow-md shadow-indigo-500/10'
+            : 'border-gray-100/80 dark:border-slate-700'
+        }`}
       >
         {/* منطقة الصورة */}
         <div className="relative aspect-square overflow-hidden bg-slate-100 dark:bg-slate-900">
@@ -51,13 +62,20 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
           </div>
 
           <div className="absolute top-3 right-3 left-3 flex justify-between items-start">
-            <span className={`px-2.5 py-1 text-xs font-bold rounded-lg backdrop-blur-md shadow-sm ${
-              condition === 'New' 
-                ? 'bg-indigo-500/90 text-white' 
-                : 'bg-white/90 text-slate-700'
-            }`}>
-              {conditionText}
-            </span>
+            {/* Promotion Ribbon or Condition Badge */}
+            {hasPromoRibbon ? (
+              <span className="px-2.5 py-1 text-xs font-bold rounded-lg shadow-lg bg-gradient-to-r from-indigo-600/90 via-purple-600/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20">
+                {promotionLabel || '⭐ مميز'}
+              </span>
+            ) : (
+              <span className={`px-2.5 py-1 text-xs font-bold rounded-lg backdrop-blur-md shadow-sm ${
+                condition === 'New' 
+                  ? 'bg-indigo-500/90 text-white' 
+                  : 'bg-white/90 text-slate-700'
+              }`}>
+                {conditionText}
+              </span>
+            )}
             <button
               className={`p-1.5 rounded-full backdrop-blur-md transition-all duration-200 shadow-sm ${
                 liked ? 'bg-rose-500 text-white scale-110' : 'bg-white/80 text-slate-400 hover:text-rose-500 hover:bg-white'
@@ -68,6 +86,15 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
               <Heart className="w-4 h-4" fill={liked ? 'currentColor' : 'none'} />
             </button>
           </div>
+
+          {/* Discount percentage badge */}
+          {hasDiscount && (
+            <div className="absolute bottom-3 left-3">
+              <span className="px-2 py-1 text-[10px] font-bold text-white bg-red-500 rounded-lg shadow-sm">
+                -{Math.round(((Number(price) - Number(discountPrice)) / Number(price)) * 100)}%
+              </span>
+            </div>
+          )}
         </div>
         
         {/* محتوى البطاقة */}
@@ -84,7 +111,18 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
           )}
           
           <div className="mt-auto pt-3 border-t border-gray-100/80 dark:border-slate-700">
-            <span className="font-extrabold text-lg text-indigo-600 dark:text-indigo-400 tracking-tight">{price}</span>
+            {hasDiscount ? (
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-lg text-emerald-600 dark:text-emerald-400 tracking-tight">
+                  {Number(discountPrice).toLocaleString('en-US')}
+                </span>
+                <span className="text-sm text-slate-400 line-through">
+                  {price}
+                </span>
+              </div>
+            ) : (
+              <span className="font-extrabold text-lg text-indigo-600 dark:text-indigo-400 tracking-tight">{price}</span>
+            )}
           </div>
         </div>
       </Link>

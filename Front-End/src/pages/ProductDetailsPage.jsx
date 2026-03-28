@@ -167,6 +167,16 @@ const ProductDetailsPage = () => {
                   متوفر ({product.stockQuantity})
                 </span>
               )}
+              {product.isPromoted && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/20">
+                  ⭐ منتج مميز
+                </span>
+              )}
+              {product.promotionLabel && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700">
+                  {product.promotionLabel}
+                </span>
+              )}
             </div>
 
             {/* العنوان */}
@@ -176,8 +186,26 @@ const ProductDetailsPage = () => {
 
             {/* السعر وأزرار الإجراء */}
             <div className="flex items-center justify-between mb-6">
-              <div className="text-3xl sm:text-4xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
-                {formatPrice(product.price, product.currency)}
+              <div>
+                {product.discountPrice ? (
+                  <>
+                    <div className="text-lg text-slate-400 dark:text-slate-500 line-through mb-1">
+                      {formatPrice(product.price, product.currency)}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
+                        {formatPrice(Number(product.discountPrice), product.currency)}
+                      </span>
+                      <span className="px-2.5 py-1 text-sm font-bold text-white bg-red-500 rounded-lg shadow-sm">
+                        -{Math.round(((product.price - product.discountPrice) / product.price) * 100)}%
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-3xl sm:text-4xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
+                    {formatPrice(product.price, product.currency)}
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <button

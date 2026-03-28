@@ -592,22 +592,48 @@ const AdminDashboard = () => {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base truncate">{product.title}</h3>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">{product.title}</h3>
+                        {product.isPromoted && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[10px] font-bold rounded-md shadow-sm">
+                            ⭐ مُروَّج
+                          </span>
+                        )}
+                      </div>
                       <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                        <span className="text-indigo-600 font-bold text-sm">
-                          {product.price?.toLocaleString('en-US') || 0} {api.CurrencySymbol[product.currency] || 'ريال'}
-                        </span>
+                        {product.discountPrice ? (
+                          <>
+                            <span className="text-slate-400 line-through text-xs">
+                              {Number(product.price).toLocaleString('en-US')} {api.CurrencySymbol[product.currency] || 'ريال'}
+                            </span>
+                            <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+                              {Number(product.discountPrice).toLocaleString('en-US')} {api.CurrencySymbol[product.currency] || 'ريال'}
+                            </span>
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-md">
+                              -{Math.round(((product.price - product.discountPrice) / product.price) * 100)}%
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-indigo-600 dark:text-indigo-400 font-bold text-sm">
+                            {Number(product.price || 0).toLocaleString('en-US')} {api.CurrencySymbol[product.currency] || 'ريال'}
+                          </span>
+                        )}
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                          product.isHidden ? 'bg-slate-100 text-slate-500' : 'bg-green-50 text-green-600'
+                          product.isHidden ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400' : 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400'
                         }`}>
                           {product.isHidden ? 'مخفي' : 'نشط'}
                         </span>
                         {product.categoryName && (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-50 text-slate-400 border border-slate-100">
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-600">
                             {product.categoryName}
                           </span>
                         )}
-                        <span className="text-[10px] font-medium text-slate-400">
+                        {product.promotionLabel && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800">
+                            {product.promotionLabel}
+                          </span>
+                        )}
+                        <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">
                           البائع: {product.sellerName}
                         </span>
                       </div>

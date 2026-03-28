@@ -68,6 +68,9 @@ function mapToProduct(p) {
     rating: p.rating ?? (3.5 + Math.abs(String(p.id).charCodeAt(0) % 15) / 10),
     reviewCount: p.reviewCount ?? Math.floor(Math.abs(String(p.id).charCodeAt(0) * 37) % 900 + 50),
     badge: p.condition === 'New' ? null : p.condition === 'Used' ? 'Sale' : 'Local',
+    isPromoted: p.isPromoted || false,
+    discountPrice: p.discountPrice ? Number(p.discountPrice) : undefined,
+    promotionLabel: p.promotionLabel || undefined,
   };
 }
 
@@ -83,6 +86,9 @@ function mapToProductForBelt(p) {
     rating: p.rating ?? (3.5 + Math.abs(String(p.id).charCodeAt(0) % 15) / 10),
     reviewCount: p.reviewCount ?? Math.floor(Math.abs(String(p.id).charCodeAt(0) * 37) % 900 + 50),
     badge: p.condition === 'New' ? null : p.condition === 'Used' ? 'Sale' : 'Local',
+    isPromoted: p.isPromoted || false,
+    discountPrice: p.discountPrice ? Number(p.discountPrice) : undefined,
+    promotionLabel: p.promotionLabel || undefined,
   };
 }
 
@@ -139,6 +145,7 @@ const HomePage = () => {
   const [filterCity, setFilterCity] = useState('');
   const [filterCondition, setFilterCondition] = useState('');
   const [filterMaxPrice, setFilterMaxPrice] = useState('');
+  const [filterSpecialOffers, setFilterSpecialOffers] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => { setSearchText(searchFromUrl); }, [searchFromUrl]);
@@ -152,7 +159,8 @@ const HomePage = () => {
   } = useProducts({
     city: filterCity,
     condition: filterCondition,
-    maxPriceUsd: filterMaxPrice
+    maxPriceUsd: filterMaxPrice,
+    specialOffers: filterSpecialOffers,
   });
 
   const { data: categories } = useCategories();
@@ -194,20 +202,29 @@ const HomePage = () => {
   }, [filteredProducts, isFavorite]);
 
   const mappedBeltProducts = useMemo(() => {
-    return activeProducts.slice(0, 10).map(p => {
+    // Prioritize promoted products for the belt
+    const sorted = [...activeProducts].sort((a, b) => {
+      if (a.isPromoted && !b.isPromoted) return -1;
+      if (!a.isPromoted && b.isPromoted) return 1;
+      if (a.discountPrice && !b.discountPrice) return -1;
+      if (!a.discountPrice && b.discountPrice) return 1;
+      return 0;
+    });
+    return sorted.slice(0, 10).map(p => {
       const mapped = mapToProductForBelt(p);
       mapped.isFavorite = isFavorite(p.id);
       return mapped;
     });
   }, [activeProducts, isFavorite]);
 
-  const activeFiltersCount = [filterCity, filterCondition, filterMaxPrice].filter(Boolean).length + (searchText.trim() ? 1 : 0);
+  const activeFiltersCount = [filterCity, filterCondition, filterMaxPrice].filter(Boolean).length + (searchText.trim() ? 1 : 0) + (filterSpecialOffers ? 1 : 0);
 
   const clearAllFilters = () => {
     setSearchText('');
     setFilterCity('');
     setFilterCondition('');
     setFilterMaxPrice('');
+    setFilterSpecialOffers(false);
     setActiveCategory('الكل');
   };
 
@@ -337,6 +354,20 @@ const HomePage = () => {
                         dir="ltr"
                       />
                     </div>
+                  </div>
+                  {/* Special Offers Toggle */}
+                  <div className="mt-4">
+                    <button
+                      onClick={() => setFilterSpecialOffers(!filterSpecialOffers)}
+                      className={`inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-200 border ${
+                        filterSpecialOffers
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/25'
+                          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30'
+                      }`}
+                    >
+                      <BadgePercent className="w-4 h-4" />
+                      عروض خاصة فقط
+                    </button>
                   </div>
                   {activeFiltersCount > 0 && (
                     <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">

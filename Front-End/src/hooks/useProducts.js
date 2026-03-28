@@ -42,11 +42,12 @@ import * as api from '../services/api';
  *     يستخدم SWR هذا المفتاح لتخزين واسترجاع البيانات المخزنة.
  *     مجموعات فلترة مختلفة = إدخالات كاش مختلفة.
  */
-function getProductsCacheKey({ city, condition, maxPriceUsd } = {}) {
+function getProductsCacheKey({ city, condition, maxPriceUsd, specialOffers } = {}) {
   const parts = ['products'];
   if (city) parts.push(`city:${city}`);
   if (condition) parts.push(`cond:${condition}`);
   if (maxPriceUsd) parts.push(`max:${maxPriceUsd}`);
+  if (specialOffers) parts.push('offers');
   return parts.join('|');
 }
 
@@ -62,6 +63,7 @@ async function fetchProducts(_key, params) {
   if (params.city) apiParams.city = params.city;
   if (params.condition) apiParams.condition = parseInt(params.condition);
   if (params.maxPriceUsd) apiParams.maxPriceUsd = parseFloat(params.maxPriceUsd);
+  if (params.specialOffers) apiParams.specialOffers = true;
   
   const data = await api.getProducts(apiParams);
   return data || [];
@@ -82,8 +84,8 @@ async function fetchProducts(_key, params) {
  * @param {string} params.maxPriceUsd - Max price filter / فلتر السعر الأقصى
  * @returns {{ data: Array, isLoading: boolean, isValidating: boolean, error: Error, mutate: Function }}
  */
-export function useProducts({ city = '', condition = '', maxPriceUsd = '' } = {}) {
-  const params = { city, condition, maxPriceUsd };
+export function useProducts({ city = '', condition = '', maxPriceUsd = '', specialOffers = false } = {}) {
+  const params = { city, condition, maxPriceUsd, specialOffers };
   const cacheKey = getProductsCacheKey(params);
 
   const { data, error, isLoading, isValidating, mutate } = useSWR(
