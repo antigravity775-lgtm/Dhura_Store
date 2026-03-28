@@ -117,7 +117,7 @@ class AuthService {
    */
   async updateProfile(userId, updateData) {
     // Remove fields that shouldn't be updated directly
-    const { id: _, passwordHash: __, role: ___, ...dataToUpdate } = updateData;
+    const { id: _, userId: ____, passwordHash: __, role: ___, ...dataToUpdate } = updateData;
     
     const user = await prisma.user.update({
       where: { id: userId },
