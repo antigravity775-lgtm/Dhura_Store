@@ -13,5 +13,6 @@ router.use(protect);
 
 router.get('/profile', asyncHandler(accountController.getProfile.bind(accountController)));
 router.put('/profile', asyncHandler(accountController.updateProfile.bind(accountController)));
+router.put('/change-password', asyncHandler(accountController.changePassword.bind(accountController)));
 
 module.exports = router;

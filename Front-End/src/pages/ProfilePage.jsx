@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Phone, MapPin, DollarSign, Loader2, Check, AlertCircle, ArrowRight, Save } from 'lucide-react';
+import { User, Mail, MapPin, DollarSign, Loader2, Check, AlertCircle, ArrowRight, Save, Lock, Key } from 'lucide-react';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import * as api from '../services/api';
@@ -20,6 +20,12 @@ const ProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
+
+  // Password Change State
+  const [pwdForm, setPwdForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [pwdSaving, setPwdSaving] = useState(false);
+  const [pwdSaved, setPwdSaved] = useState(false);
+  const [pwdError, setPwdError] = useState('');
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -91,6 +97,39 @@ const ProfilePage = () => {
     }
   };
 
+  const handlePwdChange = (e) => {
+    setPwdForm({ ...pwdForm, [e.target.name]: e.target.value });
+    setPwdError('');
+    setPwdSaved(false);
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (pwdForm.newPassword !== pwdForm.confirmPassword) {
+      setPwdError('كلمة المرور الجديدة غير متطابقة');
+      return;
+    }
+    if (pwdForm.newPassword.length < 6) {
+      setPwdError('كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل');
+      return;
+    }
+
+    setPwdSaving(true);
+    setPwdError('');
+    setPwdSaved(false);
+
+    try {
+      await api.changePassword(pwdForm.currentPassword, pwdForm.newPassword);
+      setPwdSaved(true);
+      setPwdForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setTimeout(() => setPwdSaved(false), 3000);
+    } catch (err) {
+      setPwdError(err.message || 'حدث خطأ أثناء تغيير كلمة المرور');
+    } finally {
+      setPwdSaving(false);
+    }
+  };
+
   if (authLoading || loading) {
     return (
       <Layout>
@@ -150,22 +189,22 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              {/* رقم الهاتف — للعرض فقط */}
+              {/* البريد الإلكتروني — للعرض فقط */}
               <div>
-                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">رقم الهاتف</label>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">البريد الإلكتروني</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                    <Phone className="w-5 h-5 text-slate-400" />
+                    <Mail className="w-5 h-5 text-slate-400" />
                   </div>
                   <input
-                    type="text"
-                    value={user?.phoneNumber || ''}
+                    type="email"
+                    value={user?.email || ''}
                     readOnly
                     dir="ltr"
-                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm cursor-not-allowed text-left"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm cursor-not-allowed text-left focus:outline-none"
                   />
                 </div>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1.5">رقم الهاتف لا يمكن تغييره</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1.5">البريد الإلكتروني لا يمكن تغييره</p>
               </div>
 
               {/* المدينة */}
@@ -288,6 +327,129 @@ const ProfilePage = () => {
                   <>
                     <Save className="w-5 h-5" />
                     حفظ التغييرات
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </motion.div>
+
+        {/* بطاقة تغيير كلمة المرور */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden mt-8"
+        >
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="p-6 sm:p-8 space-y-6">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <div className="w-1 h-5 bg-pink-500 rounded-full"></div>
+                تغيير كلمة المرور
+              </h2>
+
+              {/* كلمة المرور الحالية */}
+              <div>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">كلمة المرور الحالية</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <Lock className="w-5 h-5 text-slate-400" />
+                  </div>
+                  <input
+                    type="password"
+                    name="currentPassword"
+                    value={pwdForm.currentPassword}
+                    onChange={handlePwdChange}
+                    required
+                    dir="ltr"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 focus:bg-white dark:focus:bg-slate-700 transition-all text-left"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              {/* كلمة المرور الجديدة */}
+              <div>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">كلمة المرور الجديدة</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <Key className="w-5 h-5 text-slate-400" />
+                  </div>
+                  <input
+                    type="password"
+                    name="newPassword"
+                    value={pwdForm.newPassword}
+                    onChange={handlePwdChange}
+                    required
+                    dir="ltr"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 focus:bg-white dark:focus:bg-slate-700 transition-all text-left"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              {/* تأكيد كلمة المرور الجديدة */}
+              <div>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">تأكيد كلمة المرور الجديدة</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <Check className="w-5 h-5 text-slate-400" />
+                  </div>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={pwdForm.confirmPassword}
+                    onChange={handlePwdChange}
+                    required
+                    dir="ltr"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 focus:bg-white dark:focus:bg-slate-700 transition-all text-left"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* خط فاصل */}
+            <div className="border-t border-slate-100 dark:border-slate-700"></div>
+
+            {/* رسالة الخطأ / النجاح وزر الحفظ لكلمة المرور */}
+            <div className="p-6 sm:p-8">
+              {pwdError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-medium px-4 py-3 rounded-xl"
+                >
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span>{pwdError}</span>
+                </motion.div>
+              )}
+
+              {pwdSaved && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 flex items-center gap-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm font-medium px-4 py-3 rounded-xl"
+                >
+                  <Check className="w-4 h-4 flex-shrink-0" />
+                  <span>تم تغيير كلمة المرور بنجاح</span>
+                </motion.div>
+              )}
+
+              <button
+                type="submit"
+                disabled={pwdSaving}
+                className="w-full flex items-center justify-center gap-2.5 py-4 bg-slate-800 dark:bg-slate-700 text-white rounded-xl font-bold text-base hover:bg-slate-700 dark:hover:bg-slate-600 focus:outline-none focus:ring-4 focus:ring-slate-500/30 transition-all shadow-lg shadow-slate-900/10 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
+              >
+                {pwdSaving ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    جاري التحديث...
+                  </>
+                ) : (
+                  <>
+                    <Key className="w-5 h-5" />
+                    تحديث كلمة المرور
                   </>
                 )}
               </button>
