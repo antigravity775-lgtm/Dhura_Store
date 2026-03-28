@@ -107,33 +107,33 @@ const ProfilePage = () => {
 
         {/* العنوان */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-            <div className="p-2.5 bg-indigo-100 rounded-2xl">
-              <User className="w-7 h-7 text-indigo-600" />
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+            <div className="p-2.5 bg-indigo-100 dark:bg-indigo-900/40 rounded-2xl">
+              <User className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
             </div>
             الملف الشخصي
           </h1>
-          <p className="text-slate-500 mt-2 text-base">تعديل بياناتك الشخصية وإعداداتك</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 text-base">تعديل بياناتك الشخصية وإعداداتك</p>
         </div>
 
         {/* بطاقة النموذج */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden"
+          className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden"
         >
           <form onSubmit={handleSubmit}>
 
             {/* قسم المعلومات الشخصية */}
             <div className="p-6 sm:p-8 space-y-6">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <div className="w-1 h-5 bg-indigo-500 rounded-full"></div>
                 المعلومات الشخصية
               </h2>
 
               {/* الاسم الكامل */}
               <div>
-                <label className="block text-sm font-bold text-slate-600 mb-2">الاسم الكامل</label>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">الاسم الكامل</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                     <User className="w-5 h-5 text-slate-400" />
@@ -144,7 +144,7 @@ const ProfilePage = () => {
                     value={form.fullName}
                     onChange={handleChange}
                     required
-                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 focus:bg-white transition-all"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-700 transition-all"
                     placeholder="أدخل اسمك الكامل"
                   />
                 </div>
@@ -152,7 +152,7 @@ const ProfilePage = () => {
 
               {/* رقم الهاتف — للعرض فقط */}
               <div>
-                <label className="block text-sm font-bold text-slate-600 mb-2">رقم الهاتف</label>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">رقم الهاتف</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                     <Phone className="w-5 h-5 text-slate-400" />
@@ -162,15 +162,15 @@ const ProfilePage = () => {
                     value={user?.phoneNumber || ''}
                     readOnly
                     dir="ltr"
-                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 text-sm cursor-not-allowed text-left"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm cursor-not-allowed text-left"
                   />
                 </div>
-                <p className="text-xs text-slate-400 mt-1.5">رقم الهاتف لا يمكن تغييره</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1.5">رقم الهاتف لا يمكن تغييره</p>
               </div>
 
               {/* المدينة */}
               <div>
-                <label className="block text-sm font-bold text-slate-600 mb-2">المدينة</label>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">المدينة</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                     <MapPin className="w-5 h-5 text-slate-400" />
@@ -180,7 +180,7 @@ const ProfilePage = () => {
                     value={form.city}
                     onChange={handleChange}
                     required
-                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 focus:bg-white transition-all appearance-none cursor-pointer"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-700 transition-all appearance-none cursor-pointer"
                   >
                     <option value="" disabled>اختر مدينتك</option>
                     {cities.map(city => (
@@ -192,26 +192,26 @@ const ProfilePage = () => {
             </div>
 
             {/* خط فاصل */}
-            <div className="border-t border-slate-100"></div>
+            <div className="border-t border-slate-100 dark:border-slate-700"></div>
 
             {/* قسم الإعدادات */}
             <div className="p-6 sm:p-8 space-y-6">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <div className="w-1 h-5 bg-indigo-500 rounded-full"></div>
                 الإعدادات
               </h2>
 
               {/* العملة المفضلة */}
               <div>
-                <label className="block text-sm font-bold text-slate-600 mb-3">العملة المفضلة للعرض</label>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-3">العملة المفضلة للعرض</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => handleCurrencyChange('YER')}
                     className={`flex items-center justify-center gap-2.5 py-4 rounded-xl border-2 text-sm font-bold transition-all ${
                       preferredCurrency === 'YER'
-                        ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm'
-                        : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:bg-slate-50'
+                        ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 dark:text-indigo-300 shadow-sm'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                     }`}
                   >
                     <span className="text-lg">🇾🇪</span>
@@ -223,8 +223,8 @@ const ProfilePage = () => {
                     onClick={() => handleCurrencyChange('USD')}
                     className={`flex items-center justify-center gap-2.5 py-4 rounded-xl border-2 text-sm font-bold transition-all ${
                       preferredCurrency === 'USD'
-                        ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm'
-                        : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:bg-slate-50'
+                        ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 dark:text-indigo-300 shadow-sm'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                     }`}
                   >
                     <DollarSign className="w-5 h-5" />
@@ -237,10 +237,10 @@ const ProfilePage = () => {
 
               {/* نوع الحساب */}
               <div>
-                <label className="block text-sm font-bold text-slate-600 mb-2">نوع الحساب</label>
-                <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200">
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">نوع الحساب</label>
+                <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                   <span className={`w-2.5 h-2.5 rounded-full ${user?.role === 'Seller' ? 'bg-amber-400' : 'bg-green-400'}`}></span>
-                  <span className="text-sm font-semibold text-slate-700">
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                     {user?.role === 'Seller' ? 'بائع' : user?.role === 'Admin' ? 'مدير' : 'مشتري'}
                   </span>
                 </div>
@@ -256,7 +256,7 @@ const ProfilePage = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-4 py-3 rounded-xl"
+                  className="mb-4 flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-medium px-4 py-3 rounded-xl"
                 >
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
                   <span>{error}</span>
@@ -267,7 +267,7 @@ const ProfilePage = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm font-medium px-4 py-3 rounded-xl"
+                  className="mb-4 flex items-center gap-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm font-medium px-4 py-3 rounded-xl"
                 >
                   <Check className="w-4 h-4 flex-shrink-0" />
                   <span>تم حفظ التغييرات بنجاح</span>
