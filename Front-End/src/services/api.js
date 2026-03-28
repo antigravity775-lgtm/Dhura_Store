@@ -275,6 +275,18 @@ export async function updateExchangeRates(data) {
   });
 }
 
+export async function getStoreInfo() {
+  return request('/SystemSettings/store-info', { headers: jsonHeaders() });
+}
+
+export async function updateStoreInfo(data) {
+  return request('/SystemSettings/store-info', {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
 // ─── Enum Helpers ───
 export const CurrencyMap = { 1: 'ريال (صنعاء)', 2: 'ريال (عدن)', 3: 'دولار' };
 export const CurrencySymbol = {

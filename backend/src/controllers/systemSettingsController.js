@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const prisma = require('../prismaClient');
 
 // Store exchange rates in a simple JSON file (no DB migration needed)
 // Use /tmp on Vercel (read-only filesystem) or local data folder otherwise
@@ -58,6 +59,43 @@ class SystemSettingsController {
 
       writeRates(rates);
       res.status(204).send();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/SystemSettings/store-info
+   */
+  async getStoreInfo(req, res) {
+    try {
+      let info = await prisma.systemSetting.findUnique({ where: { id: 'global' } });
+      if (!info) {
+        // Create default if not exists
+        info = await prisma.systemSetting.create({
+          data: { id: 'global' }
+        });
+      }
+      res.json(info);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * PUT /api/SystemSettings/store-info
+   */
+  async updateStoreInfo(req, res) {
+    try {
+      const { aboutUsText, contactEmail, contactPhone, facebookUrl, twitterUrl, whatsappUrl, instagramUrl } = req.body;
+      
+      const updatedInfo = await prisma.systemSetting.upsert({
+        where: { id: 'global' },
+        update: { aboutUsText, contactEmail, contactPhone, facebookUrl, twitterUrl, whatsappUrl, instagramUrl },
+        create: { id: 'global', aboutUsText, contactEmail, contactPhone, facebookUrl, twitterUrl, whatsappUrl, instagramUrl }
+      });
+      
+      res.json(updatedInfo);
     } catch (error) {
       throw error;
     }
