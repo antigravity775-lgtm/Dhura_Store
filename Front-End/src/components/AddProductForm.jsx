@@ -139,7 +139,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
     <form onSubmit={handleSubmit} noValidate className="p-5 sm:p-6 space-y-4">
 
       {error && (
-        <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">
+        <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -147,7 +147,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
 
       {/* العنوان */}
       <div>
-        <label className="block text-xs font-bold text-slate-500 mb-1.5">عنوان المنتج</label>
+        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">عنوان المنتج</label>
         <input
           type="text"
           name="title"
@@ -155,14 +155,14 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           onChange={handleChange}
           required
           placeholder="مثال: آيفون 15 برو ماكس 256 جيجا"
-          className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
+          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
         />
       </div>
 
       {/* السعر + العملة */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-bold text-slate-500 mb-1.5">السعر</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">السعر</label>
           <input
             type="number"
             name="price"
@@ -171,16 +171,16 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             required
             min="1"
             placeholder="0"
-            className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 mb-1.5">العملة</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">العملة</label>
           <select
             name="currency"
             value={form.currency}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 appearance-none cursor-pointer bg-white"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 appearance-none cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           >
             <option value="USD">دولار ($)</option>
             <option value="SAR">ريال سعودي (SAR)</option>
@@ -193,13 +193,13 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
       {/* القسم */}
       {!isEdit && (
         <div>
-          <label className="block text-xs font-bold text-slate-500 mb-1.5">القسم</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">القسم</label>
           <select
             name="categoryId"
             value={form.categoryId}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 appearance-none cursor-pointer bg-white"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 appearance-none cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           >
             <option value="" disabled>اختر القسم</option>
             {categories.map(cat => (
@@ -212,7 +212,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
       {/* الحالة + الكمية */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-bold text-slate-500 mb-1.5">الحالة</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">الحالة</label>
           <div className="flex gap-2">
             {[
               { val: 1, label: 'جديد' },
@@ -224,8 +224,8 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
                 onClick={() => setForm(prev => ({ ...prev, condition: opt.val }))}
                 className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                   parseInt(form.condition) === opt.val
-                    ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-                    : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
+                    ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-300 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300'
+                    : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300'
                 }`}
               >
                 {opt.label}
@@ -234,25 +234,25 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           </div>
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 mb-1.5">الكمية</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">الكمية</label>
           <input
             type="number"
             name="stockQuantity"
             value={form.stockQuantity}
             onChange={handleChange}
             min="1"
-            className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
           />
         </div>
       </div>
 
       {/* رفع الصورة */}
       <div>
-        <label className="block text-xs font-bold text-slate-500 mb-1.5">صورة المنتج</label>
+        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">صورة المنتج</label>
           
           {form.mainImageUrl ? (
             <div 
-              className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-50 cursor-pointer group"
+              className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 cursor-pointer group"
               onClick={() => fileInputRef.current?.click()}
               title="اضغط لتغيير الصورة"
             >
@@ -285,8 +285,8 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
               onDragLeave={handleDragLeave}
               className={`relative flex flex-col items-center justify-center gap-2 py-8 rounded-xl border-2 border-dashed cursor-pointer transition-all ${
                 dragActive
-                  ? 'border-indigo-400 bg-indigo-50'
-                  : 'border-slate-200 bg-slate-50 hover:border-indigo-300 hover:bg-indigo-50/50'
+                  ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20'
+                  : 'border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20'
               }`}
             >
               {uploading ? (
@@ -299,7 +299,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
                   <div className="p-3 bg-indigo-100 rounded-xl">
                     <Cloud className="w-6 h-6 text-indigo-500" />
                   </div>
-                  <span className="text-sm text-slate-600 font-medium">اسحب الصورة هنا أو اضغط للاختيار</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">اسحب الصورة هنا أو اضغط للاختيار</span>
                   <span className="text-[10px] text-slate-400">PNG, JPG — حد أقصى 5 ميجابايت</span>
                 </>
               )}
@@ -328,7 +328,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
                 onChange={handleChange}
                 placeholder="https://example.com/image.jpg"
                 dir="ltr"
-                className="mt-2 w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 text-left"
+                className="mt-2 w-full px-3 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 text-left"
               />
             </details>
           </div>
@@ -336,7 +336,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
 
       {/* الوصف */}
       <div>
-        <label className="block text-xs font-bold text-slate-500 mb-1.5">وصف المنتج</label>
+        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">وصف المنتج</label>
         <textarea
           name="description"
           value={form.description}
@@ -344,7 +344,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           required
           rows={4}
           placeholder="اكتب وصفاً تفصيلياً للمنتج..."
-          className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 resize-none"
+          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 resize-none"
         />
       </div>
 
@@ -367,7 +367,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
         <button
           type="button"
           onClick={onCancel}
-          className="px-5 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+          className="px-5 py-3.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
         >
           إلغاء
         </button>

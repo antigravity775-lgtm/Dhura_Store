@@ -276,17 +276,17 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans" dir="rtl">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans" dir="rtl">
 
       {/* Top Bar */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
+      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-600/20">
               <Crown className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-extrabold text-slate-900 text-lg leading-none">لوحة المسؤول</h1>
+              <h1 className="font-extrabold text-slate-900 dark:text-white text-lg leading-none">لوحة المسؤول</h1>
               <p className="text-xs text-slate-400 mt-0.5">مرحباً، {user?.fullName || 'مسؤول'}</p>
             </div>
           </div>
@@ -321,15 +321,15 @@ const AdminDashboard = () => {
         </AnimatePresence>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-slate-100 p-1 rounded-xl mb-6 overflow-x-auto">
+        <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-6 overflow-x-auto">
           {tabItems.map(tab => (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-white text-indigo-700 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-700'
+                  ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -504,10 +504,10 @@ const AdminDashboard = () => {
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.95, opacity: 0 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl"
+                    className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl"
                   >
                     <div className="flex items-center justify-between p-5 border-b border-slate-100">
-                      <h3 className="text-lg font-bold text-slate-900">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                         {editingProduct ? 'تعديل المنتج' : 'إضافة منتج جديد'}
                       </h3>
                       <button onClick={closeProductModal} className="p-1 hover:bg-slate-100 rounded-lg">
@@ -619,10 +619,10 @@ const AdminDashboard = () => {
                   <motion.div
                     initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
                     onClick={e => e.stopPropagation()}
-                    className="bg-white rounded-3xl w-full max-w-md shadow-2xl"
+                    className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md shadow-2xl"
                   >
                     <div className="flex items-center justify-between p-5 border-b border-slate-100">
-                      <h3 className="text-lg font-bold text-slate-900">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                         {editingCategory ? 'تعديل التصنيف' : 'إضافة تصنيف جديد'}
                       </h3>
                       <button onClick={() => setShowCategoryForm(false)} className="p-1 hover:bg-slate-100 rounded-lg">
@@ -631,17 +631,17 @@ const AdminDashboard = () => {
                     </div>
                     <div className="p-5 space-y-4">
                       <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">اسم التصنيف</label>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">اسم التصنيف</label>
                         <input
                           type="text"
                           value={categoryForm.name}
                           onChange={e => setCategoryForm(f => ({ ...f, name: e.target.value }))}
-                          className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400"
+                          className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400"
                           placeholder="مثال: عسل بلدي"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">أيقونة التصنيف (اختياري)</label>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">أيقونة التصنيف (اختياري)</label>
                         {categoryForm.iconUrl && (
                           <div className="mb-2 flex items-center gap-2">
                             <img src={categoryForm.iconUrl} alt="" className="w-12 h-12 rounded-xl object-cover border border-slate-200" />
@@ -665,7 +665,7 @@ const AdminDashboard = () => {
                               setError('فشل رفع الأيقونة: ' + (err.message || ''));
                             }
                           }}
-                          className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                          className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                         />
                       </div>
                       <div className="flex gap-3 pt-2">
@@ -678,7 +678,7 @@ const AdminDashboard = () => {
                         </button>
                         <button
                           onClick={() => setShowCategoryForm(false)}
-                          className="px-5 py-2.5 bg-slate-100 text-slate-600 text-sm font-bold rounded-xl hover:bg-slate-200 transition-all"
+                          className="px-5 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
                         >
                           إلغاء
                         </button>
@@ -752,7 +752,7 @@ const AdminDashboard = () => {
               <div className="max-w-lg">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm"
+                  className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm"
                 >
                   {/* Header Alert */}
                   <div className="flex items-center gap-3 mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
@@ -766,7 +766,7 @@ const AdminDashboard = () => {
                   <div className="space-y-5">
                     {/* USD → Sanaa */}
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                         🇺🇸 دولار → ريال صنعاء
                       </label>
                       <div className="relative">
@@ -774,7 +774,7 @@ const AdminDashboard = () => {
                           type="number"
                           value={rates.USD_to_YER_Sanaa}
                           onChange={e => setRates(r => ({ ...r, USD_to_YER_Sanaa: parseFloat(e.target.value) || 0 }))}
-                          className="w-full px-4 py-3 border border-slate-200 rounded-xl text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400"
+                          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-lg font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400"
                           dir="ltr"
                           min="1"
                           step="0.01"
@@ -786,7 +786,7 @@ const AdminDashboard = () => {
 
                     {/* USD → Aden */}
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                         🇺🇸 دولار → ريال عدن
                       </label>
                       <div className="relative">
@@ -794,7 +794,7 @@ const AdminDashboard = () => {
                           type="number"
                           value={rates.USD_to_YER_Aden}
                           onChange={e => setRates(r => ({ ...r, USD_to_YER_Aden: parseFloat(e.target.value) || 0 }))}
-                          className="w-full px-4 py-3 border border-slate-200 rounded-xl text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400"
+                          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-lg font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400"
                           dir="ltr"
                           min="1"
                           step="0.01"

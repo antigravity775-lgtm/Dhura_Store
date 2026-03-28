@@ -117,7 +117,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         <img
           src={getOptimizedImageUrl(image, 400)}
           alt={title}
-          className="w-full h-full object-contain p-2 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
 

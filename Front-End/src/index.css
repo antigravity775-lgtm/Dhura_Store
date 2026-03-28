@@ -23,6 +23,23 @@
     @apply bg-slate-950 text-slate-100;
   }
 
+  /* EN: Global dark mode form elements — ensures text, caret, and placeholder are visible
+     AR: عناصر النماذج في الوضع الداكن — يضمن ظهور النص والمؤشر والنص التوضيحي */
+  .dark input,
+  .dark select,
+  .dark textarea {
+    color: theme('colors.slate.100');
+    caret-color: theme('colors.slate.100');
+  }
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: theme('colors.slate.500');
+  }
+  .dark select option {
+    background-color: theme('colors.slate.800');
+    color: theme('colors.slate.100');
+  }
+
   ::selection {
     @apply bg-indigo-200 text-indigo-900;
   }
