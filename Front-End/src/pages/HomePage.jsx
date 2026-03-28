@@ -407,12 +407,12 @@ const HomePage = () => {
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 placeholder="ابحث عن منتج..."
-                className="w-full pr-12 pl-4 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 shadow-sm transition-all"
+                className="w-full pr-12 pl-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 shadow-sm transition-all"
               />
               {searchText && (
                 <button
                   onClick={() => setSearchText('')}
-                  className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 hover:text-slate-600"
+                  className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -424,7 +424,7 @@ const HomePage = () => {
               className={`inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl border text-sm font-bold transition-all ${
                 showFilters || activeFiltersCount > 0
                   ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20'
-                  : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30'
               }`}
             >
               <SlidersHorizontal className="w-4 h-4" />
@@ -447,19 +447,19 @@ const HomePage = () => {
                 transition={{ duration: 0.25 }}
                 className="overflow-hidden"
               >
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
+                <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 sm:p-6">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
                     {/* المدينة / City */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
                         <MapPin className="w-3.5 h-3.5 inline ml-1" />
                         المدينة
                       </label>
                       <select
                         value={filterCity}
                         onChange={(e) => setFilterCity(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 transition-all appearance-none cursor-pointer"
+                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 transition-all appearance-none cursor-pointer"
                       >
                         <option value="">كل المدن</option>
                         {cities.map(c => (
@@ -470,14 +470,14 @@ const HomePage = () => {
 
                     {/* الحالة / Condition */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
                         <Package className="w-3.5 h-3.5 inline ml-1" />
                         الحالة
                       </label>
                       <select
                         value={filterCondition}
                         onChange={(e) => setFilterCondition(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 transition-all appearance-none cursor-pointer"
+                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 transition-all appearance-none cursor-pointer"
                       >
                         <option value="">الكل</option>
                         <option value="1">جديد</option>
@@ -488,7 +488,7 @@ const HomePage = () => {
 
                     {/* السعر الأقصى / Max Price */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
                         <DollarSign className="w-3.5 h-3.5 inline ml-1" />
                         أقصى سعر (بالدولار)
                       </label>
@@ -498,7 +498,7 @@ const HomePage = () => {
                         onChange={(e) => setFilterMaxPrice(e.target.value)}
                         placeholder="مثلاً 500"
                         min="0"
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 transition-all"
+                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 transition-all"
                         dir="ltr"
                       />
                     </div>
@@ -506,7 +506,7 @@ const HomePage = () => {
 
                   {/* مسح الفلاتر / Clear Filters */}
                   {activeFiltersCount > 0 && (
-                    <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
                       <span className="text-xs text-slate-500 font-medium">{activeFiltersCount} فلتر نشط</span>
                       <button
                         onClick={clearAllFilters}
@@ -525,14 +525,14 @@ const HomePage = () => {
         {/* عنوان القسم / Section Title */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               {searchText.trim()
                 ? `نتائج البحث: "${searchText.trim()}"`
                 : activeCategory === 'الكل' ? 'المنتجات الرائجة' : activeCategory}
             </h2>
-            <p className="text-slate-500 mt-1.5 text-base">اكتشف أفضل العروض بالقرب منك</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-base">اكتشف أفضل العروض بالقرب منك</p>
           </div>
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-400 bg-slate-100 px-4 py-2 rounded-xl w-fit">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl w-fit">
             {/* EN: Show a subtle spinning indicator during background revalidation
                 AR: إظهار مؤشر تدوير خفيف أثناء التحديث في الخلفية */}
             {productsValidating && !showSkeleton && (
@@ -545,7 +545,7 @@ const HomePage = () => {
 
         {/* أزرار الأقسام / Category Buttons */}
         <div className="relative mb-10 w-full overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 to-transparent pointer-events-none md:hidden z-10"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent pointer-events-none md:hidden z-10"></div>
 
           <div className="flex items-center gap-2.5 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
             {categoryNames.map((name) => {
@@ -557,7 +557,7 @@ const HomePage = () => {
                   className={`relative whitespace-nowrap inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 focus:outline-none border ${
                     isActive
                       ? 'text-white bg-indigo-600 border-indigo-600 shadow-lg shadow-indigo-500/25'
-                      : 'text-slate-600 bg-white border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-indigo-700'
+                      : 'text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/30 hover:text-indigo-700 dark:hover:text-indigo-300'
                   }`}
                 >
                   {name}
@@ -569,7 +569,7 @@ const HomePage = () => {
 
         {/* حزام المنتجات المميزة / Featured Products Belt */}
         {!showSkeleton && filteredProducts.length > 0 && activeCategory === 'الكل' && !searchText.trim() && (
-          <div className="mb-12 rounded-3xl overflow-hidden border border-slate-100 shadow-sm bg-white">
+          <div className="mb-12 rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
             <ProductBelt 
               title="⚡ صفقات مميزة لفترة محدودة" 
               products={mappedBeltProducts}
@@ -607,16 +607,16 @@ const HomePage = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="text-center py-24 bg-white rounded-3xl border border-dashed border-gray-300"
+                className="text-center py-24 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-gray-300 dark:border-slate-700"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 mb-4 text-slate-400">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 mb-4 text-slate-400">
                   <Search className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-2">لا توجد منتجات</h3>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">لا توجد منتجات</h3>
                 <p className="text-slate-500 max-w-sm mx-auto">
                   {searchText.trim()
-                    ? <>لم نتمكن من العثور على منتجات تطابق "<span className="font-semibold text-slate-700">{searchText.trim()}</span>".</>
-                    : <>لم نتمكن من العثور على منتجات في قسم <span className="font-semibold text-slate-700">{activeCategory}</span> حالياً.</>
+                    ? <>لم نتمكن من العثور على منتجات تطابق "<span className="font-semibold text-slate-700 dark:text-slate-300">{searchText.trim()}</span>".</>
+                    : <>لم نتمكن من العثور على منتجات في قسم <span className="font-semibold text-slate-700 dark:text-slate-300">{activeCategory}</span> حالياً.</>
                   }
                 </p>
                 <button

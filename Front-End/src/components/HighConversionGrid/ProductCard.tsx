@@ -68,29 +68,29 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
   // Skeleton Loading State
   if (isLoading || !product) {
     return (
-      <div className="flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 p-3 h-full animate-pulse">
+      <div className="flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-3 h-full animate-pulse">
         {/* Skeleton Image */}
-        <div className="aspect-square bg-gray-200 rounded-lg w-full mb-3" />
+        <div className="aspect-square bg-gray-200 dark:bg-slate-700 rounded-lg w-full mb-3" />
 
         {/* Skeleton Title (2 lines) */}
-        <div className="h-4 bg-gray-200 rounded w-full mb-2" />
-        <div className="h-4 bg-gray-200 rounded w-3/4 mb-3" />
+        <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-full mb-2" />
+        <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4 mb-3" />
 
         {/* Skeleton Rating */}
         <div className="flex gap-1 mb-3 items-center">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="w-3 h-3 bg-gray-200 rounded-full" />
+            <div key={i} className="w-3 h-3 bg-gray-200 dark:bg-slate-700 rounded-full" />
           ))}
-          <div className="w-8 h-3 bg-gray-200 rounded ml-2" />
+          <div className="w-8 h-3 bg-gray-200 dark:bg-slate-700 rounded ml-2" />
         </div>
 
         {/* Skeleton Price & Button */}
         <div className="mt-auto flex justify-between items-end pt-2">
           <div className="space-y-1">
-            <div className="h-3 bg-gray-200 rounded w-10" />
-            <div className="h-6 bg-gray-200 rounded w-16" />
+            <div className="h-3 bg-gray-200 dark:bg-slate-700 rounded w-10" />
+            <div className="h-6 bg-gray-200 dark:bg-slate-700 rounded w-16" />
           </div>
-          <div className="w-9 h-9 bg-gray-200 rounded-full" />
+          <div className="w-9 h-9 bg-gray-200 dark:bg-slate-700 rounded-full" />
         </div>
       </div>
     );
@@ -106,14 +106,14 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
   return (
     <div
       dir="ltr"
-      className="group flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 p-3 h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] cursor-pointer"
+      className="group flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-3 h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] cursor-pointer"
       role="button"
       tabIndex={0}
       aria-label={`View details for ${title}`}
       onClick={() => onClick?.(product)}
     >
       {/* Image Container with Badge */}
-      <div className="relative aspect-square w-full mb-3 bg-white rounded-lg overflow-hidden flex items-center justify-center border border-gray-50">
+      <div className="relative aspect-square w-full mb-3 bg-white dark:bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center border border-gray-50 dark:border-slate-700">
         <img
           src={getOptimizedImageUrl(image, 400)}
           alt={title}
@@ -147,7 +147,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
       <div className="flex flex-col flex-grow">
         {/* Title: Truncated to 2 lines */}
         <h3
-          className="text-[13px] sm:text-sm font-medium text-gray-900 line-clamp-2 leading-snug mb-1.5 group-hover:text-amber-700 transition-colors"
+          className="text-[13px] sm:text-sm font-medium text-gray-900 dark:text-slate-100 line-clamp-2 leading-snug mb-1.5 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors"
           title={title}
         >
           {title}
@@ -193,7 +193,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
             )}
 
             {/* Prominent Price Display */}
-            <div className="flex items-start text-gray-900 leading-none">
+            <div className="flex items-start text-gray-900 dark:text-slate-100 leading-none">
               <span className="text-xs font-semibold mt-[2px] ml-1">{currencySymbol}</span>
               <span className="text-xl sm:text-2xl font-bold">{priceWhole}</span>
               <span className="text-xs font-semibold mt-[2px]">.{priceFraction}</span>
@@ -207,7 +207,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
               onQuickAdd?.(product);
             }}
             aria-label={`Quick add ${title} to cart`}
-            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200 active:scale-90 flex-shrink-0 shadow-sm"
+            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-blue-50 dark:bg-indigo-900/40 text-blue-600 dark:text-indigo-400 hover:bg-blue-600 dark:hover:bg-indigo-600 hover:text-white transition-all duration-200 active:scale-90 flex-shrink-0 shadow-sm"
           >
             <Plus size={20} strokeWidth={2.5} />
           </button>

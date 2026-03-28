@@ -22,26 +22,26 @@ function formatPrice(price, currency) {
 
 const ProductSkeleton = () => (
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 animate-pulse w-full">
-    <div className="w-36 h-5 bg-slate-200 rounded-lg mb-8"></div>
+    <div className="w-36 h-5 bg-slate-200 dark:bg-slate-700 rounded-lg mb-8"></div>
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-14">
       <div className="w-full lg:w-[55%] flex flex-col gap-4">
-        <div className="w-full aspect-[4/3] bg-slate-200 rounded-3xl"></div>
+        <div className="w-full aspect-[4/3] bg-slate-200 dark:bg-slate-700 rounded-3xl"></div>
       </div>
       <div className="w-full lg:w-[45%] flex flex-col gap-5">
         <div className="flex gap-2">
-          <div className="w-16 h-7 bg-slate-200 rounded-lg"></div>
-          <div className="w-24 h-7 bg-slate-200 rounded-lg"></div>
+          <div className="w-16 h-7 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
+          <div className="w-24 h-7 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
         </div>
-        <div className="w-full h-10 bg-slate-200 rounded-xl"></div>
-        <div className="w-3/4 h-10 bg-slate-200 rounded-xl"></div>
-        <div className="w-40 h-12 bg-slate-200 rounded-xl"></div>
-        <div className="w-full h-px bg-slate-200 my-2"></div>
+        <div className="w-full h-10 bg-slate-200 dark:bg-slate-700 rounded-xl"></div>
+        <div className="w-3/4 h-10 bg-slate-200 dark:bg-slate-700 rounded-xl"></div>
+        <div className="w-40 h-12 bg-slate-200 dark:bg-slate-700 rounded-xl"></div>
+        <div className="w-full h-px bg-slate-200 dark:bg-slate-700 my-2"></div>
         <div className="space-y-2.5">
-          <div className="w-28 h-6 bg-slate-200 rounded"></div>
-          <div className="w-full h-4 bg-slate-200 rounded"></div>
-          <div className="w-full h-4 bg-slate-200 rounded"></div>
+          <div className="w-28 h-6 bg-slate-200 dark:bg-slate-700 rounded"></div>
+          <div className="w-full h-4 bg-slate-200 dark:bg-slate-700 rounded"></div>
+          <div className="w-full h-4 bg-slate-200 dark:bg-slate-700 rounded"></div>
         </div>
-        <div className="w-full h-16 bg-slate-200 rounded-2xl mt-auto"></div>
+        <div className="w-full h-16 bg-slate-200 dark:bg-slate-700 rounded-2xl mt-auto"></div>
       </div>
     </div>
   </div>
@@ -104,8 +104,8 @@ const ProductDetailsPage = () => {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-100 mb-6">
             <Package className="w-10 h-10 text-slate-400" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">المنتج غير موجود</h2>
-          <p className="text-slate-500 mb-6">لم نتمكن من العثور على هذا المنتج. ربما تم حذفه أو أن الرابط غير صحيح.</p>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-2">المنتج غير موجود</h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">لم نتمكن من العثور على هذا المنتج. ربما تم حذفه أو أن الرابط غير صحيح.</p>
           <Link to="/" className="inline-flex px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700">
             العودة للرئيسية
           </Link>
@@ -134,7 +134,7 @@ const ProductDetailsPage = () => {
 
           {/* ========== العمود الأيمن: الصورة ========== */}
           <div className="w-full lg:w-[55%] flex flex-col gap-4 select-none">
-            <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-sm">
+            <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm">
               <img
                 src={imageUrl}
                 alt={product.title}
@@ -150,33 +150,33 @@ const ProductDetailsPage = () => {
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide ${
                 product.condition === 1
-                  ? 'bg-indigo-100 text-indigo-700 border border-indigo-200'
-                  : 'bg-amber-50 text-amber-700 border border-amber-200'
+                  ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700'
+                  : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700'
               }`}>
                 <Package className="w-3.5 h-3.5" />
                 {conditionText}
               </span>
               {product.categoryName && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                   <Tag className="w-3.5 h-3.5" />
                   {product.categoryName}
                 </span>
               )}
               {product.stockQuantity > 0 && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-50 text-green-600 border border-green-100">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-700">
                   متوفر ({product.stockQuantity})
                 </span>
               )}
             </div>
 
             {/* العنوان */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight mb-4">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mb-4">
               {product.title}
             </h1>
 
             {/* السعر وأزرار الإجراء */}
             <div className="flex items-center justify-between mb-6">
-              <div className="text-3xl sm:text-4xl font-black text-indigo-600 tracking-tight">
+              <div className="text-3xl sm:text-4xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
                 {formatPrice(product.price, product.currency)}
               </div>
               <div className="flex items-center gap-2">
@@ -184,15 +184,15 @@ const ProductDetailsPage = () => {
                   onClick={() => product && toggleFavorite(product)}
                   className={`p-2.5 rounded-xl border transition-all duration-200 ${
                     product && isFavorite(product.id)
-                      ? 'bg-rose-50 border-rose-200 text-rose-500'
-                      : 'bg-white border-slate-200 text-slate-400 hover:text-rose-500 hover:border-rose-200'
+                      ? 'bg-rose-50 dark:bg-rose-900/30 border-rose-200 dark:border-rose-700 text-rose-500'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 hover:border-rose-200'
                   }`}
                   aria-label="إضافة للمفضلة"
                 >
                   <Heart className="w-5 h-5" fill={product && isFavorite(product.id) ? 'currentColor' : 'none'} />
                 </button>
                 <button
-                  className="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all"
+                  className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-700 transition-all"
                   aria-label="مشاركة المنتج"
                 >
                   <Share2 className="w-5 h-5" />
@@ -200,16 +200,16 @@ const ProductDetailsPage = () => {
               </div>
             </div>
 
-            <hr className="border-slate-200/80 mb-6" />
+            <hr className="border-slate-200/80 dark:border-slate-700 mb-6" />
 
             {/* الوصف */}
             {product.description && (
               <div className="mb-6">
-                <h3 className="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                   <div className="w-1 h-5 bg-indigo-500 rounded-full"></div>
                   الوصف
                 </h3>
-                <p className="text-slate-600 leading-relaxed text-[15px] whitespace-pre-line">
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-[15px] whitespace-pre-line">
                   {product.description}
                 </p>
               </div>
@@ -257,7 +257,7 @@ const ProductDetailsPage = () => {
                 تواصل عبر واتساب
               </motion.a>
 
-              <div className="text-center bg-amber-50 rounded-xl py-2.5 px-4 border border-amber-100">
+              <div className="text-center bg-amber-50 dark:bg-amber-900/20 rounded-xl py-2.5 px-4 border border-amber-100 dark:border-amber-800">
                 <p className="text-xs text-amber-700 font-medium flex items-center justify-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
                   لا ترسل أموالاً مقدماً أبداً. قابل البائع في مكان عام وآمن.

@@ -8,6 +8,49 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <title>Al-gaadi store — صفقات محلية في اليمن</title>
+
+    <!--
+      EN: ANTI-FLICKER SCRIPT — Critical inline script that runs BEFORE React hydrates.
+          This prevents the "white flash" (FOUC) when dark mode is active.
+          
+          Priority order:
+          1. Check localStorage for manual preference (user's explicit choice)
+          2. If no manual preference, check OS system preference via matchMedia
+          3. Default to light mode if neither exists
+          
+          WHY localStorage vs System Preferences:
+          - localStorage = explicit user choice (they clicked the toggle)
+          - System preference = passive detection (user's OS settings)
+          - User's explicit choice (localStorage) ALWAYS overrides system preference
+          - If a user on a dark OS manually picks "light" in our app, we respect that
+          
+      AR: سكريبت مضاد للوميض — سكريبت مضمّن حرج يعمل قبل تفعيل React.
+          يمنع "الوميض الأبيض" (FOUC) عندما يكون الوضع الداكن مفعلاً.
+          
+          ترتيب الأولوية:
+          1. تحقق من localStorage للتفضيل اليدوي (اختيار المستخدم الصريح)
+          2. إذا لم يوجد تفضيل يدوي، تحقق من تفضيل نظام التشغيل عبر matchMedia
+          3. الافتراضي هو الوضع الفاتح إذا لم يوجد أي منهما
+          
+          لماذا localStorage مقابل تفضيلات النظام:
+          - localStorage = اختيار صريح من المستخدم (ضغط زر التبديل)
+          - تفضيل النظام = كشف سلبي (إعدادات نظام التشغيل)
+          - اختيار المستخدم الصريح (localStorage) يتجاوز دائماً تفضيل النظام
+          - إذا اختار مستخدم على نظام داكن "فاتح" يدوياً في تطبيقنا، نحترم ذلك
+    -->
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (stored === 'dark' || (!stored && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body class="antialiased">
     <div id="root"></div>

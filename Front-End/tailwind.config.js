@@ -1,5 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  // EN: 'class' strategy = dark mode is toggled by adding/removing 'dark' class on <html>
+  // AR: استراتيجية 'class' = الوضع الداكن يُفعَّل بإضافة/إزالة كلاس 'dark' على <html>
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
