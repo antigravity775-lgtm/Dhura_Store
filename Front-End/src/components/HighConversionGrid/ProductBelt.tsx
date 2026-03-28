@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { Product } from './ProductCard';
+import { getOptimizedImageUrl } from '../../utils/cloudinaryUrl';
 
 interface ProductBeltProps {
   products: Product[];
@@ -12,12 +13,18 @@ interface ProductBeltProps {
   onQuickAdd?: (product: Product) => void;
 }
 
+/**
+ * EN: React.memo on BeltCard prevents re-rendering every belt card when
+ *     the parent belt re-renders (e.g., during scroll or hover events).
+ * AR: React.memo على BeltCard يمنع إعادة رسم كل بطاقة حزام عندما
+ *     يُعاد رسم الحزام الأب (مثل أثناء أحداث التمرير أو التمرير).
+ */
 const BeltCard: React.FC<{ 
   product: Product; 
   onQuickAdd?: (p: Product) => void;
   onClick?: (p: Product) => void;
   onFavorite?: (p: Product, isFavorite: boolean) => void;
-}> = ({
+}> = React.memo(({
   product,
   onQuickAdd,
   onClick,
@@ -63,7 +70,7 @@ const BeltCard: React.FC<{
       {/* Image */}
       <div className="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
         <img
-          src={image}
+          src={getOptimizedImageUrl(image, 380)}
           alt={title}
           draggable={false}
           className="w-full h-full object-contain p-2 mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
@@ -126,7 +133,9 @@ const BeltCard: React.FC<{
       </div>
     </div>
   );
-};
+});
+
+BeltCard.displayName = 'BeltCard';
 
 export const ProductBelt: React.FC<ProductBeltProps & { onClick?: (p: Product) => void, onFavorite?: (p: Product, isFavorite: boolean) => void }> = ({
   products,
