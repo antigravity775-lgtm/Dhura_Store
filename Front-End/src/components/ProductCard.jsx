@@ -28,10 +28,10 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
     <motion.div variants={cardVariants}>
       <Link
         to={`/product/${id}`}
-        className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col cursor-pointer border border-gray-100/80 block h-full"
+        className="group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col cursor-pointer border border-gray-100/80 dark:border-slate-700 block h-full"
       >
         {/* منطقة الصورة */}
-        <div className="relative aspect-square overflow-hidden bg-slate-100">
+        <div className="relative aspect-square overflow-hidden bg-slate-100 dark:bg-slate-900">
           {!imgLoaded && (
             <div className="absolute inset-0 skeleton-shimmer" />
           )}
@@ -72,7 +72,7 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
         
         {/* محتوى البطاقة */}
         <div className="p-4 flex flex-col flex-grow text-right">
-          <h3 className="font-semibold text-slate-800 text-[15px] mb-1.5 line-clamp-2 leading-snug group-hover:text-indigo-700 transition-colors">
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-[15px] mb-1.5 line-clamp-2 leading-snug group-hover:text-indigo-700 dark:group-hover:text-indigo-400 transition-colors">
             {title}
           </h3>
           
@@ -83,8 +83,8 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
             </div>
           )}
           
-          <div className="mt-auto pt-3 border-t border-gray-100/80">
-            <span className="font-extrabold text-lg text-indigo-600 tracking-tight">{price}</span>
+          <div className="mt-auto pt-3 border-t border-gray-100/80 dark:border-slate-700">
+            <span className="font-extrabold text-lg text-indigo-600 dark:text-indigo-400 tracking-tight">{price}</span>
           </div>
         </div>
       </Link>

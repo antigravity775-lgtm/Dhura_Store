@@ -52,7 +52,7 @@ const BeltCard: React.FC<{
 
   return (
     <div
-      className="group relative flex-shrink-0 w-[160px] sm:w-[190px] bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 mx-2"
+      className="group relative flex-shrink-0 w-[160px] sm:w-[190px] bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-100 dark:border-slate-700 overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 mx-2"
       style={{ userSelect: 'none' }}
       onClick={() => onClick?.(product)}
     >
@@ -68,7 +68,7 @@ const BeltCard: React.FC<{
       )}
 
       {/* Image */}
-      <div className="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-square bg-gray-50 dark:bg-slate-900 flex items-center justify-center overflow-hidden">
         <img
           src={getOptimizedImageUrl(image, 380)}
           alt={title}
@@ -92,7 +92,7 @@ const BeltCard: React.FC<{
 
       {/* Info */}
       <div className="p-2.5">
-        <p className="text-[11px] sm:text-xs font-medium text-gray-800 line-clamp-2 leading-snug mb-1.5 min-h-[2.5em]">
+        <p className="text-[11px] sm:text-xs font-medium text-gray-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5 min-h-[2.5em]">
           {title}
         </p>
 
@@ -115,7 +115,7 @@ const BeltCard: React.FC<{
                 {Number(originalPrice).toFixed(0)} {currencySymbol}
               </span>
             )}
-            <span className="text-sm font-extrabold text-gray-900">
+            <span className="text-sm font-extrabold text-gray-900 dark:text-white">
               {Number(price || 0).toFixed(0)} {currencySymbol}
             </span>
           </div>
@@ -147,16 +147,16 @@ export const ProductBelt: React.FC<ProductBeltProps & { onClick?: (p: Product) =
   if (!products.length) return null;
 
   return (
-    <section className="w-full relative py-6 bg-gradient-to-r from-slate-50 via-white to-slate-50">
+    <section className="w-full relative py-6 bg-gradient-to-r from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900">
       {title && (
-        <h3 className="text-lg sm:text-xl font-bold text-slate-800 text-center mb-4 px-4">
+        <h3 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white text-center mb-4 px-4">
           {title}
         </h3>
       )}
 
       {/* Fade edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white dark:from-slate-900 to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white dark:from-slate-900 to-transparent z-10 pointer-events-none" />
 
       {/* Scrolling track */}
       <div className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory px-4 sm:px-8 pb-6 pt-2 w-full touch-pan-x">
