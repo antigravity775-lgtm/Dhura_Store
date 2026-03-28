@@ -157,6 +157,41 @@ class AuthService {
 
     return jwt.sign(payload, this.jwtSecret, { expiresIn: this.jwtExpiresIn });
   }
+
+  /**
+   * Change user password
+   * @param {string} userId - User ID
+   * @param {string} currentPassword - Current password
+   * @param {string} newPassword - New password
+   * @returns {Promise<boolean>} Success indicator
+   */
+  async changePassword(userId, currentPassword, newPassword) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Check if current password matches
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      throw new UnauthorizedError('كلمة المرور الحالية غير صحيحة');
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const newPasswordHash = await bcrypt.hash(newPassword, salt);
+
+    // Update password
+    await prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: newPasswordHash }
+    });
+
+    return true;
+  }
 }
 
 module.exports = AuthService;

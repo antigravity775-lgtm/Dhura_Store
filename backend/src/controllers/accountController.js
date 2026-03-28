@@ -102,6 +102,31 @@ class AccountController {
       throw error;
     }
   }
+  /**
+   * Change user password
+   * PUT /api/account/change-password
+   */
+  async changePassword(req, res) {
+    try {
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        res.status(401);
+        throw new Error('Unauthorized');
+      }
+
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        throw new ValidationError('كلمة المرور الحالية والجديدة مطلوبة');
+      }
+
+      await this.authService.changePassword(userId, currentPassword, newPassword);
+      res.status(200).json({ message: 'تم تغيير كلمة المرور بنجاح' });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = new AccountController();

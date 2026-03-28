@@ -78,6 +78,14 @@ export async function updateProfile(data) {
   });
 }
 
+export async function changePassword(currentPassword, newPassword) {
+  return request('/account/change-password', {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+}
+
 // ─── Products ───
 export async function getProducts({ city, maxPriceUsd, condition, specialOffers, pageNumber = 1, pageSize = 20 } = {}) {
   const params = new URLSearchParams();
