@@ -73,7 +73,7 @@ const BeltCard: React.FC<{
           src={getOptimizedImageUrl(image, 380)}
           alt={title}
           draggable={false}
-          className="w-full h-full object-contain p-2 mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
         />
         
