@@ -11,19 +11,31 @@ export const ChatWidget = () => {
   ]);
   const [inputVal, setInputVal] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
   const messagesEndRef = useRef(null);
+  const scrollContainerRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // 1. Force the scroll immediately without smooth behavior which often glitches on desktop
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView(false);
+    }
+    // 2. Fallback brute-force scroll on the container
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
+    // Fire it immediately and also after a short delay for ReactMarkdown images/rendering
     scrollToBottom();
+    const timeout = setTimeout(scrollToBottom, 300);
+    return () => clearTimeout(timeout);
   }, [messages, isOpen]);
 
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!inputVal.trim() || isLoading) return;
+    if (!inputVal.trim() || isLoading || isRateLimited) return;
 
     const userMsg = { role: 'user', content: inputVal.trim() };
     const newMessages = [...messages, userMsg];
@@ -31,6 +43,7 @@ export const ChatWidget = () => {
     setMessages(newMessages);
     setInputVal('');
     setIsLoading(true);
+    setIsRateLimited(true);
 
     try {
       const response = await chatService.sendMessage(newMessages);
@@ -43,6 +56,7 @@ export const ChatWidget = () => {
       setMessages((prev) => [...prev, { role: 'assistant', content: 'Network error. Please try again.' }]);
     } finally {
       setIsLoading(false);
+      setTimeout(() => setIsRateLimited(false), 1500);
     }
   };
 
@@ -50,7 +64,7 @@ export const ChatWidget = () => {
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {/* Chat Window */}
       {isOpen && (
-        <div className="mb-4 w-[350px] max-w-[calc(100vw-3rem)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform origin-bottom-right">
+        <div className="mb-4 w-[350px] max-w-[calc(100vw-3rem)] h-[500px] max-h-[80vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform origin-bottom-right">
           
           {/* Header */}
           <div className="bg-indigo-600 p-4 flex items-center justify-between text-white">
@@ -71,7 +85,10 @@ export const ChatWidget = () => {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 p-4 h-80 overflow-y-auto bg-slate-50 dark:bg-slate-950 flex flex-col gap-3">
+          <div 
+            ref={scrollContainerRef}
+            className="flex-1 p-4 overflow-y-auto bg-slate-50 dark:bg-slate-950 flex flex-col gap-3 overscroll-contain"
+          >
             {messages.map((msg, idx) => {
               const isAssistant = msg.role === 'assistant';
               return (
@@ -113,7 +130,8 @@ export const ChatWidget = () => {
                   </div>
               </div>
             )}
-            <div ref={messagesEndRef} />
+            {/* The absolute ultimate bottom anchor */}
+            <div ref={messagesEndRef} className="h-[1px] w-full flex-shrink-0" />
           </div>
 
           {/* Input Area */}
@@ -123,13 +141,13 @@ export const ChatWidget = () => {
                 type="text"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
-                placeholder="Type your message..."
+                placeholder={isRateLimited ? "يرجى الانتظار قليلاً..." : "Type your message..."}
                 className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-full py-3 pl-4 pr-12 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/50 focus:outline-none placeholder-slate-400"
-                disabled={isLoading}
+                disabled={isLoading || isRateLimited}
               />
               <button
                 type="submit"
-                disabled={!inputVal.trim() || isLoading}
+                disabled={!inputVal.trim() || isLoading || isRateLimited}
                 className="absolute right-2 p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Send message"
               >
