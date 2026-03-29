@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, User, Loader2 } from 'lucide-react';
 import { chatService } from '../../services/chatService';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -83,11 +85,17 @@ export const ChatWidget = () => {
                   <div 
                     className={`p-3 rounded-2xl text-sm leading-relaxed ${
                       isAssistant 
-                        ? 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-tl-none shadow-sm' 
+                        ? 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-tl-none shadow-sm prose prose-sm dark:prose-invert max-w-none prose-p:leading-snug prose-ul:my-1 prose-li:my-0' 
                         : 'bg-indigo-600 text-white rounded-tr-none shadow-md'
                     }`}
                   >
-                    {msg.content}
+                    {isAssistant ? (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.content}
+                      </ReactMarkdown>
+                    ) : (
+                      <>{msg.content}</>
+                    )}
                   </div>
                 </div>
               );
