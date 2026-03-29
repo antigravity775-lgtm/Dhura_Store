@@ -1,8 +1,6 @@
 const Groq = require('groq-sdk');
 
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY
-});
+// Groq client will be instantiated lazily inside the route handler
 
 // Configure the AI Persona here
 const SYSTEM_PROMPT = `
@@ -34,6 +32,11 @@ const processChat = async (req, res) => {
             { role: 'system', content: SYSTEM_PROMPT },
             ...messages.map(m => ({ role: m.role, content: m.content }))
         ];
+
+        // Instantiate lazily to prevent server crashes if the key isn't set yet in Vercel
+        const groq = new Groq({
+            apiKey: process.env.GROQ_API_KEY
+        });
 
         const chatCompletion = await groq.chat.completions.create({
             messages: aiMessages,
