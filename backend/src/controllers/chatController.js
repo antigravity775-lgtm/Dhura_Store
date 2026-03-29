@@ -42,8 +42,7 @@ const processChat = async (req, res) => {
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({
-            model: "gemini-pro",
-            systemInstruction: SYSTEM_PROMPT + productsContext,
+            model: "gemini-2.5-flash",
             safetySettings: [
                 {
                     category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
@@ -88,7 +87,13 @@ const processChat = async (req, res) => {
             }
         });
 
-        const result = await chat.sendMessage(lastMessage.content);
+        // Instead of systemInstruction (which some api versions/regions block), 
+        // cleanly inject the context directly into the first message the model sees!
+        const finalPrompt = history.length === 0 
+           ? `[SYSTEM INSTRUCTIONS]\n${SYSTEM_PROMPT}\n${productsContext}\n[END SYSTEM INSTRUCTIONS]\n\nUser Question: ${lastMessage.content}` 
+           : lastMessage.content;
+
+        const result = await chat.sendMessage(finalPrompt);
         const reply = result.response.text() || "I'm having trouble connecting right now. Could you try again?";
 
         res.status(200).json({
