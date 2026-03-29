@@ -12,6 +12,7 @@ import ProfilePage from './pages/ProfilePage';
 import FavoritesPage from './pages/FavoritesPage';
 import ScrollToTop from './components/ScrollToTop';
 import { ProductGridDemo } from './components/HighConversionGrid';
+import { ChatWidget } from './components/chat/ChatWidget';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading, isAuthenticated } = useAuth();
@@ -69,6 +70,7 @@ const App = () => {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <ChatWidget />
     </>
   );
 };

@@ -11,6 +11,7 @@ const orderRoutes = require('./src/routes/orderRoutes');
 const categoryRoutes = require('./src/routes/categoryRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
 const systemSettingsRoutes = require('./src/routes/systemSettingsRoutes');
+const chatRoutes = require('./src/routes/chatRoutes');
 const { errorHandler, notFound } = require('./src/middleware/errorMiddleware');
 
 const app = express();
@@ -34,6 +35,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/SystemSettings', systemSettingsRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Error handling
 app.use(notFound);
