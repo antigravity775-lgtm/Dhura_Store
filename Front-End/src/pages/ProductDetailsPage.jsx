@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, MessageCircle, MapPin, User, ShieldCheck, Heart, Share2, ChevronLeft, ChevronRight, Clock, Tag, Package, ShoppingCart, Check, Loader2 } from 'lucide-react';
 import Layout from '../components/Layout';
 import * as api from '../services/api';
+import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../utils/cloudinaryUrl';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 
@@ -115,7 +116,8 @@ const ProductDetailsPage = () => {
   }
 
   const conditionText = api.ConditionMap[product.condition] || 'جديد';
-  const imageUrl = product.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=1000&q=80';
+  const rawImageUrl = product.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=1000&q=80';
+  const imageUrl = getOptimizedImageUrl(rawImageUrl, IMAGE_WIDTHS.DETAIL);
 
   return (
     <Layout>
@@ -138,6 +140,9 @@ const ProductDetailsPage = () => {
               <img
                 src={imageUrl}
                 alt={product.title}
+                width="800"
+                height="600"
+                fetchpriority="high"
                 className="absolute inset-0 w-full h-full object-cover"
               />
             </div>

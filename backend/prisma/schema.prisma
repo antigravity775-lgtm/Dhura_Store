@@ -69,6 +69,8 @@ model User {
   orders   Order[]   @relation("BuyerOrders")
 
   @@index([phoneNumber])
+  // Used when filtering products by seller's city (JOIN from Product query)
+  @@index([city])
 }
 
 model Category {
@@ -107,10 +109,18 @@ model Product {
   seller     User     @relation("SellerProducts", fields: [sellerId], references: [id])
   OrderItem  OrderItem[]
 
-  @@index([categoryId])
-  @@index([sellerId])
-  @@index([isHidden])
-  @@index([isPromoted])
+  // Composite index for the main product listing query:
+  // WHERE isHidden = false ORDER BY isPromoted DESC, createdAt DESC
+  @@index([isHidden, isPromoted, createdAt(sort: Desc)])
+
+  // Composite index for seller dashboard: WHERE sellerId = ? ORDER BY createdAt DESC
+  @@index([sellerId, createdAt(sort: Desc)])
+
+  // Composite index for category filtering + ordering
+  @@index([categoryId, isHidden, isPromoted])
+
+  // For discountPrice filter (specialOffers: WHERE discountPrice IS NOT NULL)
+  @@index([discountPrice])
 }
 
 // Note: We handle soft delete (isHidden) in queries by adding WHERE NOT isHidden
@@ -131,9 +141,10 @@ model Order {
   buyer      User     @relation("BuyerOrders", fields: [buyerId], references: [id])
   orderItems OrderItem[] @relation("OrderItems")
 
-  @@index([buyerId])
-  @@index([status])
-  @@index([orderDate])
+  // Composite index for buyer order history: WHERE buyerId = ? ORDER BY orderDate DESC
+  @@index([buyerId, orderDate(sort: Desc)])
+  // Admin filtering by status
+  @@index([status, orderDate(sort: Desc)])
 }
 
 model OrderItem {

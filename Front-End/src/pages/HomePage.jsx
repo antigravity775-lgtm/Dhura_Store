@@ -1,23 +1,28 @@
 /**
- * HomePage — الصفحة الرئيسية (المُحسَّنة للتحويل العالي)
+ * HomePage — الصفحة الرئيسية (المُعاد تصميمها)
  *
- * EN: High-conversion mobile-first storefront layout.
- *     Strategy: Slim OfferBelt → Search → Categories → Products (above fold).
- *     Hero banners are replaced with immediate product visibility.
+ * EN: Redesigned high-conversion homepage with two clear navigation paths:
+ *     1. Browse by Categories — visual category cards grid
+ *     2. Explore Products — "Start Shopping" CTA buttons
+ *     Plus a featured product preview grid (8 items).
  *
- * AR: تخطيط واجهة متجر محسّن للتحويل العالي (الجوال أولاً).
- *     الاستراتيجية: حزام عروض نحيل → بحث → الأقسام → المنتجات (فوق الطي).
- *     تم استبدال اللافتات البطولية برؤية فورية للمنتجات.
+ *     Layout: OfferBelt → Categories → Start Shopping CTAs → Product Preview
+ *
+ * AR: الصفحة الرئيسية المُعاد تصميمها مع مسارين واضحين للتنقل:
+ *     1. التصفح حسب الأقسام — شبكة بطاقات أقسام مرئية
+ *     2. استكشاف المنتجات — أزرار "ابدأ التسوق"
+ *     بالإضافة إلى شبكة معاينة المنتجات المميزة (8 عناصر).
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search, LayoutGrid, Loader2, SlidersHorizontal,
-  MapPin, DollarSign, Package, X, Sparkles, Truck, ShieldCheck, BadgePercent
+  Truck, BadgePercent, ShieldCheck, Sparkles, Eye
 } from 'lucide-react';
 import Layout from '../components/Layout';
+import CategoryGrid from '../components/CategoryGrid';
+import HomepageSections from '../components/HomepageSections';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -27,7 +32,7 @@ import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../utils/cloudinaryUrl';
 
 // ─── Constants ───
 
-const cities = ['صنعاء', 'عدن', 'تعز', 'إب', 'المكلا', 'الحديدة', 'ذمار', 'حجة', 'صعدة', 'مأرب'];
+const PREVIEW_COUNT = 8;
 
 /**
  * EN: Offer messages that auto-scroll in the slim promotional belt.
@@ -38,15 +43,6 @@ const offerMessages = [
   { icon: BadgePercent, text: 'خصم 15% على أول طلب — كود: FIRST15', color: 'text-amber-300' },
   { icon: ShieldCheck, text: 'بائعون محليون موثوقون في 22 مدينة يمنية', color: 'text-sky-300' },
   { icon: Sparkles, text: 'ضمان جودة المنتج — استرجع أموالك بسهولة', color: 'text-purple-300' },
-];
-
-const fallbackProducts = [
-  { id: 'fb1', title: 'انفرتر طاقة شمسية Growatt 5kW برو', price: 950000, currency: 1, condition: 1, categoryName: 'الطاقة الشمسية', mainImageUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80' },
-  { id: 'fb2', title: 'ماك بوك برو M2 شاشة 14 انش', price: 1850, currency: 3, condition: 2, categoryName: 'لابتوبات', mainImageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80' },
-  { id: 'fb3', title: 'آيفون 15 برو ماكس 256 جيجا', price: 1100, currency: 3, condition: 1, categoryName: 'هواتف', mainImageUrl: 'https://images.unsplash.com/photo-1695048132961-0eab789a421b?w=800&q=80' },
-  { id: 'fb4', title: 'بن هرازي يمني فاخر (1 كيلو)', price: 15000, currency: 1, condition: 1, categoryName: 'البن اليمني', mainImageUrl: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80' },
-  { id: 'fb5', title: 'لوح طاقة شمسية SunPower 400 واط', price: 85000, currency: 1, condition: 1, categoryName: 'الطاقة الشمسية', mainImageUrl: 'https://images.unsplash.com/photo-1521618755572-156ae0c274fe?w=800&q=80' },
-  { id: 'fb6', title: 'سامسونج جالكسي S24 الترا', price: 1200, currency: 3, condition: 1, categoryName: 'هواتف', mainImageUrl: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&q=80' },
 ];
 
 const containerVariants = {
@@ -74,26 +70,28 @@ function mapToProduct(p) {
   };
 }
 
-
+/**
+ * EN: Fisher-Yates shuffle — creates a shuffled copy of the array.
+ * AR: خوارزمية فيشر-ييتس — ينشئ نسخة مُعاد ترتيبها من المصفوفة.
+ */
+function shuffleArray(arr) {
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 // ────────────────────────────────────────────────────────────────────
 // OfferBelt — حزام العروض الترويجية
-// EN: Slim auto-scrolling promotional bar. Uses pure CSS marquee
-//     animation — no JS intervals, no re-renders, GPU-accelerated.
-//     Takes ≤12% of mobile viewport height (~48px).
-// AR: شريط ترويجي نحيل يتحرك تلقائياً. يستخدم رسوم CSS فقط —
-//     بدون فترات JS، بدون إعادة عرض، مُسرّع بـ GPU.
-//     يأخذ ≤12% من ارتفاع شاشة الجوال (~48 بكسل).
 // ────────────────────────────────────────────────────────────────────
 const OfferBelt = React.memo(() => {
-  // Double the messages for seamless infinite scroll
   const doubledMessages = [...offerMessages, ...offerMessages];
 
   return (
     <div className="relative w-full bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 overflow-hidden select-none">
-      {/* Subtle animated glow */}
       <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-indigo-500/10 animate-pulse" />
-
       <div className="offer-belt-track flex items-center gap-12 py-2.5 sm:py-3 whitespace-nowrap">
         {doubledMessages.map((msg, i) => {
           const Icon = msg.icon;
@@ -121,76 +119,67 @@ const HomePage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
-  const [searchParams] = useSearchParams();
-  const searchFromUrl = searchParams.get('search') || '';
 
-  const [activeCategory, setActiveCategory] = useState('الكل');
-  const [searchText, setSearchText] = useState(searchFromUrl);
+  const [shuffleSeed, setShuffleSeed] = useState(0);
 
-  useEffect(() => { setSearchText(searchFromUrl); }, [searchFromUrl]);
+  // ─── Auto-scroll handling ───
+  useEffect(() => {
+    if (window.location.search.includes('scrollTo=categories')) {
+      // Small timeout to ensure DOM is ready and layout is stable
+      setTimeout(() => {
+        const el = document.getElementById('categories-section');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Clean up URL so it doesn't auto-scroll again on refresh
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }, 100);
+    }
+  }, []);
 
   // ─── SWR Data ───
   const {
     data: products,
     isLoading: productsLoading,
-    isValidating: productsValidating,
     error: productsError
   } = useProducts({});
 
-  const { data: categories } = useCategories();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
 
-  const activeProducts = productsError ? fallbackProducts : (products || fallbackProducts);
+  const activeProducts = productsError ? [] : (products || []);
   const showSkeleton = productsLoading && activeProducts.length === 0;
 
-  // ─── Memoized Values ───
-  const categoryNames = useMemo(() => {
-    return ['الكل', ...new Set(
-      categories.length > 0
-        ? categories.map(c => c.name)
-        : activeProducts.map(p => p.categoryName).filter(Boolean)
-    )];
-  }, [categories, activeProducts]);
+  // ─── Preview Products (8 items, mix of promoted + random) ───
+  const previewProducts = useMemo(() => {
+    if (activeProducts.length === 0) return [];
 
-  const filteredProducts = useMemo(() => {
-    let result = activeCategory === 'الكل'
-      ? activeProducts
-      : activeProducts.filter(p => p.categoryName === activeCategory);
+    // Promoted products first
+    const promoted = activeProducts.filter(p => p.isPromoted);
+    const nonPromoted = activeProducts.filter(p => !p.isPromoted);
 
-    if (searchText.trim()) {
-      const q = searchText.trim().toLowerCase();
-      result = result.filter(p =>
-        p.title?.toLowerCase().includes(q) ||
-        p.categoryName?.toLowerCase().includes(q) ||
-        p.description?.toLowerCase().includes(q)
-      );
-    }
-    
-    // Sort by promoted first
-    result.sort((a, b) => {
-      if (a.isPromoted && !b.isPromoted) return -1;
-      if (!a.isPromoted && b.isPromoted) return 1;
-      return 0;
-    });
-    
-    return result;
-  }, [activeProducts, activeCategory, searchText]);
+    // Shuffle the non-promoted (shuffleSeed forces re-shuffle when Discover Random is clicked)
+    const shuffledNonPromoted = shuffleArray(nonPromoted);
 
-  const mappedGridProducts = useMemo(() => {
-    return filteredProducts.map(p => {
+    // Combine: promoted first, then shuffled
+    const combined = [...promoted, ...shuffledNonPromoted];
+    return combined.slice(0, PREVIEW_COUNT);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeProducts, shuffleSeed]);
+
+  const mappedPreviewProducts = useMemo(() => {
+    return previewProducts.map(p => {
       const mapped = mapToProduct(p);
       mapped.isFavorite = isFavorite(p.id);
       return mapped;
     });
-  }, [filteredProducts, isFavorite]);
+  }, [previewProducts, isFavorite]);
 
+  // ─── Handlers ───
+  const handleDiscoverRandom = useCallback(() => {
+    setShuffleSeed(prev => prev + 1);
+  }, []);
 
-
-  const clearAllFilters = () => {
-    setSearchText('');
-    setActiveCategory('الكل');
-  };
-
-  const handleQuickAdd = (p) => {
+  const handleQuickAdd = useCallback((p) => {
     const originalProduct = activeProducts.find(prod => String(prod.id) === String(p.id));
     if (originalProduct) {
       addToCart(originalProduct, 1);
@@ -200,138 +189,85 @@ const HomePage = () => {
         currency: p.currency || 'USD', mainImageUrl: p.image
       }, 1);
     }
-  };
+  }, [activeProducts, addToCart]);
 
-  const handleFavoriteToggle = (p) => {
+  const handleFavoriteToggle = useCallback((p) => {
     const originalProduct = activeProducts.find(prod => String(prod.id) === String(p.id));
     if (originalProduct) toggleFavorite(originalProduct);
-  };
+  }, [activeProducts, toggleFavorite]);
 
-  // ─── Render ───
   return (
     <Layout>
       {/* ═══════ حزام العروض / Offer Belt ═══════ */}
       <OfferBelt />
 
       {/* ═══════ المحتوى الرئيسي / Main Content ═══════ */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 lg:pb-16">
 
-        {/* ── البحث والفلاتر / Search & Filters ── */}
-        <section className="mb-5">
-          <div className="flex flex-col sm:flex-row gap-3 mb-3">
-            {/* Search */}
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                <Search className="w-5 h-5 text-slate-400" />
+        {/* ═══════ 1. الأقسام / Category Grid ═══════ */}
+        <CategoryGrid
+          categories={categories}
+          isLoading={categoriesLoading}
+        />
+
+        {/* ═══════ 2. ابدأ التسوق / Start Shopping CTAs ═══════ */}
+        <HomepageSections onDiscoverRandom={handleDiscoverRandom} />
+
+        {/* ═══════ 3. معاينة المنتجات / Product Preview ═══════ */}
+        <section>
+          {/* Section Header */}
+          <div className="flex items-center justify-between mb-5 sm:mb-6">
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/40">
+                <Eye className="w-4.5 h-4.5 text-amber-600 dark:text-amber-400" />
               </div>
-              <input
-                type="text"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                placeholder="ابحث عن منتج..."
-                className="w-full pr-12 pl-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 shadow-sm transition-all"
-              />
-              {searchText && (
-                <button
-                  onClick={() => setSearchText('')}
-                  className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
+              <div>
+                <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  منتجات مختارة لك
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                  تشكيلة مميزة من أحدث المنتجات
+                </p>
+              </div>
             </div>
-          </div>
-        </section>
 
-        {/* ── الأقسام / Category Pills ── */}
-        <section className="mb-6">
-          <div className="relative w-full overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent pointer-events-none md:hidden z-10" />
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-              {categoryNames.map((name) => {
-                const isActive = activeCategory === name;
-                return (
-                  <button
-                    key={name}
-                    onClick={() => setActiveCategory(name)}
-                    className={`relative whitespace-nowrap inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 focus:outline-none border ${
-                      isActive
-                        ? 'text-white bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-500/25'
-                        : 'text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/30'
-                    }`}
-                  >
-                    {name}
-                  </button>
-                );
-              })}
-            </div>
+            <button
+              onClick={() => navigate('/products')}
+              className="text-xs sm:text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+            >
+              عرض الكل ←
+            </button>
           </div>
-        </section>
 
-        {/* ── العنوان + العداد / Section Header ── */}
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            {searchText.trim()
-              ? `نتائج: "${searchText.trim()}"`
-              : activeCategory === 'الكل' ? 'المنتجات الرائجة' : activeCategory}
-          </h2>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
-            {productsValidating && !showSkeleton && (
-              <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
-            )}
-            <LayoutGrid className="w-3.5 h-3.5" />
-            {filteredProducts.length} منتج
-          </div>
-        </div>
-
-        {/* ── شبكة المنتجات / Product Grid ── */}
-        {showSkeleton ? (
-          <ProductGrid isLoading={true} loadingCount={8} />
-        ) : (
-          <AnimatePresence mode="popLayout">
-            {filteredProducts.length > 0 ? (
+          {/* Product Grid */}
+          {showSkeleton ? (
+            <ProductGrid isLoading={true} loadingCount={PREVIEW_COUNT} />
+          ) : (
+            <AnimatePresence mode="popLayout">
               <motion.div
                 className="w-full"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
                 exit={{ opacity: 0 }}
-                key={activeCategory + searchText}
+                key={`preview-${shuffleSeed}`}
               >
-                <ProductGrid
-                  products={mappedGridProducts}
-                  onQuickAdd={handleQuickAdd}
-                  onClick={(p) => navigate(`/product/${p.id}`)}
-                  onFavorite={handleFavoriteToggle}
-                />
+                {mappedPreviewProducts.length > 0 ? (
+                  <ProductGrid
+                    products={mappedPreviewProducts}
+                    onQuickAdd={handleQuickAdd}
+                    onClick={(p) => navigate(`/product/${p.id}`)}
+                    onFavorite={handleFavoriteToggle}
+                  />
+                ) : (
+                  <div className="text-center py-16 text-slate-400 dark:text-slate-500">
+                    <p className="text-sm">لا توجد منتجات متاحة حالياً</p>
+                  </div>
+                )}
               </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-gray-300 dark:border-slate-700"
-              >
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 mb-4 text-slate-400">
-                  <Search className="w-7 h-7" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">لا توجد منتجات</h3>
-                <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto text-sm">
-                  {searchText.trim()
-                    ? <>لم نتمكن من العثور على منتجات تطابق "<span className="font-semibold text-slate-700 dark:text-slate-300">{searchText.trim()}</span>".</>
-                    : <>لم نتمكن من العثور على منتجات في قسم <span className="font-semibold text-slate-700 dark:text-slate-300">{activeCategory}</span> حالياً.</>
-                  }
-                </p>
-                <button
-                  onClick={clearAllFilters}
-                  className="mt-5 px-5 py-2 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors text-sm"
-                >
-                  مسح الفلاتر وعرض الكل
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        )}
+            </AnimatePresence>
+          )}
+        </section>
       </main>
     </Layout>
   );

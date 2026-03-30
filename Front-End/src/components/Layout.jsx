@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingBag, Menu, X, Sun, Moon, Zap, Coffee, Heart, LogIn, LogOut, User, Package, Store, Crown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -6,8 +6,8 @@ import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useTheme } from '../context/ThemeContext';
 import * as api from '../services/api';
-
-const Layout = ({ children }) => {
+import Footer from './Footer';
+const Layout = React.memo(({ children }) => {
   const { user, isAuthenticated, isSeller, isAdmin, logout } = useAuth();
   const { cartCount } = useCart();
   const { favoritesCount } = useFavorites();
@@ -31,13 +31,13 @@ const Layout = ({ children }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
     navigate('/');
     setIsMobileMenuOpen(false);
-  };
+  }, [logout, navigate]);
 
-  const handleSearch = (e) => {
+  const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/?search=${encodeURIComponent(searchQuery.trim())}`);
@@ -45,7 +45,7 @@ const Layout = ({ children }) => {
       navigate('/');
     }
     setIsMobileMenuOpen(false);
-  };
+  }, [searchQuery, navigate]);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300" dir="rtl">
@@ -61,7 +61,7 @@ const Layout = ({ children }) => {
             {/* الشعار / Logo */}
             <Link to="/" className="flex-shrink-0 flex items-center gap-3 cursor-pointer group select-none">
               <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center p-0.5 overflow-hidden shadow-md">
-                <img src="/Logo.png" alt="شعار متجر الجعدي" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-300" />
+                <img src="/Logo.png" alt="شعار متجر الجعدي" width="44" height="44" fetchpriority="high" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-300" />
                 <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white animate-pulse hidden md:block"></div>
               </div>
               <span className="font-extrabold text-xl md:text-2xl tracking-tight text-slate-900 dark:text-white dark:drop-shadow-sm">
@@ -275,81 +275,10 @@ const Layout = ({ children }) => {
       </main>
 
       {/* الفوتر / Footer */}
-      <footer className="bg-slate-900 dark:bg-slate-950 text-slate-300 border-t border-slate-800 dark:border-slate-800 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-12 grid grid-cols-2 sm:grid-cols-4 gap-8">
-            <div>
-              <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4">الأقسام</h4>
-              <ul className="space-y-2.5 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2"><Sun className="w-4 h-4 text-yellow-400" /> الطاقة الشمسية</a></li>
-                <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2"><Zap className="w-4 h-4 text-blue-400" /> الإلكترونيات</a></li>
-                <li><a href="#" className="hover:text-white transition-colors flex items-center gap-2"><Coffee className="w-4 h-4 text-amber-400" /> البن اليمني</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4">الشركة</h4>
-              <ul className="space-y-2.5 text-sm">
-                <li>
-                  <a 
-                    href="#" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (storeInfo?.aboutUsText) alert('من نحن:\n\n' + storeInfo.aboutUsText);
-                    }}
-                    className="hover:text-white transition-colors"
-                  >
-                    من نحن
-                  </a>
-                </li>
-                {storeInfo?.contactEmail && (
-                  <li><a href={`mailto:${storeInfo.contactEmail}`} className="hover:text-white transition-colors">راسلنا (إيميل)</a></li>
-                )}
-                {storeInfo?.contactPhone && (
-                  <li><a href={`tel:${storeInfo.contactPhone.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">اتصل بنا</a></li>
-                )}
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4">الدعم</h4>
-              <ul className="space-y-2.5 text-sm">
-                {storeInfo?.whatsappUrl ? (
-                  <li><a href={storeInfo.whatsappUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-2">دعم واتساب</a></li>
-                ) : (
-                  <li><a href="#" className="hover:text-white transition-colors">مركز المساعدة</a></li>
-                )}
-                {storeInfo?.facebookUrl && (
-                  <li><a href={storeInfo.facebookUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">فيسبوك</a></li>
-                )}
-                {storeInfo?.twitterUrl && (
-                  <li><a href={storeInfo.twitterUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">إكس (تويتر)</a></li>
-                )}
-                {storeInfo?.instagramUrl && (
-                  <li><a href={storeInfo.instagramUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">إنستغرام</a></li>
-                )}
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4">قانوني</h4>
-              <ul className="space-y-2.5 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">شروط الخدمة</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">سياسة الخصوصية</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">سياسة الكوكيز</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="py-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
-            <div className="flex items-center gap-2">
-              <img src="/Logo.png" alt="شعار المتجر" className="w-6 h-6 rounded-full bg-white object-cover shadow-sm" />
-              <span className="font-bold text-slate-300">متجر الجعدي</span>
-              <span>&copy; {new Date().getFullYear()} جميع الحقوق محفوظة.</span>
-            </div>
-            <span className="text-xs">صُنع بـ ❤️ في اليمن</span>
-          </div>
-        </div>
-      </footer>
+      <Footer storeInfo={storeInfo} />
     </div>
   );
-};
+});
+Layout.displayName = 'Layout';
 
 export default Layout;

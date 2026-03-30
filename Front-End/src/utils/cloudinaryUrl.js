@@ -84,8 +84,9 @@ export function getOptimizedImageUrl(url, width = 400) {
  *     محسوبة كـ: عرض CSS × 2 (لشاشات ريتينا).
  */
 export const IMAGE_WIDTHS = {
-  GRID_CARD: 400,    // 2-column mobile grid: ~200px × 2dpr = 400px
-  BELT_CARD: 380,    // Belt card: ~190px × 2dpr = 380px
-  THUMBNAIL: 150,    // Small thumbnail: ~75px × 2dpr = 150px
-  DETAIL: 800,       // Product detail page: ~400px × 2dpr = 800px
+  GRID_CARD: 400,      // 2-column mobile grid: ~200px × 2dpr = 400px
+  BELT_CARD: 380,      // Belt card: ~190px × 2dpr = 380px
+  THUMBNAIL: 150,      // Small thumbnail: ~75px × 2dpr = 150px
+  CATEGORY_CARD: 400,  // Category full-bleed card: ~200px × 2dpr = 400px
+  DETAIL: 800,         // Product detail page: ~400px × 2dpr = 800px
 };

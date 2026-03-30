@@ -4,9 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Al-gaadi store — السوق الأول لبيع وشراء الإلكترونيات والطاقة الشمسية والبن اليمني الفاخر." />
+
+    <!-- EN: DNS-prefetch for external domains — reduces DNS lookup latency
+         AR: استعلام DNS مسبق للنطاقات الخارجية — يقلل تأخير البحث في DNS -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+
+    <!-- EN: Preconnect to Google Fonts — establishes connection early
+         AR: اتصال مسبق بخطوط جوجل — يؤسس الاتصال مبكراً -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- EN: Google Fonts with display=swap — text remains visible during font load
+         AR: خطوط جوجل مع display=swap — النص يبقى مرئياً أثناء تحميل الخط -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
     <link rel="icon" href="/Logo.png" type="image/png" />
     <title>متجر الجعدي — صفقات محلية في اليمن</title>
 
@@ -19,25 +32,8 @@
           2. If no manual preference, check OS system preference via matchMedia
           3. Default to light mode if neither exists
           
-          WHY localStorage vs System Preferences:
-          - localStorage = explicit user choice (they clicked the toggle)
-          - System preference = passive detection (user's OS settings)
-          - User's explicit choice (localStorage) ALWAYS overrides system preference
-          - If a user on a dark OS manually picks "light" in our app, we respect that
-          
       AR: سكريبت مضاد للوميض — سكريبت مضمّن حرج يعمل قبل تفعيل React.
           يمنع "الوميض الأبيض" (FOUC) عندما يكون الوضع الداكن مفعلاً.
-          
-          ترتيب الأولوية:
-          1. تحقق من localStorage للتفضيل اليدوي (اختيار المستخدم الصريح)
-          2. إذا لم يوجد تفضيل يدوي، تحقق من تفضيل نظام التشغيل عبر matchMedia
-          3. الافتراضي هو الوضع الفاتح إذا لم يوجد أي منهما
-          
-          لماذا localStorage مقابل تفضيلات النظام:
-          - localStorage = اختيار صريح من المستخدم (ضغط زر التبديل)
-          - تفضيل النظام = كشف سلبي (إعدادات نظام التشغيل)
-          - اختيار المستخدم الصريح (localStorage) يتجاوز دائماً تفضيل النظام
-          - إذا اختار مستخدم على نظام داكن "فاتح" يدوياً في تطبيقنا، نحترم ذلك
     -->
     <script>
       (function() {
@@ -52,6 +48,17 @@
         } catch(e) {}
       })();
     </script>
+
+    <!-- EN: Inline critical CSS for the loading spinner used by React.lazy Suspense fallback.
+             This ensures the spinner is styled BEFORE any JS chunk loads.
+         AR: CSS حرج مضمّن لمؤشر التحميل المستخدم في Suspense fallback.
+             يضمن أن المؤشر يحصل على تنسيق قبل تحميل أي جزء JS. -->
+    <style>
+      /* Prevent layout shift by setting minimum dimensions on root */
+      #root { min-height: 100vh; }
+      /* Pre-style the Suspense fallback spinner */
+      .border-3 { border-width: 3px; }
+    </style>
   </head>
   <body class="antialiased">
     <div id="root"></div>

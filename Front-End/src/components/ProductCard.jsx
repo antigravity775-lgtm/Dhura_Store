@@ -49,6 +49,9 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
           <img
             src={image}
             alt={title}
+            width="400"
+            height="400"
+            loading="lazy"
             className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={() => setImgLoaded(true)}
           />
