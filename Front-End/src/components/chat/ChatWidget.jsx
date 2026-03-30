@@ -1,8 +1,47 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { MessageCircle, X, Send, Bot, User, Loader2 } from 'lucide-react';
 import { chatService } from '../../services/chatService';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+
+/**
+ * EN: Lazy-load ReactMarkdown + remarkGfm — these are ~45KB gzip combined.
+ *     They're only needed when the chat window is open AND an assistant message
+ *     needs rendering. By lazy-loading, we defer this cost entirely from the
+ *     initial page load.
+ * AR: تحميل كسول لـ ReactMarkdown + remarkGfm — حجمهما ~45KB gzip مجتمعاً.
+ *     مطلوبان فقط عند فتح نافذة الدردشة وعرض رسالة المساعد.
+ *     بالتحميل الكسول، نؤجل هذه التكلفة بالكامل عن التحميل الأولي.
+ */
+const ReactMarkdown = React.lazy(() => import('react-markdown'));
+
+// EN: remarkGfm must be loaded as a module and passed as plugin.
+//     We import it eagerly since it's tiny, but it's in the vendor-chat chunk
+//     which is only loaded when ReactMarkdown is loaded.
+let remarkGfmPlugin = null;
+const loadRemarkGfm = import('remark-gfm').then(mod => {
+  remarkGfmPlugin = mod.default;
+});
+
+/**
+ * EN: Lightweight markdown fallback — shown while ReactMarkdown loads.
+ *     Just renders the raw text so the user sees content immediately.
+ * AR: بديل خفيف للماركداون — يُعرض أثناء تحميل ReactMarkdown.
+ *     يعرض النص الخام فقط ليرى المستخدم المحتوى فوراً.
+ */
+const MarkdownFallback = ({ content }) => (
+  <span className="whitespace-pre-wrap">{content}</span>
+);
+
+/**
+ * EN: Wrapper that renders markdown with Suspense.
+ * AR: غلاف يعرض الماركداون مع Suspense.
+ */
+const LazyMarkdown = ({ content }) => (
+  <Suspense fallback={<MarkdownFallback content={content} />}>
+    <ReactMarkdown remarkPlugins={remarkGfmPlugin ? [remarkGfmPlugin] : []}>
+      {content}
+    </ReactMarkdown>
+  </Suspense>
+);
 
 export const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -107,9 +146,7 @@ export const ChatWidget = () => {
                     }`}
                   >
                     {isAssistant ? (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {msg.content}
-                      </ReactMarkdown>
+                      <LazyMarkdown content={msg.content} />
                     ) : (
                       <>{msg.content}</>
                     )}
@@ -172,3 +209,5 @@ export const ChatWidget = () => {
     </div>
   );
 };
+
+export default ChatWidget;

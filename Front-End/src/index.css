@@ -96,25 +96,22 @@
   .glass {
     @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-sm;
   }
-
   .dark .glass {
-    @apply bg-slate-900/70 backdrop-blur-lg border border-slate-700/30 shadow-sm;
+    @apply bg-slate-900/70 border-slate-700/30;
   }
 
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2;
+  .focus-ring:focus {
+    @apply outline-none ring-2 ring-indigo-500/50 ring-offset-2;
   }
-
-  .dark .focus-ring {
-    @apply focus:ring-offset-slate-900;
+  .dark .focus-ring:focus {
+    @apply ring-offset-slate-900;
   }
 
   .img-placeholder {
-    @apply bg-slate-100 animate-pulse;
+    @apply animate-pulse bg-slate-100;
   }
-
   .dark .img-placeholder {
-    @apply bg-slate-800 animate-pulse;
+    @apply bg-slate-800;
   }
 }
 
@@ -165,4 +162,51 @@
 
 .offer-belt-track:hover {
   animation-play-state: paused;
+}
+
+/* ========== Category Card Animations / رسوم بطاقات الأقسام ========== */
+/* EN: Subtle shine sweep effect on category card hover
+   AR: تأثير لمعان خفيف عند التمرير فوق بطاقة القسم */
+@keyframes card-shine {
+  0% { transform: translateX(100%) rotate(12deg); }
+  100% { transform: translateX(-100%) rotate(12deg); }
+}
+
+.category-card:hover .card-shine-effect {
+  animation: card-shine 0.8s ease-out;
+}
+
+/* EN: Skeleton pulse for category cards
+   AR: نبض الهيكل العظمي لبطاقات الأقسام */
+.category-card-skeleton {
+  background: linear-gradient(
+    110deg,
+    theme('colors.white') 30%,
+    theme('colors.slate.50') 50%,
+    theme('colors.white') 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.dark .category-card-skeleton {
+  background: linear-gradient(
+    110deg,
+    theme('colors.slate.800') 30%,
+    theme('colors.slate.700') 50%,
+    theme('colors.slate.800') 70%
+  );
+  background-size: 200% 100%;
+}
+
+/* ========== Below-the-fold Optimization / تحسين ما تحت الطي ========== */
+/* EN: content-visibility: auto tells the browser to skip rendering
+       off-screen content until it's near the viewport. This reduces
+       initial rendering work (lower TBT) on mobile devices.
+   AR: content-visibility: auto يخبر المتصفح بتخطي عرض المحتوى
+       خارج الشاشة حتى يقترب من منطقة العرض. هذا يقلل عمل
+       العرض الأولي (TBT أقل) على أجهزة الجوال. */
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
 }
