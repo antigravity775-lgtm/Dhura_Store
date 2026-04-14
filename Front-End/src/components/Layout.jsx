@@ -40,9 +40,9 @@ const Layout = React.memo(({ children }) => {
   const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/?search=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
     } else {
-      navigate('/');
+      navigate('/products');
     }
     setIsMobileMenuOpen(false);
   }, [searchQuery, navigate]);

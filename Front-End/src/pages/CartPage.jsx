@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShoppingCart, Loader2, Check, MapPin, CreditCard, Banknote, AlertCircle } from 'lucide-react';
+import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShoppingCart, Loader2, Check, MapPin, CreditCard, Banknote, AlertCircle, AlertTriangle } from 'lucide-react';
 import Layout from '../components/Layout';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -179,11 +179,22 @@ const CartPage = () => {
                       <span className="w-10 text-center font-bold text-slate-800 dark:text-white text-sm">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                        className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors"
+                        disabled={item.quantity >= (item.stockQuantity || 9999)}
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                          item.quantity >= (item.stockQuantity || 9999)
+                            ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                            : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300'
+                        }`}
                       >
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
+                    {item.quantity >= (item.stockQuantity || 9999) && (
+                      <div className="flex items-center gap-1 mt-1.5 text-amber-600 dark:text-amber-400">
+                        <AlertTriangle className="w-3 h-3" />
+                        <span className="text-[11px] font-medium">الحد الأقصى للمخزون ({item.stockQuantity})</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* حذف */}

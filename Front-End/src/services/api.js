@@ -249,6 +249,21 @@ export async function deleteAdminProduct(id) {
   });
 }
 
+export async function getAdminOrders(status) {
+  const params = new URLSearchParams();
+  if (status && status !== 'All') params.set('status', status);
+  const qs = params.toString();
+  return request(`/admin/orders${qs ? `?${qs}` : ''}`, { headers: jsonHeaders() });
+}
+
+export async function updateAdminOrderStatus(orderId, status) {
+  return request(`/admin/orders/${orderId}/status`, {
+    method: 'PATCH',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ status }),
+  });
+}
+
 export async function createCategory(data) {
   return request('/categories', {
     method: 'POST',

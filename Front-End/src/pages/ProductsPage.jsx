@@ -59,6 +59,10 @@ const ProductsPage = () => {
   const [activeCategory, setActiveCategory] = useState('الكل');
   const [searchText, setSearchText] = useState(searchFromUrl);
 
+  React.useEffect(() => {
+    setSearchText(searchFromUrl);
+  }, [searchFromUrl]);
+
   // ─── SWR Data ───
   const {
     data: products,
