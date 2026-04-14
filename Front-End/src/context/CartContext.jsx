@@ -30,12 +30,14 @@ export const CartProvider = ({ children }) => {
     setItems(prev => {
       const existing = prev.find(i => i.productId === product.id);
       if (existing) {
+        const newQty = Math.min(existing.quantity + quantity, product.stockQuantity || 9999);
         return prev.map(i =>
           i.productId === product.id
-            ? { ...i, quantity: i.quantity + quantity }
+            ? { ...i, quantity: newQty, stockQuantity: product.stockQuantity }
             : i
         );
       }
+      const cappedQty = Math.min(quantity, product.stockQuantity || 9999);
       return [
         ...prev,
         {
@@ -44,7 +46,8 @@ export const CartProvider = ({ children }) => {
           price: product.price,
           currency: product.currency,
           mainImageUrl: product.mainImageUrl,
-          quantity,
+          stockQuantity: product.stockQuantity || 9999,
+          quantity: cappedQty,
         },
       ];
     });
@@ -57,9 +60,11 @@ export const CartProvider = ({ children }) => {
   const updateQuantity = (productId, quantity) => {
     if (quantity < 1) return removeFromCart(productId);
     setItems(prev =>
-      prev.map(i =>
-        i.productId === productId ? { ...i, quantity } : i
-      )
+      prev.map(i => {
+        if (i.productId !== productId) return i;
+        const maxQty = i.stockQuantity || 9999;
+        return { ...i, quantity: Math.min(quantity, maxQty) };
+      })
     );
   };
 

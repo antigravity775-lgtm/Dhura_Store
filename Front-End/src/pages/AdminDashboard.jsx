@@ -5,7 +5,8 @@ import {
   LayoutDashboard, Search, Users, Package, Tag, DollarSign, Home,
   Loader2, AlertCircle, CheckCircle, X, Trash2, ShieldBan, ShieldCheck,
   UserCog, Plus, Edit3, Save, RefreshCw, TrendingUp, ShoppingCart,
-  UserPlus, Ban, Crown, Info, Phone, Mail, Link as LinkIcon
+  UserPlus, Ban, Crown, Info, Phone, Mail, Link as LinkIcon,
+  Clock, Truck, XCircle, ChevronDown, ChevronUp, ClipboardList, Eye
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import useSWR from 'swr';
@@ -33,6 +34,15 @@ const AdminDashboard = () => {
   
   const { data: categoriesData, isLoading: categoriesLoading, mutate: mutateCategories } = useSWR(isAuth && activeTab === 'categories' ? 'adminCategories' : null, api.getCategories);
   const categories = categoriesData || [];
+
+  // Orders
+  const [orderStatusFilter, setOrderStatusFilter] = useState('All');
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const { data: ordersData, isLoading: ordersLoading, mutate: mutateOrders } = useSWR(
+    isAuth && activeTab === 'orders' ? ['adminOrders', orderStatusFilter] : null,
+    () => api.getAdminOrders(orderStatusFilter)
+  );
+  const orders = ordersData || [];
 
   const { data: ratesData, isLoading: ratesLoading, mutate: mutateRates } = useSWR(isAuth && activeTab === 'rates' ? 'adminRates' : null, api.getExchangeRates);
   const [rates, setRates] = useState({ USD_to_YER_Sanaa: 0, USD_to_YER_Aden: 0 });
@@ -219,6 +229,44 @@ const AdminDashboard = () => {
     setStoreInfoSaving(false);
   };
 
+  // ─── Orders ───
+  const handleOrderStatusUpdate = async (orderId, newStatus) => {
+    try {
+      await api.updateAdminOrderStatus(orderId, newStatus);
+      mutateOrders();
+      showSuccess('تم تحديث حالة الطلب بنجاح ✅');
+    } catch (err) {
+      setError(err.message || 'فشل تحديث حالة الطلب');
+    }
+  };
+
+  const orderStatusOptions = [
+    { value: 'All', label: 'الكل' },
+    { value: 'Pending', label: 'قيد الانتظار' },
+    { value: 'Confirmed', label: 'مؤكد' },
+    { value: 'Shipped', label: 'تم الشحن' },
+    { value: 'Delivered', label: 'تم التوصيل' },
+    { value: 'Cancelled', label: 'ملغي' },
+  ];
+
+  const orderStatusBadge = (status) => {
+    const cfg = {
+      Pending: { label: 'قيد الانتظار', color: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800', Icon: Clock },
+      Confirmed: { label: 'مؤكد', color: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800', Icon: CheckCircle },
+      Processing: { label: 'جاري التجهيز', color: 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800', Icon: Package },
+      Shipped: { label: 'تم الشحن', color: 'bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800', Icon: Truck },
+      Delivered: { label: 'تم التوصيل', color: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800', Icon: CheckCircle },
+      Cancelled: { label: 'ملغي', color: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800', Icon: XCircle },
+    };
+    const c = cfg[status] || cfg.Pending;
+    return (
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border ${c.color}`}>
+        <c.Icon className="w-3.5 h-3.5" />
+        {c.label}
+      </span>
+    );
+  };
+
   // ─── Tab Change ───
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -227,6 +275,7 @@ const AdminDashboard = () => {
 
   const tabItems = [
     { id: 'dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
+    { id: 'orders', label: 'إدارة الطلبات', icon: ClipboardList },
     { id: 'users', label: 'المستخدمين', icon: Users },
     { id: 'products', label: 'المحتوى', icon: Package },
     { id: 'categories', label: 'التصنيفات', icon: Tag },
@@ -342,6 +391,215 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="text-center py-20 text-slate-400">لا توجد بيانات</div>
+            )}
+          </div>
+        )}
+
+        {/* ======================== ORDERS TAB ======================== */}
+        {activeTab === 'orders' && (
+          <div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">إدارة الطلبات</h2>
+              <div className="flex gap-3 w-full sm:w-auto">
+                <div className="relative flex-1 sm:w-64">
+                  <Search className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="بحث بالاسم أو رقم الطلب..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-white transition-all"
+                  />
+                </div>
+                <select
+                  value={orderStatusFilter}
+                  onChange={(e) => setOrderStatusFilter(e.target.value)}
+                  className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-700 dark:text-slate-200"
+                >
+                  {orderStatusOptions.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {ordersLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+              </div>
+            ) : orders.length === 0 ? (
+              <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+                <ClipboardList className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">لا توجد طلبات</h3>
+                <p className="text-slate-500 dark:text-slate-400">لم يتم استلام أي طلبات بعد</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {orders.filter(o =>
+                  !searchQuery.trim() ||
+                  o.buyer?.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  o.id?.toLowerCase().includes(searchQuery.toLowerCase())
+                ).map((order, index) => {
+                  const isExpanded = expandedOrderId === order.id;
+                  const orderItems = order.orderItems || [];
+                  const orderDate = new Date(order.orderDate).toLocaleDateString('ar-EG', {
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                  });
+
+                  return (
+                    <motion.div
+                      key={order.id}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md dark:hover:shadow-slate-800/50 transition-shadow overflow-hidden"
+                    >
+                      {/* Order Header */}
+                      <div className="p-5">
+                        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                              order.status === 'Pending' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' :
+                              order.status === 'Confirmed' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' :
+                              order.status === 'Cancelled' ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' :
+                              'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
+                            }`}>
+                              <Package className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-slate-900 dark:text-white text-sm">طلب #{order.id?.slice(0, 8)?.toUpperCase()}</h3>
+                              <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                                <span className="text-xs text-slate-400">{orderDate}</span>
+                                <span className="text-xs text-slate-300 dark:text-slate-600">•</span>
+                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{order.buyer?.fullName}</span>
+                                {order.buyer?.phoneNumber && (
+                                  <span className="text-xs text-slate-400">📱 {order.buyer.phoneNumber}</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          {orderStatusBadge(order.status)}
+                        </div>
+
+                        {/* Order Info */}
+                        <div className="flex flex-wrap gap-4 text-xs text-slate-500 dark:text-slate-400 mb-4">
+                          <span className="flex items-center gap-1">📍 {order.shippingAddress}</span>
+                          <span className="flex items-center gap-1">💳 {order.paymentMethod === 'COD' || order.paymentMethod === 'CashOnDelivery' ? 'الدفع عند الاستلام' : order.paymentMethod === 'BankTransfer' ? 'تحويل بنكي' : order.paymentMethod}</span>
+                          <span className="font-bold text-indigo-600 dark:text-indigo-400">الإجمالي: {Number(order.totalAmount || 0).toLocaleString('en-US')} {api.CurrencySymbol[order.currency] || 'ريال'}</span>
+                        </div>
+
+                        {/* Actions Row */}
+                        <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                          {/* View Items Toggle */}
+                          <button
+                            onClick={() => setExpandedOrderId(isExpanded ? null : order.id)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            {orderItems.length} منتج
+                            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                          </button>
+
+                          <div className="flex-1" />
+
+                          {/* Status Action Buttons */}
+                          {order.status === 'Pending' && (
+                            <>
+                              <button
+                                onClick={() => handleOrderStatusUpdate(order.id, 'Confirmed')}
+                                className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-all shadow-sm shadow-emerald-600/20 active:scale-[0.97]"
+                              >
+                                <CheckCircle className="w-3.5 h-3.5" />
+                                تأكيد الطلب
+                              </button>
+                              <button
+                                onClick={() => handleOrderStatusUpdate(order.id, 'Cancelled')}
+                                className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800 rounded-xl transition-all active:scale-[0.97]"
+                              >
+                                <XCircle className="w-3.5 h-3.5" />
+                                رفض
+                              </button>
+                            </>
+                          )}
+                          {order.status === 'Confirmed' && (
+                            <>
+                              <button
+                                onClick={() => handleOrderStatusUpdate(order.id, 'Shipped')}
+                                className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl transition-all shadow-sm shadow-indigo-600/20 active:scale-[0.97]"
+                              >
+                                <Truck className="w-3.5 h-3.5" />
+                                شحن الطلب
+                              </button>
+                              <button
+                                onClick={() => handleOrderStatusUpdate(order.id, 'Cancelled')}
+                                className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800 rounded-xl transition-all active:scale-[0.97]"
+                              >
+                                <XCircle className="w-3.5 h-3.5" />
+                                إلغاء
+                              </button>
+                            </>
+                          )}
+                          {order.status === 'Shipped' && (
+                            <button
+                              onClick={() => handleOrderStatusUpdate(order.id, 'Delivered')}
+                              className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-green-600 hover:bg-green-500 rounded-xl transition-all shadow-sm shadow-green-600/20 active:scale-[0.97]"
+                            >
+                              <CheckCircle className="w-3.5 h-3.5" />
+                              تم التوصيل
+                            </button>
+                          )}
+                          {(order.status === 'Delivered' || order.status === 'Cancelled') && (
+                            <span className={`text-xs font-semibold px-3 py-1.5 rounded-lg ${
+                              order.status === 'Delivered' ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20' : 'text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20'
+                            }`}>
+                              {order.status === 'Delivered' ? '✅ مكتمل' : '❌ ملغي'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Expanded Items */}
+                      <AnimatePresence>
+                        {isExpanded && orderItems.length > 0 && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-5 pb-5 space-y-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+                              {orderItems.map((item) => (
+                                <div key={item.id} className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3">
+                                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0 border border-slate-200 dark:border-slate-600">
+                                    <img
+                                      src={item.product?.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=100&q=60'}
+                                      alt={item.product?.title}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{item.product?.title || 'منتج'}</p>
+                                    <p className="text-xs text-slate-400 mt-0.5">
+                                      الكمية: {item.quantity} × {Number(item.unitPrice || 0).toLocaleString('en-US')}
+                                      {item.product?.stockQuantity != null && (
+                                        <span className="mr-2 text-slate-300 dark:text-slate-600">| المخزون: {item.product.stockQuantity}</span>
+                                      )}
+                                    </p>
+                                  </div>
+                                  <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex-shrink-0">
+                                    {(item.quantity * Number(item.unitPrice || 0)).toLocaleString('en-US')}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  );
+                })}
+              </div>
             )}
           </div>
         )}

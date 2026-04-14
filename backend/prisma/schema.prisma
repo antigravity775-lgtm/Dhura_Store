@@ -36,6 +36,7 @@ enum Currency {
 
 enum OrderStatus {
   Pending
+  Confirmed
   Processing
   Shipped
   Delivered
