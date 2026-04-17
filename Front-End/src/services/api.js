@@ -1,6 +1,8 @@
-// In production (Vercel), set VITE_API_URL to your backend URL e.g. https://your-backend.vercel.app/api
-// In development, the Vite proxy forwards /api to localhost:5000
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+// In production (Vercel), set VITE_API_URL to your backend origin, e.g. https://your-backend.vercel.app
+// (the /api path is added automatically if missing). In dev, the Vite proxy forwards /api to localhost:5000.
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
+
+const BASE_URL = getApiBaseUrl();
 
 // ─── Token Management ───
 export const getToken = () => localStorage.getItem('auth_token');

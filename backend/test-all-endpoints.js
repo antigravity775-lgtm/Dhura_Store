@@ -1,6 +1,16 @@
+require('dotenv').config();
 const http = require('http');
 
 const BASE = { hostname: 'localhost', port: 5000 };
+
+const TEST_EMAIL = process.env.TEST_ADMIN_EMAIL;
+const TEST_PASSWORD = process.env.TEST_ADMIN_PASSWORD;
+if (!TEST_EMAIL || !TEST_PASSWORD) {
+  console.error(
+    'Set TEST_ADMIN_EMAIL and TEST_ADMIN_PASSWORD in backend/.env (your existing Supabase admin), then run again.'
+  );
+  process.exit(1);
+}
 
 function req(method, path, body, token) {
   return new Promise((resolve, reject) => {
@@ -19,10 +29,19 @@ function req(method, path, body, token) {
 }
 
 async function main() {
-  // 1. Login
-  const login = await req('POST', '/api/account/login', { email: 'bdalrhmnaljdy395@gmail.com', password: 'Ghoomaan' });
-  console.log('LOGIN:', login.status);
-  const token = JSON.parse(login.body).token;
+  // 1. Login — uses existing admin from Supabase (see TEST_ADMIN_* in .env)
+  const login = await req('POST', '/api/account/login', {
+    email: TEST_EMAIL,
+    password: TEST_PASSWORD,
+  });
+  console.log('LOGIN:', login.status, login.body.substring(0, 120));
+  let token;
+  try {
+    token = JSON.parse(login.body).token;
+  } catch {
+    console.error('Login failed; cannot continue authenticated tests.');
+    process.exit(1);
+  }
 
   // 2. Admin dashboard
   const dash = await req('GET', '/api/admin/dashboard', null, token);
