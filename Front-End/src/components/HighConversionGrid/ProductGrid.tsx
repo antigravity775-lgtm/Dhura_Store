@@ -37,7 +37,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         - 3 columns on sm (tablet)
         - 4 columns md/lg, 5 columns xl+
       */}
-      <div className="grid grid-cols-1 min-[380px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
         {isLoading
           ? Array.from({ length: loadingCount }).map((_, index) => (
               <ProductCard key={`skeleton-${index}`} isLoading={true} />

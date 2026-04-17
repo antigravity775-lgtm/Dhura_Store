@@ -15,9 +15,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Shuffle, ArrowLeft, Sparkles } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Sparkles, BadgePercent } from 'lucide-react';
 
-const HomepageSections = React.memo(({ onDiscoverRandom }) => {
+const HomepageSections = React.memo(() => {
   const navigate = useNavigate();
 
   return (
@@ -44,7 +44,7 @@ const HomepageSections = React.memo(({ onDiscoverRandom }) => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/products')}
-          className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 text-white shadow-lg shadow-indigo-500/20 hover:shadow-xl hover:shadow-indigo-500/30 transition-shadow duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 text-right"
+          className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-dhura-500 via-dhura-600 to-dhura-700 text-white shadow-lg shadow-dhura-500/20 hover:shadow-xl hover:shadow-dhura-500/30 transition-shadow duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-dhura-950 text-right"
         >
           {/* Animated background pattern */}
           <div className="absolute inset-0 opacity-10">
@@ -58,7 +58,7 @@ const HomepageSections = React.memo(({ onDiscoverRandom }) => {
                 <ShoppingBag className="w-5 h-5 opacity-80" />
                 <span className="text-base sm:text-lg font-bold">تصفح جميع المنتجات</span>
               </div>
-              <span className="text-xs sm:text-sm text-indigo-200/80 font-medium">
+              <span className="text-xs sm:text-sm text-dhura-200/80 font-medium">
                 استعرض جميع المنتجات المتاحة
               </span>
             </div>
@@ -66,12 +66,12 @@ const HomepageSections = React.memo(({ onDiscoverRandom }) => {
           </div>
         </motion.button>
 
-        {/* Discover Random Products */}
+        {/* Exclusive Offers */}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={onDiscoverRandom}
-          className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 text-white shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/30 transition-shadow duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 text-right"
+          onClick={() => navigate('/products?offers=true')}
+          className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-rose-700 via-rose-800 to-rose-900 text-white shadow-lg shadow-rose-900/20 hover:shadow-xl hover:shadow-rose-900/30 transition-shadow duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#1A1510] text-right"
         >
           {/* Animated background pattern */}
           <div className="absolute inset-0 opacity-10">
@@ -82,11 +82,11 @@ const HomepageSections = React.memo(({ onDiscoverRandom }) => {
           <div className="relative z-10 flex items-center justify-between">
             <div className="flex flex-col">
               <div className="flex items-center gap-2 mb-1.5">
-                <Shuffle className="w-5 h-5 opacity-80 group-hover:animate-spin" style={{ animationDuration: '2s' }} />
-                <span className="text-base sm:text-lg font-bold">اكتشف منتجات عشوائية</span>
+                <BadgePercent className="w-5 h-5 text-rose-200 group-hover:scale-110 transition-transform" />
+                <span className="text-base sm:text-lg font-bold">العروض الحصرية</span>
               </div>
-              <span className="text-xs sm:text-sm text-emerald-200/80 font-medium">
-                دع الحظ يختار لك منتجات مميزة
+              <span className="text-xs sm:text-sm text-rose-200/80 font-medium">
+                أقوى الخصومات والأسعار المميزة
               </span>
             </div>
             <ArrowLeft className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:-translate-x-1 transition-all duration-300 flex-shrink-0" />

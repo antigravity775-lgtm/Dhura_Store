@@ -53,8 +53,9 @@ const ProductsPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchFromUrl = searchParams.get('search') || '';
+  const offersOnly = searchParams.get('offers') === 'true';
 
   const [activeCategory, setActiveCategory] = useState('الكل');
   const [searchText, setSearchText] = useState(searchFromUrl);
@@ -99,6 +100,10 @@ const ProductsPage = () => {
       );
     }
 
+    if (offersOnly) {
+      result = result.filter(p => p.isPromoted);
+    }
+
     // Sort by promoted first
     result.sort((a, b) => {
       if (a.isPromoted && !b.isPromoted) return -1;
@@ -107,7 +112,7 @@ const ProductsPage = () => {
     });
 
     return result;
-  }, [activeProducts, activeCategory, searchText]);
+  }, [activeProducts, activeCategory, searchText, offersOnly]);
 
   const mappedGridProducts = useMemo(() => {
     return filteredProducts.map(p => {
@@ -120,7 +125,8 @@ const ProductsPage = () => {
   const clearAllFilters = useCallback(() => {
     setSearchText('');
     setActiveCategory('الكل');
-  }, []);
+    setSearchParams(new URLSearchParams());
+  }, [setSearchParams]);
 
   const handleQuickAdd = useCallback((p) => {
     const originalProduct = activeProducts.find(prod => String(prod.id) === String(p.id));
@@ -215,11 +221,27 @@ const ProductsPage = () => {
 
         {/* ── Section Header + Counter ── */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            {searchText.trim()
-              ? `نتائج: "${searchText.trim()}"`
-              : activeCategory === 'الكل' ? 'جميع المنتجات' : activeCategory}
-          </h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {searchText.trim()
+                ? `نتائج: "${searchText.trim()}"`
+                : offersOnly
+                  ? 'العروض الحصرية'
+                  : activeCategory === 'الكل' ? 'جميع المنتجات' : activeCategory}
+            </h2>
+            {offersOnly && (
+              <button 
+                onClick={() => {
+                  const newParams = new URLSearchParams(searchParams);
+                  newParams.delete('offers');
+                  setSearchParams(newParams);
+                }}
+                className="text-xs flex items-center gap-1 bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 px-2.5 py-1 rounded-full hover:bg-rose-200 dark:hover:bg-rose-900/50 transition-colors"
+              >
+                إلغاء الخصومات <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
             {productsValidating && !showSkeleton && (
               <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />

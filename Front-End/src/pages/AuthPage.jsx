@@ -88,35 +88,35 @@ const AuthPage = () => {
 
       {/* ========== خلفية متحركة ========== */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-bl from-slate-900 via-indigo-950 to-slate-900"></div>
+        <div className="absolute inset-0 bg-gradient-to-bl from-[#1A1510] via-[#231D14] to-[#0E0B07]"></div>
 
         <motion.div
           animate={{
             scale: [1, 1.3, 1],
             x: [0, 50, 0],
             y: [0, -30, 0],
-            opacity: [0.2, 0.35, 0.2],
+            opacity: [0.15, 0.30, 0.15],
           }}
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-indigo-500/20 blur-[140px]"
+          className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-amber-500/15 blur-[140px]"
         />
         <motion.div
           animate={{
             scale: [1, 1.25, 1],
             x: [0, -40, 0],
             y: [0, 40, 0],
-            opacity: [0.15, 0.3, 0.15],
+            opacity: [0.10, 0.22, 0.10],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
-          className="absolute bottom-[-20%] left-[-10%] w-[55%] h-[55%] rounded-full bg-blue-600/15 blur-[130px]"
+          className="absolute bottom-[-20%] left-[-10%] w-[55%] h-[55%] rounded-full bg-dhura-700/20 blur-[130px]"
         />
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.1, 0.25, 0.1],
+            opacity: [0.08, 0.18, 0.08],
           }}
           transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 5 }}
-          className="absolute top-[40%] left-[30%] w-[25%] h-[35%] rounded-full bg-purple-500/15 blur-[100px]"
+          className="absolute top-[40%] left-[30%] w-[25%] h-[35%] rounded-full bg-amber-700/15 blur-[100px]"
         />
 
         <div
@@ -139,12 +139,12 @@ const AuthPage = () => {
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-3 group">
             <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0.5 overflow-hidden shadow-2xl">
-              <img src="/Logo.png" alt="شعار متجر الجعدي" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-300" />
-              <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
+              <img src="/Logo.png" alt="شعار DHURA ذُرى" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-300" />
+              <div className="absolute top-0 right-0 w-3 h-3 bg-amber-400 rounded-full border-2 border-white animate-pulse"></div>
             </div>
-            <span className="font-extrabold text-3xl text-white tracking-tight drop-shadow-md">متجر الجعدي</span>
+            <span className="font-extrabold text-3xl text-white tracking-tight drop-shadow-md font-display">DHURA</span>
           </Link>
-          <p className="text-indigo-200/60 text-sm mt-3 font-medium">
+          <p className="text-amber-200/50 text-sm mt-3 font-medium">
             {isLogin ? 'مرحباً بعودتك! سجّل دخولك للمتابعة' : 'أنشئ حسابك وابدأ التسوق'}
           </p>
         </div>
@@ -164,7 +164,7 @@ const AuthPage = () => {
               {isLogin && (
                 <motion.div
                   layoutId="authTab"
-                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-indigo-400 rounded-full"
+                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-amber-400 rounded-full"
                 />
               )}
             </button>
@@ -178,7 +178,7 @@ const AuthPage = () => {
               {!isLogin && (
                 <motion.div
                   layoutId="authTab"
-                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-indigo-400 rounded-full"
+                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-amber-400 rounded-full"
                 />
               )}
             </button>
@@ -229,7 +229,7 @@ const AuthPage = () => {
                          onChange={handleChange}
                          required
                          placeholder="أدخل اسمك الكامل"
-                         className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500/40 focus:bg-white/[0.08] transition-all"
+                         className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40 focus:bg-white/[0.08] transition-all"
                        />
                      </div>
                    </div>
@@ -313,7 +313,7 @@ const AuthPage = () => {
                 {/* نسيت كلمة المرور */}
                 {isLogin && (
                   <div className="text-left">
-                    <button type="button" className="text-xs text-indigo-300/70 hover:text-indigo-300 transition-colors font-medium">
+                    <button type="button" className="text-xs text-amber-300/70 hover:text-amber-300 transition-colors font-medium">
                       نسيت كلمة المرور؟
                     </button>
                   </div>
@@ -323,7 +323,7 @@ const AuthPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 bg-indigo-600 text-white rounded-xl font-bold text-base hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/40 transition-all shadow-xl shadow-indigo-600/20 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-2.5 py-4 bg-dhura-500 text-white rounded-xl font-bold text-base hover:bg-dhura-400 focus:outline-none focus:ring-4 focus:ring-amber-500/40 transition-all shadow-xl shadow-dhura-600/20 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
                 >
                   {isLoading ? (
                     <>
@@ -348,7 +348,7 @@ const AuthPage = () => {
                   <button
                     type="button"
                     onClick={() => switchView(!isLogin)}
-                    className="text-indigo-300 hover:text-indigo-200 font-bold transition-colors"
+                    className="text-amber-300 hover:text-amber-200 font-bold transition-colors"
                   >
                     {isLogin ? 'سجّل الآن' : 'سجّل دخولك'}
                   </button>

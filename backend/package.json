@@ -20,6 +20,7 @@
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
+    "pg": "^8.20.0",
     "prisma": "^5.22.0",
     "streamifier": "^0.1.1"
   },

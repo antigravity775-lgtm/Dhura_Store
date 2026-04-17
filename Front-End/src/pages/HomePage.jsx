@@ -90,8 +90,8 @@ const OfferBelt = React.memo(() => {
   const doubledMessages = [...offerMessages, ...offerMessages];
 
   return (
-    <div className="relative w-full bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 overflow-hidden select-none">
-      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-indigo-500/10 animate-pulse" />
+    <div className="relative w-full bg-gradient-to-r from-[#120F09] via-[#2A1F0A] to-[#120F09] overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-r from-dhura-500/10 via-dhura-400/8 to-dhura-500/10 animate-pulse" />
       <div className="offer-belt-track flex items-center gap-12 py-2.5 sm:py-3 whitespace-nowrap">
         {doubledMessages.map((msg, i) => {
           const Icon = msg.icon;
@@ -175,9 +175,6 @@ const HomePage = () => {
   }, [previewProducts, isFavorite]);
 
   // ─── Handlers ───
-  const handleDiscoverRandom = useCallback(() => {
-    setShuffleSeed(prev => prev + 1);
-  }, []);
 
   const handleQuickAdd = useCallback((p) => {
     const originalProduct = activeProducts.find(prod => String(prod.id) === String(p.id));
@@ -211,7 +208,7 @@ const HomePage = () => {
         />
 
         {/* ═══════ 2. ابدأ التسوق / Start Shopping CTAs ═══════ */}
-        <HomepageSections onDiscoverRandom={handleDiscoverRandom} />
+        <HomepageSections />
 
         {/* ═══════ 3. معاينة المنتجات / Product Preview ═══════ */}
         <section>
@@ -223,17 +220,17 @@ const HomePage = () => {
               </div>
               <div>
                 <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                  منتجات مختارة لك
+                  العروض الحصرية
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                  تشكيلة مميزة من أحدث المنتجات
+                  أقوى الخصومات والأسعار المميزة
                 </p>
               </div>
             </div>
 
             <button
               onClick={() => navigate('/products')}
-              className="text-xs sm:text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+              className="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-dhura-900/30"
             >
               عرض الكل ←
             </button>
