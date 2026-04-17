@@ -4,7 +4,7 @@ import { Facebook, MessageCircle, Mail, MapPin, Truck, ShieldAlert, CreditCard, 
 
 const Footer = ({ storeInfo }) => {
   return (
-    <footer className="bg-slate-950 text-slate-400 py-8 border-t border-slate-900 mt-auto" dir="rtl">
+    <footer className="bg-[#120F09] text-slate-400 py-8 border-t border-[#2A1F0A] mt-auto" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Grid: Mobile 2-col, Desktop 4-col */}
@@ -13,11 +13,11 @@ const Footer = ({ storeInfo }) => {
           {/* Brand & Short text */}
           <div className="col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 mb-3">
-              <img src="/Logo.png" alt="شعار المتجر" width="32" height="32" className="w-8 h-8 rounded-full bg-white object-cover border-2 border-slate-800" loading="lazy" />
-              <span className="font-extrabold text-white text-lg tracking-tight">متجر الجعدي</span>
+              <img src="/Logo.png" alt="شعار DHURA ذُرى" width="32" height="32" className="w-8 h-8 rounded-full bg-white object-cover border-2 border-dhura-800" loading="lazy" />
+              <span className="font-extrabold text-white text-lg tracking-tight font-display">DHURA <span className="text-dhura-400 text-base">ذُرى</span></span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500 max-w-xs">
-              السوق الأول في اليمن لتصفح وعرض وتداول المنتجات المحلية بأفضل تجربة مستخدم وأمان عالي.
+              متجر العطور والمنتجات الفاخرة. نختار لك أرقى العطور وأجود المنتجات بعناية فائقة.
             </p>
           </div>
 
@@ -27,13 +27,13 @@ const Footer = ({ storeInfo }) => {
             <ul className="space-y-2 text-xs">
               <li>
                 <Link to="/about" className="hover:text-white transition-colors flex items-center gap-1.5 group">
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-indigo-500 transition-colors"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-dhura-500 transition-colors"></span>
                   من نحن
                 </Link>
               </li>
               <li>
                 <Link to="/privacy-policy" className="hover:text-white transition-colors flex items-center gap-1.5 group">
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-indigo-500 transition-colors"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-dhura-500 transition-colors"></span>
                   سياسة الخصوصية
                 </Link>
               </li>
@@ -91,7 +91,7 @@ const Footer = ({ storeInfo }) => {
         {/* Bottom Socket */}
         <div className="pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-[11px] text-slate-600 font-medium">
-            &copy; 2026 Al-Gaadi Store. All rights reserved.
+            &copy; 2026 DHURA ذُرى. جميع الحقوق محفوظة.
           </div>
           
           <div className="flex items-center gap-3 opacity-60 mix-blend-luminosity hover:mix-blend-normal transition-all">

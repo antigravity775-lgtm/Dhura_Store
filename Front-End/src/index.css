@@ -41,11 +41,11 @@
   }
 
   ::selection {
-    @apply bg-indigo-200 text-indigo-900;
+    @apply bg-amber-200 text-amber-900;
   }
 
   .dark ::selection {
-    @apply bg-indigo-800 text-indigo-100;
+    @apply bg-amber-800 text-amber-100;
   }
 
   /* EN: Smooth color transitions when toggling theme — prevents jarring changes
@@ -101,10 +101,10 @@
   }
 
   .focus-ring:focus {
-    @apply outline-none ring-2 ring-indigo-500/50 ring-offset-2;
+    @apply outline-none ring-2 ring-amber-500/50 ring-offset-2;
   }
   .dark .focus-ring:focus {
-    @apply ring-offset-slate-900;
+    @apply ring-offset-[#1A1510];
   }
 
   .img-placeholder {
@@ -124,23 +124,23 @@
     background: theme('colors.slate.100');
   }
   ::-webkit-scrollbar-thumb {
-    background: theme('colors.slate.300');
+    background: #C9A84C;
     border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: theme('colors.slate.400');
+    background: #A07830;
   }
 
-  /* EN: Dark mode scrollbar
-     AR: شريط تمرير الوضع الداكن */
+  /* EN: Dark mode scrollbar — DHURA gold
+     AR: شريط تمرير الوضع الداكن — ذهبي ذُرى */
   .dark ::-webkit-scrollbar-track {
-    background: theme('colors.slate.900');
+    background: #1A1510;
   }
   .dark ::-webkit-scrollbar-thumb {
-    background: theme('colors.slate.700');
+    background: #7A5C20;
   }
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: theme('colors.slate.600');
+    background: #C9A84C;
   }
 }
 

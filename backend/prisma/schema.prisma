@@ -1,6 +1,7 @@
-// Prisma schema for Yemeni E-commerce store
-// Migrated from SQL Server (Entity Framework Core) to PostgreSQL (Supabase)
-// Using Prisma ORM
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
 
 datasource db {
   provider  = "postgresql"
@@ -8,12 +9,106 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  fullName     String
+  phoneNumber  String?
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(Buyer)
+  city         String?
+  isVerified   Boolean   @default(false)
+  isBlocked    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  orders       Order[]   @relation("BuyerOrders")
+  products     Product[] @relation("SellerProducts")
+
+  @@index([phoneNumber])
+  @@index([city])
 }
 
-// Enums to match C# versions
+model Category {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  iconUrl   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[] @relation("CategoryProducts")
+
+  @@index([name])
+}
+
+model Product {
+  id             String      @id @default(uuid()) @db.Uuid
+  title          String
+  description    String
+  price          Decimal     @db.Decimal(18, 2)
+  currency       Currency    @default(YER_Sanaa)
+  condition      Condition   @default(New)
+  stockQuantity  Int
+  mainImageUrl   String?
+  isHidden       Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  categoryId     String      @db.Uuid
+  sellerId       String      @db.Uuid
+  discountPrice  Decimal?    @db.Decimal(18, 2)
+  isPromoted     Boolean     @default(false)
+  promotionLabel String?
+  OrderItem      OrderItem[]
+  category       Category    @relation("CategoryProducts", fields: [categoryId], references: [id])
+  seller         User        @relation("SellerProducts", fields: [sellerId], references: [id])
+
+  @@index([isHidden, isPromoted, createdAt(sort: Desc)])
+  @@index([sellerId, createdAt(sort: Desc)])
+  @@index([categoryId, isHidden, isPromoted])
+  @@index([discountPrice])
+}
+
+model Order {
+  id              String        @id @default(uuid()) @db.Uuid
+  totalAmount     Decimal       @db.Decimal(18, 2)
+  currency        Currency      @default(YER_Sanaa)
+  status          OrderStatus   @default(Pending)
+  shippingAddress String
+  paymentMethod   PaymentMethod @default(COD)
+  orderDate       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  buyerId         String        @db.Uuid
+  buyer           User          @relation("BuyerOrders", fields: [buyerId], references: [id])
+  orderItems      OrderItem[]   @relation("OrderItems")
+
+  @@index([buyerId, orderDate(sort: Desc)])
+  @@index([status, orderDate(sort: Desc)])
+}
+
+model OrderItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  quantity  Int
+  unitPrice Decimal  @db.Decimal(18, 2)
+  createdAt DateTime @default(now())
+  orderId   String   @db.Uuid
+  productId String   @db.Uuid
+  order     Order    @relation("OrderItems", fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model SystemSetting {
+  id           String   @id @default("global")
+  aboutUsText  String   @default("سوق إلكتروني يمني يوفر أفضل المنتجات...")
+  contactEmail String   @default("info@al-gaadi.com")
+  contactPhone String   @default("+967 77X XXX XXX")
+  facebookUrl  String?
+  twitterUrl   String?
+  whatsappUrl  String?
+  instagramUrl String?
+  updatedAt    DateTime @updatedAt
+}
+
 enum Role {
   Admin
   Seller
@@ -36,11 +131,11 @@ enum Currency {
 
 enum OrderStatus {
   Pending
-  Confirmed
   Processing
   Shipped
   Delivered
   Cancelled
+  Confirmed
 }
 
 enum PaymentMethod {
@@ -48,130 +143,4 @@ enum PaymentMethod {
   BankTransfer
   CreditCard
   CashOnDelivery
-}
-
-// Models
-
-model User {
-  id           String   @id @default(uuid()) @db.Uuid
-  fullName     String
-  phoneNumber  String?
-  email        String   @unique
-  passwordHash String
-  role         Role     @default(Buyer)
-  city         String?
-  isVerified   Boolean  @default(false)
-  isBlocked    Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Relations
-  products Product[] @relation("SellerProducts")
-  orders   Order[]   @relation("BuyerOrders")
-
-  @@index([phoneNumber])
-  // Used when filtering products by seller's city (JOIN from Product query)
-  @@index([city])
-}
-
-model Category {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String
-  iconUrl   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  products Product[] @relation("CategoryProducts")
-
-  @@index([name])
-}
-
-model Product {
-  id            String    @id @default(uuid()) @db.Uuid
-  title         String
-  description   String
-  price         Decimal   @db.Decimal(18, 2)
-  currency      Currency  @default(YER_Sanaa)
-  condition     Condition @default(New)
-  stockQuantity Int
-  mainImageUrl    String?
-  isHidden        Boolean   @default(false)
-  isPromoted      Boolean   @default(false)
-  discountPrice   Decimal?  @db.Decimal(18, 2)
-  promotionLabel  String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  // Relations
-  categoryId String   @db.Uuid
-  category   Category @relation("CategoryProducts", fields: [categoryId], references: [id])
-  sellerId   String   @db.Uuid
-  seller     User     @relation("SellerProducts", fields: [sellerId], references: [id])
-  OrderItem  OrderItem[]
-
-  // Composite index for the main product listing query:
-  // WHERE isHidden = false ORDER BY isPromoted DESC, createdAt DESC
-  @@index([isHidden, isPromoted, createdAt(sort: Desc)])
-
-  // Composite index for seller dashboard: WHERE sellerId = ? ORDER BY createdAt DESC
-  @@index([sellerId, createdAt(sort: Desc)])
-
-  // Composite index for category filtering + ordering
-  @@index([categoryId, isHidden, isPromoted])
-
-  // For discountPrice filter (specialOffers: WHERE discountPrice IS NOT NULL)
-  @@index([discountPrice])
-}
-
-// Note: We handle soft delete (isHidden) in queries by adding WHERE NOT isHidden
-// In the repository, we will always filter out hidden products unless explicitly requested.
-
-model Order {
-  id              String        @id @default(uuid()) @db.Uuid
-  totalAmount     Decimal       @db.Decimal(18, 2)
-  currency        Currency      @default(YER_Sanaa)
-  status          OrderStatus   @default(Pending)
-  shippingAddress String
-  paymentMethod   PaymentMethod @default(COD)
-  orderDate       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  // Relations
-  buyerId    String   @db.Uuid
-  buyer      User     @relation("BuyerOrders", fields: [buyerId], references: [id])
-  orderItems OrderItem[] @relation("OrderItems")
-
-  // Composite index for buyer order history: WHERE buyerId = ? ORDER BY orderDate DESC
-  @@index([buyerId, orderDate(sort: Desc)])
-  // Admin filtering by status
-  @@index([status, orderDate(sort: Desc)])
-}
-
-model OrderItem {
-  id        String   @id @default(uuid()) @db.Uuid
-  quantity  Int
-  unitPrice Decimal  @db.Decimal(18, 2)
-  createdAt DateTime @default(now())
-
-  // Relations
-  orderId   String   @db.Uuid
-  order     Order    @relation("OrderItems", fields: [orderId], references: [id])
-  productId String   @db.Uuid
-  product   Product  @relation(fields: [productId], references: [id])
-
-  @@index([orderId])
-  @@index([productId])
-}
-
-model SystemSetting {
-  id           String   @id @default("global") // We only need one row with id "global"
-  aboutUsText  String   @default("سوق إلكتروني يمني يوفر أفضل المنتجات...")
-  contactEmail String   @default("info@al-gaadi.com")
-  contactPhone String   @default("+967 77X XXX XXX")
-  facebookUrl  String?
-  twitterUrl   String?
-  whatsappUrl  String?
-  instagramUrl String?
-  updatedAt    DateTime @updatedAt
 }

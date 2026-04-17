@@ -118,10 +118,10 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
   return (
     <div
       dir="ltr"
-      className={`group flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-sm border p-3 h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] cursor-pointer ${
+      className={`group flex flex-col bg-white dark:bg-[#1A1510]/50 rounded-2xl shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] border p-3 h-full transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] cursor-pointer ${
         isPromoted
-          ? 'border-indigo-300 dark:border-indigo-600 ring-2 ring-indigo-400/30 dark:ring-indigo-500/20 shadow-md shadow-indigo-500/10'
-          : 'border-gray-100 dark:border-slate-700'
+          ? 'border-dhura-300 dark:border-dhura-600 ring-2 ring-dhura-400/30 dark:ring-dhura-500/20'
+          : 'border-gray-100/60 dark:border-dhura-900'
       }`}
       role="button"
       tabIndex={0}
@@ -129,7 +129,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
       onClick={() => onClick?.(product)}
     >
       {/* Image Container with Badge */}
-      <div className="relative aspect-square w-full mb-3 bg-white dark:bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center border border-gray-50 dark:border-slate-700">
+      <div className="relative aspect-[4/5] w-full mb-3 bg-white dark:bg-[#1A1510] rounded-xl overflow-hidden flex items-center justify-center border border-gray-50 dark:border-dhura-900/50">
         <img
           src={getOptimizedImageUrl(image, 400)}
           alt={title}
@@ -140,9 +140,9 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         {/* Absolute Banner/Badge */}
         {badge && !hasPromoRibbon && (
           <div className="absolute top-0 left-0 z-10 w-full flex justify-start pointer-events-none">
-            <span className={`px-2 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-white rounded-br-lg shadow-sm ${badge === 'Sale' ? 'bg-[#CC0C39]' : 'bg-emerald-600'
+            <span className={`px-2.5 py-1 text-[10px] sm:text-xs font-bold tracking-wide text-white rounded-br-xl shadow-sm ${badge === 'Sale' ? 'bg-gradient-to-r from-orange-500 to-amber-500' : 'bg-gradient-to-r from-teal-500 to-emerald-500'
               }`}>
-              {badge}
+              {badge === 'Sale' ? 'تخفيض' : badge === 'Local' ? 'محلي' : badge}
             </span>
           </div>
         )}
@@ -159,7 +159,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         {/* Discount Badge */}
         {hasDiscount && (
           <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
-            <span className="px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-500 rounded-md shadow-sm">
+            <span className="px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 rounded-md shadow-md">
               -{discountPercentage}%
             </span>
           </div>
@@ -188,27 +188,32 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         </h3>
 
         {/* 5-Star Rating Component & Review Count */}
-        <div className="flex items-center gap-1 mb-2">
-          <div className="flex items-center space-x-[2px]">
+        <div className="flex items-center gap-1.5 mb-2.5">
+          <div className="flex items-center space-x-[2px] rtl:space-x-reverse">
             {Array.from({ length: 5 }).map((_, i) => {
               const isFilled = i < Math.floor(rating);
               const isHalf = !isFilled && i < rating;
 
               return (
-                <div key={i} className="relative w-[14px] h-[14px]">
-                  <Star className="w-[14px] h-[14px] text-gray-300 absolute" />
+                <div key={i} className="relative w-[12px] h-[12px] sm:w-[14px] sm:h-[14px]">
+                  <Star className="w-full h-full text-gray-200 dark:text-slate-600 absolute" />
                   {(isFilled || isHalf) && (
                     <div className={`absolute top-0 left-0 overflow-hidden ${isHalf ? 'w-1/2' : 'w-full'}`}>
-                      <Star className="w-[14px] h-[14px] text-[#FFA41C] fill-[#FFA41C]" />
+                      <Star className="w-full h-full text-amber-400 fill-amber-400" />
                     </div>
                   )}
                 </div>
               );
             })}
           </div>
-          <span className="text-[11px] sm:text-xs text-blue-600 hover:underline hover:text-amber-700 cursor-pointer ml-1">
-            {reviewCount.toLocaleString()}
-          </span>
+          <div className="flex items-center gap-1">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-amber-400">
+              {Number(rating).toFixed(1)}/5
+            </span>
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+              ({reviewCount.toLocaleString()})
+            </span>
+          </div>
         </div>
 
         {/* Pricing Layout & Quick Add Action */}
