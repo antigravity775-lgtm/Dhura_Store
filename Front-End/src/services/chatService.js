@@ -1,4 +1,6 @@
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
+
+const BASE_URL = getApiBaseUrl();
 
 export const chatService = {
   sendMessage: async (messages) => {
