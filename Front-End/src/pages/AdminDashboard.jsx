@@ -307,7 +307,7 @@ const AdminDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row gap-3 sm:items-center justify-between h-16">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-0 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700 ring-1 ring-amber-200/60">
-               <img src="/Logo.png" alt="شعار متجر الجعدي" className="w-full h-full object-cover object-center scale-[1.16]" />
+               <img src="/Logo_192.png" alt="شعار متجر الجعدي" className="w-full h-full object-cover object-center scale-[1.16]" />
             </div>
             <div>
               <h1 className="font-extrabold text-slate-900 dark:text-white text-lg leading-none">لوحة المسؤول</h1>

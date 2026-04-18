@@ -41,6 +41,24 @@
     color: theme('colors.slate.100');
   }
 
+  /* EN: Keep autofill text readable on dark/auth inputs (Chrome/Edge/Safari)
+     AR: الحفاظ على وضوح نص الإكمال التلقائي في الحقول الداكنة */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: theme('colors.slate.100');
+    caret-color: theme('colors.slate.100');
+    -webkit-box-shadow: 0 0 0px 1000px rgba(15, 23, 42, 0.9) inset;
+    box-shadow: 0 0 0px 1000px rgba(15, 23, 42, 0.9) inset;
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
   /* EN: Keep native search clear control visible in dark mode (WebKit browsers)
      AR: إبقاء زر المسح داخل حقل البحث واضحاً في الوضع الداكن (متصفحات WebKit) */
   .dark input[type="search"]::-webkit-search-cancel-button {

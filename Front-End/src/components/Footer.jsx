@@ -13,7 +13,7 @@ const Footer = ({ storeInfo }) => {
           {/* Brand & Short text */}
           <div className="col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 mb-3">
-              <img src="/Logo.png" alt="شعار DHURA ذُرى" width="32" height="32" className="w-8 h-8 rounded-full bg-white object-cover object-center scale-[1.16] border-2 border-dhura-800" loading="lazy" />
+              <img src="/Logo_192.png" alt="شعار DHURA ذُرى" width="32" height="32" className="w-8 h-8 rounded-full bg-white object-cover object-center scale-[1.16] border-2 border-dhura-800" loading="lazy" />
               <span className="font-extrabold text-white text-lg tracking-tight font-display">DHURA <span className="text-dhura-400 text-base">ذُرى</span></span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500 max-w-xs">
@@ -92,6 +92,18 @@ const Footer = ({ storeInfo }) => {
         <div className="pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-[11px] text-slate-600 font-medium">
             &copy; 2026 DHURA ذُرى. جميع الحقوق محفوظة.
+            <span className="mx-1.5">|</span>
+            <span>تم التطوير بواسطة عبدالرحمن يوسف الجعدي</span>
+            <span className="mx-1.5">|</span>
+            <a
+  href="https://wa.me/967775181863?text=Hello%2C%20I%20would%20like%20to%20get%20in%20touch%20with%20you"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Contact me on WhatsApp"
+  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-400 transition-all duration-200 shadow-md hover:shadow-lg"
+>
+  💬 Contact me on WhatsApp
+</a>
           </div>
           
           <div className="flex items-center gap-3 opacity-60 mix-blend-luminosity hover:mix-blend-normal transition-all">
