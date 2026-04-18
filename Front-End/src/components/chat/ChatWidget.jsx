@@ -46,7 +46,7 @@ const LazyMarkdown = ({ content }) => (
 export const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hi there! 👋 How can I help you today?' }
+    { role: 'assistant', content: 'مرحباً بك 👋\nأنا مساعد ذُرى. اكتب لي ما تبحث عنه وسأقترح لك من المنتجات المتوفرة في المتجر فقط.' }
   ]);
   const [inputVal, setInputVal] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -89,10 +89,10 @@ export const ChatWidget = () => {
       if (response && response.success) {
         setMessages((prev) => [...prev, { role: 'assistant', content: response.reply }]);
       } else {
-        setMessages((prev) => [...prev, { role: 'assistant', content: 'Oops! Something went wrong on our end. Please try again later.' }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: 'حدث خطأ من جهتنا حالياً. حاول مرة أخرى بعد قليل.' }]);
       }
     } catch (error) {
-      setMessages((prev) => [...prev, { role: 'assistant', content: 'Network error. Please try again.' }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: 'مشكلة في الاتصال بالشبكة. حاول مرة أخرى.' }]);
     } finally {
       setIsLoading(false);
       setTimeout(() => setIsRateLimited(false), 1500);
@@ -110,8 +110,8 @@ export const ChatWidget = () => {
             <div className="flex items-center gap-2">
               <Bot className="w-6 h-6" />
               <div>
-                <h3 className="font-semibold text-sm">DHURA Assistant</h3>
-                <p className="text-xs text-dhura-200">Online & ready to help</p>
+                <h3 className="font-semibold text-sm">مساعد DHURA</h3>
+                <p className="text-xs text-dhura-200">متصل الآن وجاهز للمساعدة</p>
               </div>
             </div>
             <button 
@@ -169,7 +169,7 @@ export const ChatWidget = () => {
                   </div>
                   <div className="p-3 rounded-2xl text-sm bg-white dark:bg-[#231D14] border border-dhura-100 dark:border-dhura-900 text-slate-700 dark:text-dhura-100 rounded-tl-none shadow-sm flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin text-dhura-500" />
-                    <span className="text-slate-500 dark:text-dhura-400">Thinking...</span>
+                    <span className="text-slate-500 dark:text-dhura-400">جاري التفكير...</span>
                   </div>
               </div>
             )}
@@ -184,7 +184,7 @@ export const ChatWidget = () => {
                 type="text"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
-                placeholder={isRateLimited ? "يرجى الانتظار قليلاً..." : "Type your message..."}
+                placeholder={isRateLimited ? "يرجى الانتظار قليلاً..." : "اكتب رسالتك..."}
                 className="w-full bg-dhura-50 dark:bg-dhura-950/80 border border-dhura-100 dark:border-dhura-900 rounded-full py-3 pl-4 pr-12 text-sm text-slate-900 dark:text-dhura-100 focus:ring-2 focus:ring-dhura-500/50 focus:outline-none placeholder-slate-400 dark:placeholder-dhura-600"
                 disabled={isLoading || isRateLimited}
               />

@@ -61,7 +61,7 @@ const Layout = React.memo(({ children }) => {
             {/* الشعار / Logo */}
             <Link to="/" className="flex-shrink-0 flex items-center gap-3 cursor-pointer group select-none">
               <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-amber-200/60">
-                <img src="/Logo.png" alt="شعار DHURA ذُرى" width="44" height="44" fetchpriority="high" className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300" />
+                <img src="/Logo_192.png" alt="شعار DHURA ذُرى" width="44" height="44" fetchpriority="high" className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300" />
                 <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-amber-400 rounded-full border-2 border-white animate-pulse hidden md:block"></div>
               </div>
               <span className="font-extrabold text-xl md:text-2xl tracking-tight text-slate-900 dark:text-amber-100 drop-shadow-sm font-display">
