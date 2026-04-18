@@ -87,12 +87,12 @@ class SystemSettingsController {
    */
   async updateStoreInfo(req, res) {
     try {
-      const { aboutUsText, contactEmail, contactPhone, facebookUrl, twitterUrl, whatsappUrl, instagramUrl } = req.body;
+      const { aboutUsText, contactEmail, contactPhone, facebookUrl, twitterUrl, whatsappUrl, instagramUrl, shippingOfferText } = req.body;
       
       const updatedInfo = await prisma.systemSetting.upsert({
         where: { id: 'global' },
-        update: { aboutUsText, contactEmail, contactPhone, facebookUrl, twitterUrl, whatsappUrl, instagramUrl },
-        create: { id: 'global', aboutUsText, contactEmail, contactPhone, facebookUrl, twitterUrl, whatsappUrl, instagramUrl }
+        update: { aboutUsText, contactEmail, contactPhone, facebookUrl, twitterUrl, whatsappUrl, instagramUrl, shippingOfferText },
+        create: { id: 'global', aboutUsText, contactEmail, contactPhone, facebookUrl, twitterUrl, whatsappUrl, instagramUrl, shippingOfferText }
       });
       
       res.json(updatedInfo);

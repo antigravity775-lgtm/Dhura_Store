@@ -138,8 +138,8 @@ const AuthPage = () => {
         {/* الشعار */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-3 group">
-            <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0.5 overflow-hidden shadow-2xl">
-              <img src="/Logo.png" alt="شعار DHURA ذُرى" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-300" />
+            <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-1 ring-amber-200/60">
+              <img src="/Logo.png" alt="شعار DHURA ذُرى" className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300" />
               <div className="absolute top-0 right-0 w-3 h-3 bg-amber-400 rounded-full border-2 border-white animate-pulse"></div>
             </div>
             <span className="font-extrabold text-3xl text-white tracking-tight drop-shadow-md font-display">DHURA</span>

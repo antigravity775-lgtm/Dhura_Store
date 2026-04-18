@@ -29,6 +29,7 @@
   .dark select,
   .dark textarea {
     color: theme('colors.slate.100');
+    -webkit-text-fill-color: theme('colors.slate.100');
     caret-color: theme('colors.slate.100');
   }
   .dark input::placeholder,
@@ -38,6 +39,14 @@
   .dark select option {
     background-color: theme('colors.slate.800');
     color: theme('colors.slate.100');
+  }
+
+  /* EN: Keep native search clear control visible in dark mode (WebKit browsers)
+     AR: إبقاء زر المسح داخل حقل البحث واضحاً في الوضع الداكن (متصفحات WebKit) */
+  .dark input[type="search"]::-webkit-search-cancel-button {
+    filter: invert(1) brightness(1.4);
+    opacity: 0.95;
+    cursor: pointer;
   }
 
   ::selection {
