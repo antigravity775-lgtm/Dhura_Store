@@ -13,7 +13,7 @@ const Footer = ({ storeInfo }) => {
           {/* Brand & Short text */}
           <div className="col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 mb-3">
-              <img src="/Logo.png" alt="شعار DHURA ذُرى" width="32" height="32" className="w-8 h-8 rounded-full bg-white object-cover border-2 border-dhura-800" loading="lazy" />
+              <img src="/Logo.png" alt="شعار DHURA ذُرى" width="32" height="32" className="w-8 h-8 rounded-full bg-white object-cover object-center scale-[1.16] border-2 border-dhura-800" loading="lazy" />
               <span className="font-extrabold text-white text-lg tracking-tight font-display">DHURA <span className="text-dhura-400 text-base">ذُرى</span></span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500 max-w-xs">

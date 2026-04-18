@@ -102,6 +102,7 @@ model SystemSetting {
   aboutUsText  String   @default("سوق إلكتروني يمني يوفر أفضل المنتجات...")
   contactEmail String   @default("info@al-gaadi.com")
   contactPhone String   @default("+967 77X XXX XXX")
+  shippingOfferText String @default("شحن مجاني للطلبات فوق 50$")
   facebookUrl  String?
   twitterUrl   String?
   whatsappUrl  String?

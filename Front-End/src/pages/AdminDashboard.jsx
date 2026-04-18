@@ -58,7 +58,8 @@ const AdminDashboard = () => {
   const { data: storeInfoData, isLoading: storeInfoLoading, mutate: mutateStoreInfo } = useSWR(isAuth && activeTab === 'storeInfo' ? 'adminStoreInfo' : null, api.getStoreInfo);
   const [storeInfo, setStoreInfo] = useState({
     aboutUsText: '', contactEmail: '', contactPhone: '',
-    facebookUrl: '', twitterUrl: '', whatsappUrl: '', instagramUrl: ''
+    facebookUrl: '', twitterUrl: '', whatsappUrl: '', instagramUrl: '',
+    shippingOfferText: ''
   });
   const [storeInfoSaving, setStoreInfoSaving] = useState(false);
 
@@ -71,6 +72,7 @@ const AdminDashboard = () => {
       twitterUrl: storeInfoData.twitterUrl || '',
       whatsappUrl: storeInfoData.whatsappUrl || '',
       instagramUrl: storeInfoData.instagramUrl || '',
+      shippingOfferText: storeInfoData.shippingOfferText || '',
     });
   }, [storeInfoData]);
 
@@ -304,8 +306,8 @@ const AdminDashboard = () => {
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row gap-3 sm:items-center justify-between h-16">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-0.5 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700">
-               <img src="/Logo.png" alt="شعار متجر الجعدي" className="w-full h-full object-cover" />
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-0 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700 ring-1 ring-amber-200/60">
+               <img src="/Logo.png" alt="شعار متجر الجعدي" className="w-full h-full object-cover object-center scale-[1.16]" />
             </div>
             <div>
               <h1 className="font-extrabold text-slate-900 dark:text-white text-lg leading-none">لوحة المسؤول</h1>
@@ -1158,6 +1160,24 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Moving Offer Text */}
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                          <Truck className="w-4 h-4 inline ml-1.5" />
+                          نص العرض المتحرك (شريط أعلى الصفحة)
+                        </label>
+                        <input
+                          type="text"
+                          value={storeInfo.shippingOfferText}
+                          onChange={(e) => setStoreInfo({ ...storeInfo, shippingOfferText: e.target.value })}
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                          placeholder="مثال: شحن مجاني للطلبات فوق 50$"
+                        />
+                        <p className="text-xs text-slate-400 mt-1">
+                          اتركه فارغاً للرجوع إلى النص الافتراضي.
+                        </p>
+                      </div>
+
                       {/* Email */}
                       <div>
                         <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">

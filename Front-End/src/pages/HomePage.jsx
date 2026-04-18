@@ -86,8 +86,13 @@ function shuffleArray(arr) {
 // ────────────────────────────────────────────────────────────────────
 // OfferBelt — حزام العروض الترويجية
 // ────────────────────────────────────────────────────────────────────
-const OfferBelt = React.memo(() => {
-  const doubledMessages = [...offerMessages, ...offerMessages];
+const OfferBelt = React.memo(({ shippingOfferText }) => {
+  const dynamicMessages = useMemo(() => {
+    const next = [...offerMessages];
+    next[0] = { ...next[0], text: shippingOfferText || next[0].text };
+    return next;
+  }, [shippingOfferText]);
+  const doubledMessages = [...dynamicMessages, ...dynamicMessages];
 
   return (
     <div className="relative w-full bg-gradient-to-r from-[#120F09] via-[#2A1F0A] to-[#120F09] overflow-hidden select-none">
@@ -121,6 +126,7 @@ const HomePage = () => {
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const [shuffleSeed, setShuffleSeed] = useState(0);
+  const [shippingOfferText, setShippingOfferText] = useState('');
 
   // ─── Auto-scroll handling ───
   useEffect(() => {
@@ -135,6 +141,20 @@ const HomePage = () => {
         }
       }, 100);
     }
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    api.getStoreInfo()
+      .then((info) => {
+        if (mounted) setShippingOfferText(info?.shippingOfferText || '');
+      })
+      .catch(() => {
+        if (mounted) setShippingOfferText('');
+      });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // ─── SWR Data ───
@@ -196,7 +216,7 @@ const HomePage = () => {
   return (
     <Layout>
       {/* ═══════ حزام العروض / Offer Belt ═══════ */}
-      <OfferBelt />
+      <OfferBelt shippingOfferText={shippingOfferText} />
 
       {/* ═══════ المحتوى الرئيسي / Main Content ═══════ */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 lg:pb-16">
