@@ -40,7 +40,6 @@ const PREVIEW_COUNT = 8;
  */
 const offerMessages = [
   { icon: Truck, text: 'شحن مجاني للطلبات فوق 50$', color: 'text-emerald-300' },
-  { icon: BadgePercent, text: 'خصم 15% على أول طلب — كود: FIRST15', color: 'text-amber-300' },
   { icon: ShieldCheck, text: 'بائعون محليون موثوقون في 22 مدينة يمنية', color: 'text-sky-300' },
   { icon: Sparkles, text: 'ضمان جودة المنتج — استرجع أموالك بسهولة', color: 'text-purple-300' },
 ];

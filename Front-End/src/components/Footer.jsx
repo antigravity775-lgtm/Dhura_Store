@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, MessageCircle, Mail, MapPin, Truck, ShieldAlert, CreditCard, Banknote } from 'lucide-react';
+import { Facebook, MessageCircle, Mail, Truck, CreditCard, Banknote, Instagram, Phone } from 'lucide-react';
 
 const Footer = ({ storeInfo }) => {
+  const phone = (storeInfo?.contactPhone || '774405120').trim();
+  const phoneDigits = phone.replace(/[^\d]/g, '');
+  const phoneE164 = phoneDigits.startsWith('967') ? phoneDigits : `967${phoneDigits}`;
+  const whatsappUrl = storeInfo?.whatsappUrl || `https://wa.me/${phoneE164}`;
+  const instagramUrl = storeInfo?.instagramUrl || 'https://instagram.com/dhura';
   return (
     <footer className="bg-[#120F09] text-slate-400 py-8 border-t border-[#2A1F0A] mt-auto" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,7 +22,7 @@ const Footer = ({ storeInfo }) => {
               <span className="font-extrabold text-white text-lg tracking-tight font-display">DHURA <span className="text-dhura-400 text-base">ذُرى</span></span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500 max-w-xs">
-              متجر العطور والمنتجات الفاخرة. نختار لك أرقى العطور وأجود المنتجات بعناية فائقة.
+              متجر ذُرى هو المتجر الالكتروني الاول في اليمن لبيع العطور الاصلية فقط بأسعار أقل من الموقع الرسمي.
             </p>
           </div>
 
@@ -50,6 +55,12 @@ const Footer = ({ storeInfo }) => {
                   اتصل بنا
                 </Link>
               </li>
+              <li>
+                <a href={`tel:${phoneDigits}`} className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                  <Phone className="w-3.5 h-3.5 text-slate-600 group-hover:text-amber-400 transition-colors" />
+                  {phone}
+                </a>
+              </li>
               {storeInfo?.contactEmail && (
                 <li>
                   <a href={`mailto:${storeInfo.contactEmail}`} className="hover:text-white transition-colors flex items-center gap-1.5 group">
@@ -78,9 +89,15 @@ const Footer = ({ storeInfo }) => {
                 </a>
               </li>
               <li>
-                <a href={storeInfo?.whatsappUrl || '#'} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                <a href={whatsappUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
                   <MessageCircle className="w-3.5 h-3.5 text-slate-600 group-hover:text-green-500 transition-colors" />
                   واتساب
+                </a>
+              </li>
+              <li>
+                <a href={instagramUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                  <Instagram className="w-3.5 h-3.5 text-slate-600 group-hover:text-pink-500 transition-colors" />
+                  انستغرام
                 </a>
               </li>
             </ul>
@@ -90,20 +107,17 @@ const Footer = ({ storeInfo }) => {
 
         {/* Bottom Socket */}
         <div className="pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-[11px] text-slate-600 font-medium">
-            &copy; 2026 DHURA ذُرى. جميع الحقوق محفوظة.
-            <span className="mx-1.5">|</span>
-            <span>تم التطوير بواسطة عبدالرحمن يوسف الجعدي</span>
-            <span className="mx-1.5">|</span>
-            <a
-  href="https://wa.me/967775181863?text=Hello%2C%20I%20would%20like%20to%20get%20in%20touch%20with%20you"
-  target="_blank"
-  rel="noopener noreferrer"
-  aria-label="Contact me on WhatsApp"
-  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-400 transition-all duration-200 shadow-md hover:shadow-lg"
->
-  💬 Contact me on WhatsApp
-</a>
+          <div className="text-[11px] text-slate-600 font-medium flex flex-wrap items-center gap-x-2 gap-y-1 justify-center sm:justify-start text-center sm:text-right">
+            <span>&copy; 2026 ذُرى. جميع الحقوق محفوظة.</span>
+            <span className="text-slate-800/70 dark:text-slate-700/70 hidden sm:inline">|</span>
+            <span className="text-slate-600/90">
+              <Link
+                to="/credits"
+                className="text-slate-500 hover:text-white transition-colors underline underline-offset-4 decoration-slate-700 hover:decoration-white"
+              >
+                صفحة المطوّر
+              </Link>
+            </span>
           </div>
           
           <div className="flex items-center gap-3 opacity-60 mix-blend-luminosity hover:mix-blend-normal transition-all">
