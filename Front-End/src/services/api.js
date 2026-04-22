@@ -197,6 +197,10 @@ export async function getMyOrders() {
   return request('/orders/my-orders', { headers: jsonHeaders() });
 }
 
+export async function trackMyOrder(code) {
+  return request(`/orders/track/${encodeURIComponent(code)}`, { headers: jsonHeaders() });
+}
+
 export async function getSales() {
   return request('/orders/sales', { headers: jsonHeaders() });
 }
@@ -315,14 +319,30 @@ export async function updateStoreInfo(data) {
 
 
 // ─── Enum Helpers ───
-export const CurrencyMap = { 1: 'ريال (صنعاء)', 2: 'ريال (عدن)', 3: 'دولار' };
+export const CurrencyMap = {
+  1: 'ريال (صنعاء)',
+  2: 'ريال (عدن)',
+  3: 'دولار',
+  4: 'ريال سعودي',
+  5: 'يورو',
+};
 export const CurrencySymbol = {
+  1: 'ريال (صنعاء)',
+  2: 'ريال (عدن)',
+  3: '$',
+  4: 'ر.س',
+  5: '€',
   YER_Sanaa: 'ريال (صنعاء)',
   YER_Aden: 'ريال (عدن)',
   USD: '$',
   SAR: 'ر.س',
   EUR: '€',
 };
+
+export function getCurrencySymbol(currency) {
+  if (currency === null || currency === undefined || currency === '') return '';
+  return CurrencySymbol[currency] || CurrencySymbol[String(currency)] || '';
+}
 
 export const ConditionMap = { 1: 'جديد', 2: 'مستعمل', 3: 'مجدد' };
 export const ConditionEn = { 1: 'New', 2: 'Used', 3: 'Refurbished' };

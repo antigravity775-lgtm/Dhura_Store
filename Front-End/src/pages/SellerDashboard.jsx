@@ -9,6 +9,12 @@ import { useAuth } from '../context/AuthContext';
 import * as api from '../services/api';
 import AddProductForm from '../components/AddProductForm';
 
+function resolveOrderCurrency(order) {
+  const itemCurrency = order?.items?.[0]?.product?.currency || order?.orderItems?.[0]?.product?.currency;
+  if (order?.currency && order.currency !== 'YER_Sanaa') return order.currency;
+  return itemCurrency || order?.currency;
+}
+
 const SellerDashboard = () => {
   const { user, isAuthenticated, isSeller } = useAuth();
   const navigate = useNavigate();
@@ -390,7 +396,9 @@ const SellerDashboard = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {sales.map(order => (
+                {sales.map(order => {
+                  const displayCurrency = resolveOrderCurrency(order);
+                  return (
                   <div key={order.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-3">
                       <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">طلب #{order.id?.slice(0, 8)?.toUpperCase()}</span>
@@ -401,11 +409,11 @@ const SellerDashboard = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-slate-500 dark:text-slate-400">{order.items?.length || 0} منتج</span>
                       <span className="text-lg font-extrabold text-indigo-600 dark:text-indigo-400">
-                        {order.totalAmount?.toLocaleString('en-US') || 0} {order.currency || 'ريال'}
+                        {order.totalAmount?.toLocaleString('en-US') || 0} {api.getCurrencySymbol(displayCurrency) || 'ريال'}
                       </span>
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             )}
           </div>
