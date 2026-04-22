@@ -66,11 +66,10 @@ const App = () => {
           <Route path="/category/:categoryName" element={<CategoryPage />} />
           <Route path="/product-grid-demo" element={<ProductGridDemo />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/track-order" element={<TrackOrderPage />} />
-          <Route path="/credits" element={<CreditsPage />} />
+           <Route path="/about" element={<AboutPage />} />
+           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+           <Route path="/contact" element={<ContactPage />} />
+           <Route path="/credits" element={<CreditsPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
