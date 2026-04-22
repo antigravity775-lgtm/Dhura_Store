@@ -56,10 +56,13 @@ const Layout = React.memo(({ children }) => {
           : 'bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-gray-200 dark:border-slate-800 shadow-sm'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 relative">
 
             {/* الشعار / Logo */}
-            <Link to="/" className="flex-shrink-0 flex items-center gap-3 cursor-pointer group select-none">
+            <Link
+              to="/"
+              className="flex-shrink-0 flex items-center gap-3 cursor-pointer group select-none"
+            >
               <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-amber-200/60">
                 <img src="/Logo_192.png" alt="شعار DHURA ذُرى" width="44" height="44" fetchpriority="high" className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300" />
                 <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-amber-400 rounded-full border-2 border-white animate-pulse hidden md:block"></div>
