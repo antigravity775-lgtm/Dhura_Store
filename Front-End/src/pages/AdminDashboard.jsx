@@ -13,6 +13,12 @@ import useSWR from 'swr';
 import * as api from '../services/api';
 import AddProductForm from '../components/AddProductForm';
 
+function resolveOrderCurrency(order) {
+  const itemCurrency = order?.orderItems?.[0]?.product?.currency;
+  if (order?.currency && order.currency !== 'YER_Sanaa') return order.currency;
+  return itemCurrency || order?.currency;
+}
+
 const AdminDashboard = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -444,6 +450,7 @@ const AdminDashboard = () => {
                 ).map((order, index) => {
                   const isExpanded = expandedOrderId === order.id;
                   const orderItems = order.orderItems || [];
+                  const displayCurrency = resolveOrderCurrency(order);
                   const orderDate = new Date(order.orderDate).toLocaleDateString('ar-EG', {
                     year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                   });
@@ -487,7 +494,7 @@ const AdminDashboard = () => {
                         <div className="flex flex-wrap gap-4 text-xs text-slate-500 dark:text-slate-400 mb-4">
                           <span className="flex items-center gap-1">📍 {order.shippingAddress}</span>
                           <span className="flex items-center gap-1">💳 {order.paymentMethod === 'COD' || order.paymentMethod === 'CashOnDelivery' ? 'الدفع عند الاستلام' : order.paymentMethod === 'BankTransfer' ? 'تحويل بنكي' : order.paymentMethod}</span>
-                          <span className="font-bold text-indigo-600 dark:text-indigo-400">الإجمالي: {Number(order.totalAmount || 0).toLocaleString('en-US')} {api.CurrencySymbol[order.currency] || 'ريال'}</span>
+                          <span className="font-bold text-indigo-600 dark:text-indigo-400">الإجمالي: {Number(order.totalAmount || 0).toLocaleString('en-US')} {api.getCurrencySymbol(displayCurrency) || 'ريال'}</span>
                         </div>
 
                         {/* Actions Row */}

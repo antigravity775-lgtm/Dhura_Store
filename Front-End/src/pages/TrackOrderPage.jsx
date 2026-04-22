@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import * as api from '../services/api';
@@ -18,27 +18,29 @@ const TrackOrderPage = () => {
   const { isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [orders, setOrders] = useState([]);
+  const [result, setResult] = useState(null);
   const [query, setQuery] = useState('');
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    let mounted = true;
-    setLoading(true);
-    api.getMyOrders()
-      .then((data) => { if (mounted) setOrders(data || []); })
-      .catch((err) => { if (mounted) setError(err.message || 'تعذر تحميل الطلبات'); })
-      .finally(() => { if (mounted) setLoading(false); });
-    return () => { mounted = false; };
-  }, [isAuthenticated]);
 
   const normalizedQuery = useMemo(() => query.trim().toLowerCase(), [query]);
 
-  const matchedOrder = useMemo(() => {
-    if (!normalizedQuery) return null;
-    return orders.find((o) => String(o.id || '').toLowerCase() === normalizedQuery)
-      || orders.find((o) => String(o.id || '').toLowerCase().startsWith(normalizedQuery));
-  }, [orders, normalizedQuery]);
+  const handleSearch = async () => {
+    if (!normalizedQuery) {
+      setError('الرجاء إدخال رقم الطلب');
+      setResult(null);
+      return;
+    }
+    setLoading(true);
+    setError('');
+    setResult(null);
+    try {
+      const order = await api.trackMyOrder(normalizedQuery);
+      setResult(order || null);
+    } catch (err) {
+      setError(err.message || 'تعذر البحث عن الطلب');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Layout>
@@ -71,15 +73,34 @@ const TrackOrderPage = () => {
               </label>
               <input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setError('');
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSearch();
+                }}
                 placeholder="مثال: 9f3a1c2b..."
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 text-right"
               />
+              <button
+                type="button"
+                onClick={handleSearch}
+                disabled={loading}
+                className="mt-3 inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-dhura-500 text-white font-bold hover:bg-dhura-400 disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    جاري البحث...
+                  </span>
+                ) : 'بحث'}
+              </button>
 
               {loading && (
                 <div className="mt-4 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  جاري تحميل الطلبات...
+                  جاري البحث في قاعدة البيانات...
                 </div>
               )}
 
@@ -93,16 +114,16 @@ const TrackOrderPage = () => {
 
             {normalizedQuery && !loading && !error && (
               <div className="mt-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm p-6 sm:p-8">
-                {matchedOrder ? (
+                {result ? (
                   (() => {
-                    const status = statusConfig[matchedOrder.status] || statusConfig.Pending;
+                    const status = statusConfig[result.status] || statusConfig.Pending;
                     const Icon = status.icon;
                     return (
                       <div className="flex items-center justify-between gap-4 flex-wrap">
                         <div>
                           <div className="text-sm text-slate-500 dark:text-slate-400 mb-1">طلب</div>
                           <div className="text-lg font-extrabold text-slate-900 dark:text-white">
-                            #{String(matchedOrder.id).slice(0, 8).toUpperCase()}
+                            #{String(result.id).slice(0, 8).toUpperCase()}
                           </div>
                         </div>
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold border ${status.color}`}>

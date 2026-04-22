@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, MessageCircle, Mail, Truck, CreditCard, Banknote, Instagram, Phone } from 'lucide-react';
+import { MessageCircle, Mail, Truck, CreditCard, Banknote, Instagram } from 'lucide-react';
 
 const Footer = ({ storeInfo }) => {
   const phone = (storeInfo?.contactPhone || '774405120').trim();
@@ -55,15 +55,9 @@ const Footer = ({ storeInfo }) => {
                   اتصل بنا
                 </Link>
               </li>
-              <li>
-                <a href={`tel:${phoneDigits}`} className="hover:text-white transition-colors flex items-center gap-1.5 group">
-                  <Phone className="w-3.5 h-3.5 text-slate-600 group-hover:text-amber-400 transition-colors" />
-                  {phone}
-                </a>
-              </li>
               {storeInfo?.contactEmail && (
                 <li>
-                  <a href={`mailto:${storeInfo.contactEmail}`} className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                  <a href={`tel:${phoneDigits}`} className="hover:text-white transition-colors flex items-center gap-1.5 group">
                     <Mail className="w-3.5 h-3.5 text-slate-600 group-hover:text-amber-400 transition-colors" />
                     راسلنا للإستفسار
                   </a>
@@ -82,12 +76,12 @@ const Footer = ({ storeInfo }) => {
           <div>
             <h4 className="text-white font-bold text-sm mb-3">تواصل معنا</h4>
             <ul className="space-y-2 text-xs">
-              <li>
+              {/* <li>
                 <a href={storeInfo?.facebookUrl || '#'} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
                   <Facebook className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-500 transition-colors" />
                   صفحة فيسبوك
                 </a>
-              </li>
+              </li> */}
               <li>
                 <a href={whatsappUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
                   <MessageCircle className="w-3.5 h-3.5 text-slate-600 group-hover:text-green-500 transition-colors" />

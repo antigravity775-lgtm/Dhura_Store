@@ -5,6 +5,12 @@ import { Package, Loader2, Calendar, MapPin, CreditCard, ShoppingBag, ArrowRight
 import Layout from '../components/Layout';
 import * as api from '../services/api';
 
+function resolveOrderCurrency(order) {
+  const itemCurrency = order?.orderItems?.[0]?.product?.currency;
+  if (order?.currency && order.currency !== 'YER_Sanaa') return order.currency;
+  return itemCurrency || order?.currency;
+}
+
 const statusConfig = {
   Pending: { label: 'قيد الانتظار', color: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800', icon: Clock },
   Confirmed: { label: 'تم التأكيد', color: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800', icon: ShieldCheck },
@@ -100,6 +106,7 @@ const MyOrdersPage = () => {
               });
               const isExpanded = expandedOrder === order.id;
               const orderItems = order.orderItems || [];
+              const displayCurrency = resolveOrderCurrency(order);
 
               return (
                 <motion.div
@@ -156,7 +163,7 @@ const MyOrdersPage = () => {
                       <div className="text-left">
                         <span className="text-xs text-slate-400">الإجمالي</span>
                         <div className="text-lg font-extrabold text-indigo-600 dark:text-indigo-400">
-                          {Number(order.totalAmount || 0).toLocaleString('en-US')} {api.CurrencySymbol[order.currency] || 'ريال'}
+                          {Number(order.totalAmount || 0).toLocaleString('en-US')} {api.getCurrencySymbol(displayCurrency) || 'ريال'}
                         </div>
                       </div>
                     </div>

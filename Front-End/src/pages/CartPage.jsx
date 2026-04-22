@@ -253,7 +253,7 @@ const CartPage = () => {
                         onChange={(e) => { setCheckoutForm({...checkoutForm, shippingAddress: e.target.value}); setError(''); }}
                         placeholder="المدينة، الحي، الشارع..."
                         rows={2}
-                        className="w-full pr-10 pl-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 resize-none"
+                        className="w-full pr-10 pl-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 resize-none"
                       />
                     </div>
                   </div>

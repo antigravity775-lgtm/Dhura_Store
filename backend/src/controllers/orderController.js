@@ -45,6 +45,7 @@ class OrderController {
       }
 
       let totalAmount = 0;
+      let orderCurrency = null;
       const resolvedItems = [];
 
       for (const item of items) {
@@ -57,6 +58,11 @@ class OrderController {
         if (product.isHidden) throw new ValidationError(`Product is not available: ${product.title}`);
         if (product.stockQuantity < item.quantity) {
           throw new ValidationError(`الكمية المطلوبة من "${product.title}" (${item.quantity}) تتجاوز المخزون المتاح (${product.stockQuantity})`);
+        }
+        if (!orderCurrency) {
+          orderCurrency = product.currency;
+        } else if (orderCurrency !== product.currency) {
+          throw new ValidationError('لا يمكن إتمام طلب واحد بعملات مختلفة. الرجاء إتمام كل عملة في طلب منفصل.');
         }
 
         const unitPrice = Number(product.price);
@@ -74,6 +80,7 @@ class OrderController {
         data: {
           buyerId,
           totalAmount,
+          currency: orderCurrency || 'YER_Sanaa',
           shippingAddress,
           paymentMethod: paymentMethod || 'COD',
           status: 'Pending',
@@ -128,6 +135,53 @@ class OrderController {
       });
 
       res.json(orders);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Track a single order by code for current user
+   * GET /api/orders/track/:code
+   */
+  async trackMyOrder(req, res) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) throw new UnauthorizedError('Unauthorized');
+
+      const rawCode = String(req.params.code || '').trim();
+      const normalizedCode = rawCode.replace(/^#/, '').toLowerCase();
+      if (!normalizedCode) {
+        throw new ValidationError('Order code is required');
+      }
+
+      const where = {
+        buyerId: userId,
+        id: normalizedCode.length < 36
+          ? { startsWith: normalizedCode, mode: 'insensitive' }
+          : normalizedCode
+      };
+
+      const order = await prisma.order.findFirst({
+        where,
+        include: {
+          orderItems: {
+            include: {
+              product: {
+                select: { id: true, title: true, price: true, currency: true, condition: true, mainImageUrl: true }
+              }
+            }
+          },
+          buyer: { select: { id: true, fullName: true, phoneNumber: true } }
+        },
+        orderBy: { orderDate: 'desc' }
+      });
+
+      if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+
+      res.json(order);
     } catch (error) {
       throw error;
     }
