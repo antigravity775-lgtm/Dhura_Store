@@ -45,32 +45,26 @@ const Footer = ({ storeInfo }) => {
             </ul>
           </div>
 
-          {/* Support */}
-          <div>
-            <h4 className="text-white font-bold text-sm mb-3">الدعم</h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <Link to="/contact" className="hover:text-white transition-colors flex items-center gap-1.5 group">
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-indigo-500 transition-colors"></span>
-                  اتصل بنا
-                </Link>
-              </li>
-              {storeInfo?.contactEmail && (
-                <li>
-                  <a href={`tel:${phoneDigits}`} className="hover:text-white transition-colors flex items-center gap-1.5 group">
-                    <Mail className="w-3.5 h-3.5 text-slate-600 group-hover:text-amber-400 transition-colors" />
-                    راسلنا للإستفسار
-                  </a>
-                </li>
-              )}
-              <li>
-                <Link to="/track-order" className="hover:text-white transition-colors flex items-center gap-1.5 group">
-                  <Truck className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition-colors" />
-                  تتبع الطلب
-                </Link>
-              </li>
-            </ul>
-          </div>
+           {/* Support */}
+           <div>
+             <h4 className="text-white font-bold text-sm mb-3">الدعم</h4>
+             <ul className="space-y-2 text-xs">
+               <li>
+                 <Link to="/contact" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                   <span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-indigo-500 transition-colors"></span>
+                   اتصل بنا
+                 </Link>
+               </li>
+               {storeInfo?.contactEmail && (
+                 <li>
+                   <a href={`tel:${phoneDigits}`} className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                     <Mail className="w-3.5 h-3.5 text-slate-600 group-hover:text-amber-400 transition-colors" />
+                     راسلنا للإستفسار
+                   </a>
+                 </li>
+               )}
+             </ul>
+           </div>
 
           {/* Connect */}
           <div>
