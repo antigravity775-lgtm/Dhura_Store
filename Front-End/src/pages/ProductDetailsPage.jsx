@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, MessageCircle, MapPin, User, ShieldCheck, Heart, Share2, ChevronLeft, ChevronRight, Clock, Tag, Package, ShoppingCart, Check, Loader2 } from 'lucide-react';
@@ -56,6 +56,7 @@ const ProductDetailsPage = () => {
   const [product, setProduct] = useState(null);
   const [addedToCart, setAddedToCart] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [storeInfo, setStoreInfo] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -87,12 +88,69 @@ const ProductDetailsPage = () => {
     return () => { mounted = false; };
   }, [id]);
 
+  useEffect(() => {
+    let mounted = true;
+
+    api.getStoreInfo()
+      .then((info) => {
+        if (mounted) setStoreInfo(info);
+      })
+      .catch(() => {
+        if (mounted) setStoreInfo(null);
+      });
+
+    return () => { mounted = false; };
+  }, []);
+
   const handleAddToCart = () => {
     if (!product) return;
     addToCart(product, 1);
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2500);
   };
+
+  const whatsappMessage = `مرحباً! أنا مهتم بالمنتج: ${product?.title || ''}`;
+  const defaultWhatsAppPhone = '967775181863';
+  const formattedContactPhone = useMemo(() => {
+    const rawPhone = storeInfo?.contactPhone || '';
+    const digits = rawPhone.replace(/\D/g, '');
+    if (!digits) return defaultWhatsAppPhone;
+    return digits.startsWith('967') ? digits : `967${digits}`;
+  }, [storeInfo?.contactPhone]);
+
+  const whatsappBaseUrl = useMemo(() => {
+    const link = (storeInfo?.whatsappUrl || '').trim();
+    if (!link || link.includes('chat.whatsapp.com')) {
+      return `https://wa.me/${formattedContactPhone || defaultWhatsAppPhone}`;
+    }
+    const normalized = link.startsWith('http') ? link : `https://${link}`;
+    try {
+      const url = new URL(normalized);
+      if (url.hostname.includes('whatsapp.com')) {
+        return normalized;
+      }
+      return `https://wa.me/${formattedContactPhone || defaultWhatsAppPhone}`;
+    } catch {
+      const digits = link.replace(/\D/g, '');
+      if (digits) {
+        return `https://wa.me/${digits.startsWith('967') ? digits : `967${digits}`}`;
+      }
+      return `https://wa.me/${formattedContactPhone || defaultWhatsAppPhone}`;
+    }
+  }, [storeInfo?.whatsappUrl, formattedContactPhone]);
+
+  const productWhatsAppUrl = useMemo(() => {
+    try {
+      const url = new URL(whatsappBaseUrl);
+      if (url.searchParams.has('text')) {
+        return whatsappBaseUrl;
+      }
+      url.searchParams.set('text', whatsappMessage);
+      return url.toString();
+    } catch {
+      return `${whatsappBaseUrl}?text=${encodeURIComponent(whatsappMessage)}`;
+    }
+  }, [whatsappBaseUrl, whatsappMessage]);
 
   if (loading) {
     return <Layout><ProductSkeleton /></Layout>;
@@ -279,7 +337,7 @@ const ProductDetailsPage = () => {
 
               {/* زر واتساب */}
               <motion.a
-                href={`https://wa.me/967775181863?text=${encodeURIComponent(`مرحباً! أنا مهتم بالمنتج: ${product.title}`)}`}
+                href={productWhatsAppUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-3 bg-[#25D366] text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-lg shadow-green-500/25 hover:bg-[#1fb855] focus:outline-none focus:ring-4 focus:ring-green-400/50 transition-colors"

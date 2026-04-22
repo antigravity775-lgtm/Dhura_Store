@@ -23,7 +23,6 @@ const ProductGridDemo = React.lazy(() => import('./components/HighConversionGrid
 const AboutPage = React.lazy(() => import('./pages/AboutPage'));
 const PrivacyPolicyPage = React.lazy(() => import('./pages/PrivacyPolicyPage'));
 const ContactPage = React.lazy(() => import('./pages/ContactPage'));
-const TrackOrderPage = React.lazy(() => import('./pages/TrackOrderPage'));
 const CreditsPage = React.lazy(() => import('./pages/CreditsPage'));
 
 // EN: ChatWidget is lazy-loaded because it imports react-markdown + remark-gfm (~45KB gzip).
