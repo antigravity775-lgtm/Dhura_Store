@@ -4,7 +4,6 @@ import {
   MessageCircle,
   Mail,
   Truck,
-  CreditCard,
   Banknote,
   Instagram,
 } from "lucide-react";
@@ -158,12 +157,7 @@ const Footer = ({ storeInfo }) => {
             >
               <Banknote className="w-4 h-4 text-slate-300" />
             </div>
-            <div
-              className="flex items-center justify-center p-1.5 bg-slate-800 rounded-md border border-slate-700"
-              title="البطاقة البنكية"
-            >
-              <CreditCard className="w-4 h-4 text-slate-300" />
-            </div>
+
           </div>
         </div>
       </div>
