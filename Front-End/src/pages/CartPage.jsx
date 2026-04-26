@@ -22,6 +22,13 @@ const CartPage = () => {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutDone, setCheckoutDone] = useState(false);
   const [error, setError] = useState('');
+  const [storeInfo, setStoreInfo] = useState(null);
+
+  React.useEffect(() => {
+    api.getStoreInfo()
+      .then((data) => setStoreInfo(data))
+      .catch((err) => console.error("Failed to load store info:", err));
+  }, []);
 
   const [checkoutForm, setCheckoutForm] = useState({
     shippingAddress: '',
@@ -29,10 +36,12 @@ const CartPage = () => {
   });
 
   const handleCheckout = async () => {
+    /* Commenting out auth requirement for WhatsApp orders
     if (!isAuthenticated) {
       navigate('/auth');
       return;
     }
+    */
     if (!checkoutForm.shippingAddress.trim()) {
       setError('الرجاء إدخال عنوان التوصيل');
       return;
@@ -42,6 +51,7 @@ const CartPage = () => {
     setError('');
 
     try {
+      /* Commenting out original backend order creation
       await api.createOrder({
         buyerId: '00000000-0000-0000-0000-000000000000',
         shippingAddress: checkoutForm.shippingAddress,
@@ -51,6 +61,24 @@ const CartPage = () => {
           quantity: item.quantity,
         })),
       });
+      */
+      
+      let message = `مرحباً، أود طلب المنتجات التالية:\n\n`;
+      items.forEach((item, index) => {
+        message += `${index + 1}. ${item.title} (الكمية: ${item.quantity})\n`;
+      });
+      message += `\nالإجمالي: ${cartTotal.toLocaleString('en-US')}\n`;
+      message += `العنوان: ${checkoutForm.shippingAddress}\n`;
+      message += `طريقة الدفع: ${checkoutForm.paymentMethod === 0 ? 'عند الاستلام' : 'أخرى'}`;
+
+      const phone = (storeInfo?.contactPhone || "774405120").trim();
+      const phoneDigits = phone.replace(/[^\d]/g, "");
+      const phoneE164 = phoneDigits.startsWith("967") ? phoneDigits : `967${phoneDigits}`;
+      
+      const whatsappUrl = `https://wa.me/${phoneE164}?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, '_blank');
+      
       setCheckoutDone(true);
       clearCart();
     } catch (err) {
