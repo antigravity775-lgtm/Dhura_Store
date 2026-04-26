@@ -261,7 +261,7 @@ const CartPage = () => {
                   {/* طريقة الدفع */}
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1.5">طريقة الدفع</label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2">
                       <button
                         onClick={() => setCheckoutForm({...checkoutForm, paymentMethod: 0})}
                         className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border text-xs font-bold transition-all ${
@@ -272,17 +272,6 @@ const CartPage = () => {
                       >
                         <Banknote className="w-4 h-4" />
                         عند الاستلام
-                      </button>
-                      <button
-                        onClick={() => setCheckoutForm({...checkoutForm, paymentMethod: 1})}
-                        className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border text-xs font-bold transition-all ${
-                          checkoutForm.paymentMethod === 1
-                            ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
-                        }`}
-                      >
-                        <CreditCard className="w-4 h-4" />
-                        تحويل بنكي
                       </button>
                     </div>
                   </div>
