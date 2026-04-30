@@ -33,6 +33,25 @@ const jsonHeaders = () => ({
   ...getCsrfHeaders(),
 });
 
+function normalizeProduct(product) {
+  if (!product || typeof product !== 'object') return product;
+  const normalizedId = product.id ?? product.productId ?? product._id ?? null;
+  return normalizedId ? { ...product, id: normalizedId } : product;
+}
+
+function normalizeProductsListResponse(data) {
+  if (Array.isArray(data)) {
+    return data.map(normalizeProduct);
+  }
+  if (data && Array.isArray(data.items)) {
+    return data.items.map(normalizeProduct);
+  }
+  if (data && Array.isArray(data.products)) {
+    return data.products.map(normalizeProduct);
+  }
+  return [];
+}
+
 async function request(url, options = {}) {
   options.credentials = 'include'; // Ensure cookies are sent with every request
   const method = String(options.method || 'GET').toUpperCase();
@@ -141,11 +160,13 @@ export async function getProducts({ city, maxPriceUsd, condition, specialOffers,
   if (specialOffers) params.set('specialOffers', 'true');
   params.set('pageNumber', pageNumber);
   params.set('pageSize', pageSize);
-  return request(`/products?${params.toString()}`, { headers: jsonHeaders() });
+  const data = await request(`/products?${params.toString()}`, { headers: jsonHeaders() });
+  return normalizeProductsListResponse(data);
 }
 
 export async function getProductById(id) {
-  return request(`/products/${id}`, { headers: jsonHeaders() });
+  const data = await request(`/products/${id}`, { headers: jsonHeaders() });
+  return normalizeProduct(data);
 }
 
 export async function createProduct(data) {

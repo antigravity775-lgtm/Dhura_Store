@@ -1,5 +1,16 @@
 const crypto = require('crypto');
 
+function getCsrfCookieOptions() {
+  const isProd = process.env.NODE_ENV === 'production';
+  // Cross-domain deployments (frontend + API on different origins) require SameSite=None.
+  const sameSite = isProd ? 'none' : 'lax';
+  return {
+    secure: isProd,
+    sameSite,
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+  };
+}
+
 const csrfMiddleware = (req, res, next) => {
   // Methods that don't change state are safe
   const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
@@ -11,11 +22,7 @@ const csrfMiddleware = (req, res, next) => {
     // Generate a new token if one doesn't exist
     token = crypto.randomBytes(32).toString('hex');
     // Set cookie (not HttpOnly so frontend can read it)
-    res.cookie('XSRF-TOKEN', token, {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-    });
+    res.cookie('XSRF-TOKEN', token, getCsrfCookieOptions());
   }
 
   // If method is safe, just proceed
