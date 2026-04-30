@@ -25,6 +25,10 @@ const csrfMiddleware = (req, res, next) => {
     res.cookie('XSRF-TOKEN', token, getCsrfCookieOptions());
   }
 
+  // Expose token in response header so cross-origin frontends can read it.
+  // (They cannot read cookies from another origin via document.cookie.)
+  res.setHeader('x-xsrf-token', token);
+
   // If method is safe, just proceed
   if (safeMethods.includes(req.method)) {
     return next();
