@@ -231,6 +231,11 @@ const HomePage = () => {
 
         {/* ═══════ 3. معاينة المنتجات / Product Preview ═══════ */}
         <section>
+          {productsError && (
+            <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">
+              تعذر تحميل المنتجات حالياً: {productsError.message || 'حدث خطأ غير متوقع'}
+            </div>
+          )}
           {/* Section Header */}
           <div className="flex items-center justify-between mb-5 sm:mb-6">
             <div className="flex items-center gap-2.5">

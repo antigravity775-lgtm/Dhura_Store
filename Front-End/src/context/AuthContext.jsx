@@ -9,45 +9,11 @@ export const useAuth = () => {
   return ctx;
 };
 
-// Decode JWT payload without library
-function decodeToken(token) {
-  try {
-    const payload = token.split('.')[1];
-    const decoded = JSON.parse(atob(payload));
-    return decoded;
-  } catch {
-    return null;
-  }
-}
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const loadUserFromToken = useCallback(async () => {
-    const token = api.getToken();
-    if (!token) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-
-    const decoded = decodeToken(token);
-    if (!decoded) {
-      api.removeToken();
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-
-    // Check expiration
-    if (decoded.exp && decoded.exp * 1000 < Date.now()) {
-      api.removeToken();
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-
+  const checkAuthStatus = useCallback(async () => {
     try {
       const profile = await api.getProfile();
       setUser({
@@ -59,44 +25,39 @@ export const AuthProvider = ({ children }) => {
         role: profile.role,
       });
     } catch {
-      // Token invalid or API down — use decoded token data as fallback
-      setUser({
-        id: decoded.sub || decoded.nameid,
-        fullName: decoded.name || decoded.unique_name || '',
-        role: decoded.role || '',
-        phoneNumber: '',
-        email: '',
-        city: '',
-      });
+      // API call failed (e.g., 401 Unauthorized), so user is not logged in.
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, []);
 
   useEffect(() => {
-    loadUserFromToken();
-  }, [loadUserFromToken]);
+    checkAuthStatus();
+  }, [checkAuthStatus]);
 
    const login = async (email, password) => {
      const result = await api.login(email, password);
-     api.setToken(result.token);
      localStorage.setItem('user_name', result.fullName);
      localStorage.setItem('user_id', result.userId);
-     await loadUserFromToken();
+     await checkAuthStatus();
      return result;
    };
 
   const register = async (data) => {
     const result = await api.register(data);
-    api.setToken(result.token);
     localStorage.setItem('user_name', result.fullName);
     localStorage.setItem('user_id', result.userId);
-    await loadUserFromToken();
+    await checkAuthStatus();
     return result;
   };
 
-  const logout = () => {
-    api.removeToken();
+  const logout = async () => {
+    try {
+      await api.logout();
+    } catch (e) {
+      console.error('Logout failed on server', e);
+    }
     localStorage.removeItem('user_name');
     localStorage.removeItem('user_id');
     setUser(null);
@@ -109,7 +70,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, isAuthenticated, isSeller, isBuyer, isAdmin, loadUserFromToken }}
+      value={{ user, loading, login, register, logout, isAuthenticated, isSeller, isBuyer, isAdmin, checkAuthStatus }}
     >
       {children}
     </AuthContext.Provider>

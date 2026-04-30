@@ -220,6 +220,11 @@ const ProductsPage = () => {
         </section>
 
         {/* ── Section Header + Counter ── */}
+        {productsError && (
+          <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">
+            تعذر تحميل المنتجات حالياً: {productsError.message || 'حدث خطأ غير متوقع'}
+          </div>
+        )}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
