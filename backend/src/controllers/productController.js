@@ -54,6 +54,11 @@ class ProductController {
    */
   async createProduct(req, res) {
     try {
+      // Inject sellerId from user token if not provided or if not admin
+      if (req.user?.role !== 'Admin' || !req.body.sellerId) {
+        req.body.sellerId = req.user?.id;
+      }
+
       // Validate required fields
       const requiredFields = ['title', 'description', 'price', 'currency', 'condition', 'stockQuantity', 'categoryId', 'sellerId'];
       for (const field of requiredFields) {
@@ -81,6 +86,15 @@ class ProductController {
         throw new Error('ID mismatch');
       }
 
+      // Verify ownership
+      if (req.user?.role !== 'Admin') {
+        const product = await this.productService.getProductById(req.params.id);
+        if (!product || product.sellerId !== req.user.id) {
+          res.status(403);
+          throw new Error('Forbidden: You can only modify your own products');
+        }
+      }
+
       await this.productService.updateProduct(req.params.id, req.body);
       res.status(204).send();
     } catch (error) {
@@ -94,6 +108,15 @@ class ProductController {
    */
   async deleteProduct(req, res) {
     try {
+      // Verify ownership
+      if (req.user?.role !== 'Admin') {
+        const product = await this.productService.getProductById(req.params.id);
+        if (!product || product.sellerId !== req.user.id) {
+          res.status(403);
+          throw new Error('Forbidden: You can only delete your own products');
+        }
+      }
+
       await this.productService.deleteProduct(req.params.id);
       res.status(204).send();
     } catch (error) {
@@ -107,6 +130,15 @@ class ProductController {
    */
   async toggleVisibility(req, res) {
     try {
+      // Verify ownership
+      if (req.user?.role !== 'Admin') {
+        const product = await this.productService.getProductById(req.params.id);
+        if (!product || product.sellerId !== req.user.id) {
+          res.status(403);
+          throw new Error('Forbidden: You can only modify your own products');
+        }
+      }
+
       await this.productService.toggleVisibility(req.params.id);
       res.status(204).send();
     } catch (error) {

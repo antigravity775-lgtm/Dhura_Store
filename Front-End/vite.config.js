@@ -8,7 +8,9 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        // Local backend target for development only.
+        // Override with VITE_DEV_API_TARGET if your backend uses another port.
+        target: process.env.VITE_DEV_API_TARGET || 'http://localhost:5001',
         changeOrigin: true,
         secure: false,
       },

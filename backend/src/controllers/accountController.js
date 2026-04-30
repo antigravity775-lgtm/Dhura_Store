@@ -21,7 +21,18 @@ class AccountController {
       }
 
       const result = await this.authService.register(req.body);
-      res.status(200).json(result);
+      
+      // Set HttpOnly cookie
+      res.cookie('auth_token', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
+
+      // Remove token from response payload to prevent XSS leaks
+      const { token, ...responsePayload } = result;
+      res.status(200).json(responsePayload);
     } catch (error) {
       throw error;
     }
@@ -39,10 +50,34 @@ class AccountController {
       }
 
       const result = await this.authService.login(req.body);
-      res.status(200).json(result);
+      
+      // Set HttpOnly cookie
+      res.cookie('auth_token', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
+
+      // Remove token from response payload to prevent XSS leaks
+      const { token, ...responsePayload } = result;
+      res.status(200).json(responsePayload);
     } catch (error) {
       throw error;
     }
+  }
+
+  /**
+   * Logout user
+   * POST /api/account/logout
+   */
+  async logout(req, res) {
+    res.clearCookie('auth_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+    res.status(200).json({ message: 'Logged out successfully' });
   }
 
   /**
