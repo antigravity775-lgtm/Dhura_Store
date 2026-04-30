@@ -1,13 +1,15 @@
 const { PrismaClient } = require('@prisma/client');
 
-// Prisma Client instance with logging
-const prisma = new PrismaClient({
+// Singleton to avoid exhausting DB connections in serverless (Vercel).
+// In dev, we attach to globalThis so hot-reloads don't spawn new clients.
+const globalForPrisma = globalThis;
+
+const prisma = globalForPrisma.__prisma || new PrismaClient({
   log: ['error', 'warn'],
 });
 
-// Eagerly connect and log status
-prisma.$connect()
-  .then(() => console.log('✅ Prisma connected to database'))
-  .catch((err) => console.error('❌ Prisma connection failed:', err.message));
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.__prisma = prisma;
+}
 
 module.exports = prisma;

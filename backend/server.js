@@ -21,7 +21,10 @@ const csrfMiddleware = require('./src/middleware/csrfMiddleware');
 const app = express();
 
 // Security Headers
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  crossOriginOpenerPolicy: { policy: 'unsafe-none' },
+}));
 
 // CORS configuration
 const localDevOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
