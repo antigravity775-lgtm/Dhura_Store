@@ -3,6 +3,7 @@
 import { getApiBaseUrl } from '../utils/apiBaseUrl';
 
 const BASE_URL = getApiBaseUrl();
+let csrfTokenCache = null;
 
 // ─── Token Management ───
 // Tokens are now managed securely via HttpOnly cookies by the backend.
@@ -16,16 +17,18 @@ function getCookie(name) {
 }
 
 const getCsrfHeaders = () => {
-  const csrfToken = getCookie('XSRF-TOKEN');
+  const csrfToken = getCookie('XSRF-TOKEN') || csrfTokenCache;
   return csrfToken ? { 'x-xsrf-token': csrfToken } : {};
 };
 
 const isSafeMethod = (method = 'GET') => ['GET', 'HEAD', 'OPTIONS'].includes(String(method).toUpperCase());
 
 async function ensureCsrfCookie(baseUrl) {
-  if (getCookie('XSRF-TOKEN')) return;
+  if (getCookie('XSRF-TOKEN') || csrfTokenCache) return;
   // Safe request to prime CSRF cookie before first state-changing call (e.g. login/register).
-  await fetch(`${baseUrl}/products?pageNumber=1&pageSize=1`, { credentials: 'include' });
+  const res = await fetch(`${baseUrl}/products?pageNumber=1&pageSize=1`, { credentials: 'include' });
+  const headerToken = res.headers.get('x-xsrf-token');
+  if (headerToken) csrfTokenCache = headerToken;
 }
 
 const jsonHeaders = () => ({
@@ -69,6 +72,8 @@ async function request(url, options = {}) {
 
   try {
     res = await fetch(primaryUrl, options);
+    const headerToken = res.headers.get('x-xsrf-token');
+    if (headerToken) csrfTokenCache = headerToken;
   } catch (err) {
     // Dev fallback: if VITE_API_URL is misconfigured, retry through Vite local proxy.
     if (import.meta.env.DEV && BASE_URL !== '/api') {
