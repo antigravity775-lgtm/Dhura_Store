@@ -6,6 +6,17 @@ class AccountController {
     this.authService = new AuthService();
   }
 
+  getAuthCookieOptions() {
+    const isProd = process.env.NODE_ENV === 'production';
+    return {
+      httpOnly: true,
+      secure: isProd,
+      // Required for frontend/backend on different domains in production.
+      sameSite: isProd ? 'none' : 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+    };
+  }
+
   /**
    * Register a new user
    * POST /api/account/register
@@ -23,12 +34,7 @@ class AccountController {
       const result = await this.authService.register(req.body);
       
       // Set HttpOnly cookie
-      res.cookie('auth_token', result.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-      });
+      res.cookie('auth_token', result.token, this.getAuthCookieOptions());
 
       // Remove token from response payload to prevent XSS leaks
       const { token, ...responsePayload } = result;
@@ -52,12 +58,7 @@ class AccountController {
       const result = await this.authService.login(req.body);
       
       // Set HttpOnly cookie
-      res.cookie('auth_token', result.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-      });
+      res.cookie('auth_token', result.token, this.getAuthCookieOptions());
 
       // Remove token from response payload to prevent XSS leaks
       const { token, ...responsePayload } = result;
@@ -72,11 +73,8 @@ class AccountController {
    * POST /api/account/logout
    */
   async logout(req, res) {
-    res.clearCookie('auth_token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
-    });
+    const { maxAge, ...clearOptions } = this.getAuthCookieOptions();
+    res.clearCookie('auth_token', clearOptions);
     res.status(200).json({ message: 'Logged out successfully' });
   }
 
