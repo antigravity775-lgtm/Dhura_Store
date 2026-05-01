@@ -69,6 +69,9 @@ app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'Yemeni Store API is running' });
 });
 
+// Ignore favicon requests to prevent 404 logs
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/account', accountRoutes);
