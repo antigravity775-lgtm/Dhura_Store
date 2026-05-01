@@ -48,6 +48,9 @@ class AuthService {
     return {
       userId: user.id,
       fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      city: user.city,
       token
     };
   }
@@ -64,13 +67,18 @@ class AuthService {
     // Find user by email
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      throw new UnauthorizedError('Invalid email or password');
+      throw new UnauthorizedError('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+    }
+
+    // Check if user is blocked by admin
+    if (user.isBlocked) {
+      throw new UnauthorizedError('تم حظر حسابك. يرجى التواصل مع الدعم.');
     }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
-      throw new UnauthorizedError('Invalid email or password');
+      throw new UnauthorizedError('البريد الإلكتروني أو كلمة المرور غير صحيحة');
     }
 
     // Generate token
@@ -79,6 +87,9 @@ class AuthService {
     return {
       userId: user.id,
       fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      city: user.city,
       token
     };
   }

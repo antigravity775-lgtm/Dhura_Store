@@ -36,19 +36,37 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, [checkAuthStatus]);
 
-   const login = async (email, password) => {
-     const result = await api.login(email, password);
-     localStorage.setItem('user_name', result.fullName);
-     localStorage.setItem('user_id', result.userId);
-     await checkAuthStatus();
-     return result;
-   };
+  const login = async (email, password) => {
+    const result = await api.login(email, password);
+    // Set user immediately from login result — don't depend on getProfile()
+    // because the HttpOnly cookie may not be forwarded on the very next
+    // cross-origin request in some browser/Vercel configurations.
+    setUser({
+      id: result.userId,
+      fullName: result.fullName,
+      email: result.email,
+      role: result.role,
+      city: result.city,
+    });
+    localStorage.setItem('user_name', result.fullName);
+    localStorage.setItem('user_id', result.userId);
+    // Sync full profile in background to refresh any extra fields
+    checkAuthStatus().catch(() => {});
+    return result;
+  };
 
   const register = async (data) => {
     const result = await api.register(data);
+    setUser({
+      id: result.userId,
+      fullName: result.fullName,
+      email: result.email,
+      role: result.role,
+      city: result.city,
+    });
     localStorage.setItem('user_name', result.fullName);
     localStorage.setItem('user_id', result.userId);
-    await checkAuthStatus();
+    checkAuthStatus().catch(() => {});
     return result;
   };
 
