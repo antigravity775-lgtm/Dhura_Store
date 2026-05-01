@@ -16,7 +16,7 @@ const systemSettingsRoutes = require('./src/routes/systemSettingsRoutes');
 const chatRoutes = require('./src/routes/chatRoutes');
 const { errorHandler, notFound } = require('./src/middleware/errorMiddleware');
 const { sanitizeMiddleware } = require('./src/utils/sanitize');
-const csrfMiddleware = require('./src/middleware/csrfMiddleware');
+
 
 const app = express();
 
@@ -54,13 +54,12 @@ app.use(cors({
     return callback(null, true);
   },
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-xsrf-token'],
-  exposedHeaders: ['x-xsrf-token']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(csrfMiddleware);
+
 app.use(sanitizeMiddleware);
 
 // Images are now served from Cloudinary, no local /uploads serving needed
