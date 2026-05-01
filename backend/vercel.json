@@ -1,34 +1,5 @@
 {
   "version": 2,
-  "headers": [
-    {
-      "source": "/api/products(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, s-maxage=60, stale-while-revalidate=300"
-        }
-      ]
-    },
-    {
-      "source": "/api/categories(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, s-maxage=300, stale-while-revalidate=600"
-        }
-      ]
-    },
-    {
-      "source": "/api/SystemSettings(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, s-maxage=300, stale-while-revalidate=600"
-        }
-      ]
-    }
-  ],
   "rewrites": [
     {
       "source": "/(.*)",
