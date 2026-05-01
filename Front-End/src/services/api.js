@@ -3,37 +3,13 @@
 import { getApiBaseUrl } from '../utils/apiBaseUrl';
 
 const BASE_URL = getApiBaseUrl();
-let csrfTokenCache = null;
 
 // ─── Token Management ───
-// Tokens are now managed securely via HttpOnly cookies by the backend.
-// CSRF Tokens are extracted from non-HttpOnly cookies.
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return null;
-}
-
-const getCsrfHeaders = () => {
-  const csrfToken = getCookie('XSRF-TOKEN') || csrfTokenCache;
-  return csrfToken ? { 'x-xsrf-token': csrfToken } : {};
-};
-
-const isSafeMethod = (method = 'GET') => ['GET', 'HEAD', 'OPTIONS'].includes(String(method).toUpperCase());
-
-async function ensureCsrfCookie(baseUrl) {
-  if (getCookie('XSRF-TOKEN') || csrfTokenCache) return;
-  // Safe request to prime CSRF cookie before first state-changing call (e.g. login/register).
-  const res = await fetch(`${baseUrl}/products?pageNumber=1&pageSize=1`, { credentials: 'include' });
-  const headerToken = res.headers.get('x-xsrf-token');
-  if (headerToken) csrfTokenCache = headerToken;
-}
+// Auth tokens are managed securely via HttpOnly cookies by the backend.
+// No client-side token handling needed.
 
 const jsonHeaders = () => ({
   'Content-Type': 'application/json',
-  ...getCsrfHeaders(),
 });
 
 function normalizeProduct(product) {
@@ -57,23 +33,12 @@ function normalizeProductsListResponse(data) {
 
 async function request(url, options = {}) {
   options.credentials = 'include'; // Ensure cookies are sent with every request
-  const method = String(options.method || 'GET').toUpperCase();
-
-  if (!isSafeMethod(method)) {
-    await ensureCsrfCookie(BASE_URL);
-    options.headers = {
-      ...(options.headers || {}),
-      ...getCsrfHeaders(),
-    };
-  }
 
   const primaryUrl = `${BASE_URL}${url}`;
   let res;
 
   try {
     res = await fetch(primaryUrl, options);
-    const headerToken = res.headers.get('x-xsrf-token');
-    if (headerToken) csrfTokenCache = headerToken;
   } catch (err) {
     // Dev fallback: if VITE_API_URL is misconfigured, retry through Vite local proxy.
     if (import.meta.env.DEV && BASE_URL !== '/api') {
@@ -124,7 +89,7 @@ export async function login(email, password) {
 export async function logout() {
   return request('/account/logout', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getCsrfHeaders() },
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -216,7 +181,6 @@ export async function uploadImageToCloudinary(file) {
   const res = await fetch(`${BASE_URL}/products/upload-image`, {
     method: 'POST',
     body: formData,
-    headers: getCsrfHeaders(),
     credentials: 'include',
   });
 
@@ -244,7 +208,6 @@ export async function uploadCategoryIcon(file) {
   const res = await fetch(`${BASE_URL}/categories/upload-icon`, {
     method: 'POST',
     body: formData,
-    headers: getCsrfHeaders(),
     credentials: 'include',
   });
 
