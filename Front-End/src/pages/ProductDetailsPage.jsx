@@ -105,10 +105,13 @@ const ProductDetailsPage = () => {
   const [notFound, setNotFound] = useState(false);
   const [storeInfo, setStoreInfo] = useState(null);
 
+  const [errorType, setErrorType] = useState(null); // 'not_found' or 'server_error'
+
   useEffect(() => {
     let mounted = true;
     setLoading(true);
     setNotFound(false);
+    setErrorType(null);
     setAddedToCart(false);
 
     async function load() {
@@ -118,7 +121,10 @@ const ProductDetailsPage = () => {
           setProduct(data);
           setLoading(false);
         }
-      } catch {
+      } catch (err) {
+        // Check if the error is a 404
+        const is404 = err.message?.includes('404');
+        
         // Try fallback
         const fb = fallbackDB[id];
         if (fb && mounted) {
@@ -126,6 +132,7 @@ const ProductDetailsPage = () => {
           setLoading(false);
         } else if (mounted) {
           setNotFound(true);
+          setErrorType(is404 ? 'not_found' : 'server_error');
           setLoading(false);
         }
       }
@@ -231,26 +238,27 @@ const ProductDetailsPage = () => {
     );
   }
 
-  if (notFound || !product) {
+  if (notFound) {
     return (
       <Layout>
-        <div className="max-w-7xl mx-auto px-4 py-24 text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-100 mb-6">
-            <Package className="w-10 h-10 text-slate-400" />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
+          <div className="w-24 h-24 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-full flex items-center justify-center mb-6">
+            <AlertCircle className="w-12 h-12" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-2">
-            المنتج غير موجود
+          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
+            {errorType === 'server_error' ? 'خطأ في الاتصال بالخادم' : 'المنتج غير موجود'}
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 mb-6">
-            لم نتمكن من العثور على هذا المنتج. ربما تم حذفه أو أن الرابط غير
-            صحيح.
+          <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-8">
+            {errorType === 'server_error' 
+              ? 'يبدو أن هناك مشكلة في الخادم حالياً (ربما ضغط كبير). يرجى المحاولة مرة أخرى بعد قليل.' 
+              : 'عذراً، لم نتمكن من العثور على المنتج الذي تبحث عنه. قد يكون تم حذفه أو أن الرابط غير صحيح.'}
           </p>
-          <Link
-            to="/"
-            className="inline-flex px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700"
-          >
-            العودة للرئيسية
-          </Link>
+          <button onClick={() => {
+            if (errorType === 'server_error') window.location.reload();
+            else navigate('/');
+          }} className="px-8 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 dark:shadow-none active:scale-95">
+            {errorType === 'server_error' ? 'إعادة المحاولة' : 'العودة للصفحة الرئيسية'}
+          </button>
         </div>
       </Layout>
     );
