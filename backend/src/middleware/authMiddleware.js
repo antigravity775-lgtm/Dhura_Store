@@ -44,6 +44,10 @@ const protect = async (req, res, next) => {
         throw new UnauthorizedError('User not found');
       }
 
+      if (req.user.isBlocked) {
+        throw new UnauthorizedError('تم حظر حسابك. يرجى التواصل مع الدعم.');
+      }
+
       return next();
     } catch (error) {
       console.error(error);
