@@ -61,12 +61,9 @@
           "value": "public, max-age=86400, stale-while-revalidate=604800"
         }
       ]
-    }
-  ],
-  "rewrites": [
+    },
     {
       "source": "/((?!assets/).*)",
-      "destination": "/index.html",
       "headers": [
         {
           "key": "Cache-Control",
@@ -77,6 +74,12 @@
           "value": "no-cache"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
