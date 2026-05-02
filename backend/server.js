@@ -17,9 +17,10 @@ const chatRoutes = require('./src/routes/chatRoutes');
 const { errorHandler, notFound } = require('./src/middleware/errorMiddleware');
 const { sanitizeMiddleware } = require('./src/utils/sanitize');
 
-
 const app = express();
 
+// Trust the first proxy (e.g. Vercel) for rate limiting and IP detection
+app.set('trust proxy', 1);
 // Security Headers
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
