@@ -1,0 +1,7 @@
+# Ignore Mobile folder
+Mobile/
+node_modules/
+.env
+dist/
+build/
+.vscode/
