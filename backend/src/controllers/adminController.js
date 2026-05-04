@@ -168,7 +168,12 @@ class AdminController {
         throw new Error('Product not found');
       }
 
-      await prisma.product.delete({ where: { id: req.params.id } });
+      // Delete related OrderItems first to avoid foreign key constraint violations
+      await prisma.$transaction([
+        prisma.orderItem.deleteMany({ where: { productId: req.params.id } }),
+        prisma.product.delete({ where: { id: req.params.id } })
+      ]);
+      
       res.status(204).send();
     } catch (error) {
       throw error;

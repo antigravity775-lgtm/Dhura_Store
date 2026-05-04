@@ -64,6 +64,39 @@ const AuthPage = () => {
     role: 3, // 2=Seller, 3=Buyer
   });
 
+  const [lockoutTimeLeft, setLockoutTimeLeft] = useState(0);
+
+  // Initialize lockout state from localStorage
+  React.useEffect(() => {
+    const lockedUntil = localStorage.getItem('auth_lockout_until');
+    if (lockedUntil) {
+      const remainingMs = parseInt(lockedUntil, 10) - Date.now();
+      if (remainingMs > 0) {
+        setLockoutTimeLeft(Math.ceil(remainingMs / 1000));
+      } else {
+        localStorage.removeItem('auth_lockout_until');
+      }
+    }
+  }, []);
+
+  // Countdown timer for lockout
+  React.useEffect(() => {
+    if (lockoutTimeLeft > 0) {
+      const timer = setInterval(() => {
+        setLockoutTimeLeft((prev) => {
+          if (prev <= 1) {
+            localStorage.removeItem('auth_lockout_until');
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [lockoutTimeLeft]);
+
+
   // Redirect if already logged in
   React.useEffect(() => {
     if (isAuthenticated) navigate("/", { replace: true });
@@ -83,6 +116,7 @@ const AuthPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (lockoutTimeLeft > 0) return;
     setIsLoading(true);
     setError("");
 
@@ -100,7 +134,16 @@ const AuthPage = () => {
       }
       navigate("/", { replace: true });
     } catch (err) {
-      setError(err.message || "حدث خطأ، حاول مرة أخرى");
+      if (err.status === 429) {
+        const match = err.message.match(/بعد (\d+) دقيقة/);
+        const minutes = match ? parseInt(match[1], 10) : 15;
+        const lockoutEnd = Date.now() + minutes * 60 * 1000;
+        localStorage.setItem('auth_lockout_until', lockoutEnd.toString());
+        setLockoutTimeLeft(minutes * 60);
+        setError(""); // Clear normal error in favor of lockout UI
+      } else {
+        setError(err.message || "حدث خطأ، حاول مرة أخرى");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -229,17 +272,24 @@ const AuthPage = () => {
 
           {/* محتوى النموذج */}
           <div className="p-6 sm:p-8">
-            {/* رسالة الخطأ */}
+            {/* رسالة الخطأ أو الحظر */}
             <AnimatePresence>
-              {error && (
+              {(error || lockoutTimeLeft > 0) && (
                 <motion.div
                   initial={{ opacity: 0, y: -10, height: 0 }}
                   animate={{ opacity: 1, y: 0, height: "auto" }}
                   exit={{ opacity: 0, y: -10, height: 0 }}
-                  className="mb-4 flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-300 text-sm font-medium px-4 py-3 rounded-xl"
+                  className="mb-4 flex flex-col gap-2 bg-red-500/10 border border-red-500/20 text-red-300 text-sm font-medium px-4 py-3 rounded-xl"
                 >
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  <span>{error}</span>
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{lockoutTimeLeft > 0 ? "تم حظر المحاولات مؤقتاً لأسباب أمنية. يرجى الانتظار." : error}</span>
+                  </div>
+                  {lockoutTimeLeft > 0 && (
+                    <div className="text-center font-mono font-bold text-lg text-red-400 mt-1 bg-red-500/10 py-2 rounded-lg">
+                      {Math.floor(lockoutTimeLeft / 60)}:{String(lockoutTimeLeft % 60).padStart(2, '0')}
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -386,7 +436,7 @@ const AuthPage = () => {
                 {/* زر الإرسال */}
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || lockoutTimeLeft > 0}
                   className="w-full flex items-center justify-center gap-2.5 py-4 bg-dhura-500 text-white rounded-xl font-bold text-base hover:bg-dhura-400 focus:outline-none focus:ring-4 focus:ring-amber-500/40 transition-all shadow-xl shadow-dhura-600/20 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
                 >
                   {isLoading ? (
@@ -394,6 +444,8 @@ const AuthPage = () => {
                       <Loader2 className="w-5 h-5 animate-spin" />
                       <span>جاري المعالجة...</span>
                     </>
+                  ) : lockoutTimeLeft > 0 ? (
+                    `محظور (${Math.floor(lockoutTimeLeft / 60)}:${String(lockoutTimeLeft % 60).padStart(2, '0')})`
                   ) : isLogin ? (
                     "تسجيل الدخول"
                   ) : (
