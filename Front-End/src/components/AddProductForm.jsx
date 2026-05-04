@@ -32,6 +32,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
     categoryId: editProduct?.categoryId || '',
     mainImageUrl: editProduct?.mainImageUrl || '',
     isPromoted: editProduct?.isPromoted || false,
+    isHidden: editProduct?.isHidden || false,
     discountPrice: editProduct?.discountPrice?.toString() || '',
     promotionLabel: editProduct?.promotionLabel || '',
   });
@@ -125,6 +126,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           categoryId: form.categoryId || editProduct.categoryId,
           mainImageUrl: form.mainImageUrl || null,
           isPromoted: form.isPromoted,
+          isHidden: form.isHidden,
           discountPrice: form.discountPrice ? parseFloat(form.discountPrice) : null,
           promotionLabel: form.promotionLabel || null,
         });
@@ -140,6 +142,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           sellerId: user?.id,
           mainImageUrl: form.mainImageUrl || null,
           isPromoted: form.isPromoted,
+          isHidden: form.isHidden,
           discountPrice: form.discountPrice ? parseFloat(form.discountPrice) : null,
           promotionLabel: form.promotionLabel || null,
         });
@@ -205,6 +208,31 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             <option value="YER_Aden">ريال (عدن)</option>
           </select>
         </div>
+      </div>
+
+      {/* ── إعدادات الظهور ── */}
+      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">إخفاء المنتج</label>
+          <span className="text-xs text-slate-500 dark:text-slate-400">عند تفعيله، لن يظهر المنتج للعملاء في المتجر</span>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={form.isHidden}
+          onClick={() => setForm(prev => ({ ...prev, isHidden: !prev.isHidden }))}
+          className={`relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 ${
+            form.isHidden
+              ? 'bg-red-500 shadow-lg shadow-red-500/25'
+              : 'bg-slate-200 dark:bg-slate-600'
+          }`}
+        >
+          <span
+            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${
+              form.isHidden ? 'translate-x-6' : 'translate-x-1'
+            }`}
+          />
+        </button>
       </div>
 
       {/* ── ترويج المنتج / Promotion Section ── */}

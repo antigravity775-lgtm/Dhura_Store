@@ -23,6 +23,7 @@ const SellerDashboard = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [products, setProducts] = useState([]);
+  const [visibilityFilter, setVisibilityFilter] = useState('all');
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [salesLoading, setSalesLoading] = useState(false);
@@ -233,15 +234,26 @@ const SellerDashboard = () => {
         {activeTab === 'products' && (
           <>
             {/* Add Product Button */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">منتجاتي</h2>
-              <button
-                onClick={() => { setEditingProduct(null); setShowAddForm(true); }}
-                className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98]"
-              >
-                <Plus className="w-4 h-4" />
-                إضافة منتج
-              </button>
+              <div className="flex gap-3 w-full sm:w-auto">
+                <select
+                  value={visibilityFilter}
+                  onChange={(e) => setVisibilityFilter(e.target.value)}
+                  className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-700 dark:text-slate-200 flex-1 sm:flex-none"
+                >
+                  <option value="all">الكل</option>
+                  <option value="visible">مرئي فقط</option>
+                  <option value="hidden">مخفي فقط</option>
+                </select>
+                <button
+                  onClick={() => { setEditingProduct(null); setShowAddForm(true); }}
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98] flex-1 sm:flex-none"
+                >
+                  <Plus className="w-4 h-4" />
+                  إضافة منتج
+                </button>
+              </div>
             </div>
 
             {/* Add/Edit Product Modal */}
@@ -297,7 +309,13 @@ const SellerDashboard = () => {
               </div>
             ) : (
               <div className="grid gap-4">
-                {products.map((product) => (
+                {products
+                  .filter(p => {
+                    if (visibilityFilter === 'visible' && p.isHidden) return false;
+                    if (visibilityFilter === 'hidden' && !p.isHidden) return false;
+                    return true;
+                  })
+                  .map((product) => (
                   <motion.div
                     key={product.id}
                     layout

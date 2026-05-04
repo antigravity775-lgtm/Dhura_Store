@@ -15,7 +15,23 @@ const jsonHeaders = () => ({
 function normalizeProduct(product) {
   if (!product || typeof product !== 'object') return product;
   const normalizedId = product.id ?? product.productId ?? product._id ?? null;
-  return normalizedId ? { ...product, id: normalizedId } : product;
+  const normalizeBoolean = (value, fallback = false) => {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'number') return value !== 0;
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (normalized === 'true' || normalized === '1') return true;
+      if (normalized === 'false' || normalized === '0') return false;
+    }
+    return fallback;
+  };
+
+  const normalizedProduct = {
+    ...product,
+    isHidden: normalizeBoolean(product.isHidden, false),
+  };
+
+  return normalizedId ? { ...normalizedProduct, id: normalizedId } : normalizedProduct;
 }
 
 function normalizeProductsListResponse(data) {
@@ -133,7 +149,7 @@ export async function getProducts({ city, maxPriceUsd, condition, specialOffers,
   params.set('pageNumber', pageNumber);
   params.set('pageSize', pageSize);
   const data = await request(`/products?${params.toString()}`, { headers: jsonHeaders() });
-  return normalizeProductsListResponse(data);
+  return normalizeProductsListResponse(data).filter((product) => !product?.isHidden);
 }
 
 export async function getProductById(id) {
@@ -172,7 +188,8 @@ export async function toggleProductVisibility(id) {
 }
 
 export async function getMyProducts() {
-  return request('/products/my-products', { headers: jsonHeaders() });
+  const data = await request('/products/my-products', { headers: jsonHeaders() });
+  return normalizeProductsListResponse(data);
 }
 
 // ─── Image Upload (Local API) ───
@@ -282,7 +299,8 @@ export async function deleteUser(id) {
 }
 
 export async function getAdminProducts() {
-  return request('/admin/products', { headers: jsonHeaders() });
+  const data = await request('/admin/products', { headers: jsonHeaders() });
+  return normalizeProductsListResponse(data);
 }
 
 export async function deleteAdminProduct(id) {
