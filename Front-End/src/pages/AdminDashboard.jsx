@@ -56,6 +56,7 @@ const AdminDashboard = () => {
 
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchQuery, setSearchQuery] = useState("");
+  const [productVisibilityFilter, setProductVisibilityFilter] = useState("all");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -1071,6 +1072,15 @@ const AdminDashboard = () => {
                     className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-white transition-all"
                   />
                 </div>
+                <select
+                  value={productVisibilityFilter}
+                  onChange={(e) => setProductVisibilityFilter(e.target.value)}
+                  className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-700 dark:text-slate-200"
+                >
+                  <option value="all">الكل</option>
+                  <option value="visible">مرئي فقط</option>
+                  <option value="hidden">مخفي فقط</option>
+                </select>
                 <button
                   onClick={() => {
                     setEditingProduct(null);
@@ -1136,6 +1146,11 @@ const AdminDashboard = () => {
             ) : (
               <div className="grid gap-4">
                 {products
+                  .filter((p) => {
+                    if (productVisibilityFilter === "visible" && p.isHidden) return false;
+                    if (productVisibilityFilter === "hidden" && !p.isHidden) return false;
+                    return true;
+                  })
                   .filter(
                     (p) =>
                       p.title
