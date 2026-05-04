@@ -124,7 +124,7 @@ const ProductDetailsPage = () => {
       } catch (err) {
         // Check if the error is a 404
         const is404 = err.message?.includes('404');
-        
+
         // Try fallback
         const fb = fallbackDB[id];
         if (fb && mounted) {
@@ -249,8 +249,8 @@ const ProductDetailsPage = () => {
             {errorType === 'server_error' ? 'خطأ في الاتصال بالخادم' : 'المنتج غير موجود'}
           </h2>
           <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-8">
-            {errorType === 'server_error' 
-              ? 'يبدو أن هناك مشكلة في الخادم حالياً (ربما ضغط كبير). يرجى المحاولة مرة أخرى بعد قليل.' 
+            {errorType === 'server_error'
+              ? 'يبدو أن هناك مشكلة في الخادم حالياً (ربما ضغط كبير). يرجى المحاولة مرة أخرى بعد قليل.'
               : 'عذراً، لم نتمكن من العثور على المنتج الذي تبحث عنه. قد يكون تم حذفه أو أن الرابط غير صحيح.'}
           </p>
           <button onClick={() => {
@@ -302,11 +302,10 @@ const ProductDetailsPage = () => {
             {/* شارات المعلومات */}
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide ${
-                  product.condition === 1
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide ${product.condition === 1
                     ? "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700"
                     : "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700"
-                }`}
+                  }`}
               >
                 <Package className="w-3.5 h-3.5" />
                 {conditionText}
@@ -359,7 +358,7 @@ const ProductDetailsPage = () => {
                         {Math.round(
                           ((product.price - product.discountPrice) /
                             product.price) *
-                            100,
+                          100,
                         )}
                         %
                       </span>
@@ -374,11 +373,10 @@ const ProductDetailsPage = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => product && toggleFavorite(product)}
-                  className={`p-2.5 rounded-xl border transition-all duration-200 ${
-                    product && isFavorite(product.id)
+                  className={`p-2.5 rounded-xl border transition-all duration-200 ${product && isFavorite(product.id)
                       ? "bg-rose-50 dark:bg-rose-900/30 border-rose-200 dark:border-rose-700 text-rose-500"
                       : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 hover:border-rose-200"
-                  }`}
+                    }`}
                   aria-label="إضافة للمفضلة"
                 >
                   <Heart
@@ -423,11 +421,10 @@ const ProductDetailsPage = () => {
               <motion.button
                 onClick={handleAddToCart}
                 disabled={addedToCart}
-                className={`w-full flex items-center justify-center gap-3 py-4 px-8 rounded-2xl font-bold text-lg shadow-lg transition-all ${
-                  addedToCart
+                className={`w-full flex items-center justify-center gap-3 py-4 px-8 rounded-2xl font-bold text-lg shadow-lg transition-all ${addedToCart
                     ? "bg-green-500 text-white shadow-green-500/25"
                     : "bg-indigo-600 text-white shadow-indigo-600/25 hover:bg-indigo-500"
-                } focus:outline-none focus:ring-4 focus:ring-indigo-400/50`}
+                  } focus:outline-none focus:ring-4 focus:ring-indigo-400/50`}
                 whileHover={!addedToCart ? { scale: 1.02 } : {}}
                 whileTap={!addedToCart ? { scale: 0.98 } : {}}
               >
@@ -460,7 +457,7 @@ const ProductDetailsPage = () => {
               <div className="text-center bg-amber-50 dark:bg-amber-900/20 rounded-xl py-2.5 px-4 border border-amber-100 dark:border-amber-800">
                 <p className="text-xs text-amber-700 font-medium flex items-center justify-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                  لا ترسل أموالاً مقدماً أبداً. قابل البائع في مكان عام وآمن.
+                  🚚 توصيل سريع لجميع المناطق – اطلب الآن واستلم خلال أيام قليلة
                 </p>
               </div>
             </div>
