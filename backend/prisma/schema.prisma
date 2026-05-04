@@ -145,3 +145,9 @@ enum PaymentMethod {
   CreditCard
   CashOnDelivery
 }
+
+model RateLimit {
+  key       String   @id
+  hits      Int      @default(0)
+  resetTime DateTime
+}

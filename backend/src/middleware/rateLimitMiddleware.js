@@ -1,8 +1,10 @@
 const rateLimit = require('express-rate-limit');
+const PrismaStore = require('./prismaRateLimitStore');
 
 const authLimiter = rateLimit({
+  store: new PrismaStore({ windowMs: 15 * 60 * 1000 }),
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // Limit each IP to 30 failed attempts per 15 minutes
+  max: 10, // Limit each IP to 10 failed attempts per 15 minutes
   skipSuccessfulRequests: true, // Only count failed attempts (4xx/5xx)
   standardHeaders: true,
   legacyHeaders: false,
