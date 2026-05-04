@@ -303,8 +303,8 @@ const ProductDetailsPage = () => {
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide ${product.condition === 1
-                    ? "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700"
-                    : "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700"
+                  ? "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700"
+                  : "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700"
                   }`}
               >
                 <Package className="w-3.5 h-3.5" />
@@ -374,8 +374,8 @@ const ProductDetailsPage = () => {
                 <button
                   onClick={() => product && toggleFavorite(product)}
                   className={`p-2.5 rounded-xl border transition-all duration-200 ${product && isFavorite(product.id)
-                      ? "bg-rose-50 dark:bg-rose-900/30 border-rose-200 dark:border-rose-700 text-rose-500"
-                      : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 hover:border-rose-200"
+                    ? "bg-rose-50 dark:bg-rose-900/30 border-rose-200 dark:border-rose-700 text-rose-500"
+                    : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 hover:border-rose-200"
                     }`}
                   aria-label="إضافة للمفضلة"
                 >
@@ -422,8 +422,8 @@ const ProductDetailsPage = () => {
                 onClick={handleAddToCart}
                 disabled={addedToCart}
                 className={`w-full flex items-center justify-center gap-3 py-4 px-8 rounded-2xl font-bold text-lg shadow-lg transition-all ${addedToCart
-                    ? "bg-green-500 text-white shadow-green-500/25"
-                    : "bg-indigo-600 text-white shadow-indigo-600/25 hover:bg-indigo-500"
+                  ? "bg-green-500 text-white shadow-green-500/25"
+                  : "bg-indigo-600 text-white shadow-indigo-600/25 hover:bg-indigo-500"
                   } focus:outline-none focus:ring-4 focus:ring-indigo-400/50`}
                 whileHover={!addedToCart ? { scale: 1.02 } : {}}
                 whileTap={!addedToCart ? { scale: 0.98 } : {}}
@@ -457,7 +457,7 @@ const ProductDetailsPage = () => {
               <div className="text-center bg-amber-50 dark:bg-amber-900/20 rounded-xl py-2.5 px-4 border border-amber-100 dark:border-amber-800">
                 <p className="text-xs text-amber-700 font-medium flex items-center justify-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                  🚚 توصيل سريع لجميع المناطق – اطلب الآن واستلم خلال أيام قليلة
+                  🚚 توصيل سريع لجميع المناطق في اليمن – اطلب الآن
                 </p>
               </div>
             </div>
