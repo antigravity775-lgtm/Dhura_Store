@@ -67,7 +67,9 @@ async function request(url, options = {}) {
         }
       }
     } catch { /* empty */ }
-    throw new Error(message);
+    const errObj = new Error(message);
+    errObj.status = res.status;
+    throw errObj;
   }
 
   if (res.status === 204) return null;

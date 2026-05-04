@@ -204,7 +204,10 @@ class ProductService {
    * @returns {Promise<void>}
    */
   async deleteProduct(id) {
-    return await prisma.product.delete({ where: { id } });
+    return await prisma.$transaction([
+      prisma.orderItem.deleteMany({ where: { productId: id } }),
+      prisma.product.delete({ where: { id } })
+    ]);
   }
 
   /**
