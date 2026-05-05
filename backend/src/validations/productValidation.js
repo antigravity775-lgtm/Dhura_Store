@@ -10,6 +10,8 @@ const createProductSchema = Joi.object({
   categoryId: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).required(),
   sellerId: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).optional(),
   isPromoted: Joi.boolean().optional(),
+  isHidden: Joi.boolean().optional(),
+  mainImageUrl: Joi.string().uri().allow(null, '').optional(),
   discountPrice: Joi.number().positive().allow(null, '').optional(),
   promotionLabel: Joi.string().allow(null, '').optional()
 });
