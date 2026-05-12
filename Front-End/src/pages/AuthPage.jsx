@@ -15,6 +15,7 @@ import {
   Mail,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import logo from "../assets/Logo_192.png";
 
 const cities = [
   "صنعاء",
@@ -219,7 +220,7 @@ const AuthPage = () => {
           <Link to="/" className="inline-flex items-center gap-3 group">
             <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-1 ring-amber-200/60">
               <img
-                src="/Logo_192.png"
+                src={logo}
                 alt="شعار DHURA ذُرى"
                 className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
               />

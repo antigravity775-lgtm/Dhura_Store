@@ -23,6 +23,7 @@ import { useFavorites } from "../context/FavoritesContext";
 import { useTheme } from "../context/ThemeContext";
 import * as api from "../services/api";
 import Footer from "./Footer";
+import logo from "../assets/Logo_192.png";
 const Layout = React.memo(({ children }) => {
   const { user, isAuthenticated, isSeller, isAdmin, logout } = useAuth();
   const { cartCount } = useCart();
@@ -89,7 +90,7 @@ const Layout = React.memo(({ children }) => {
             >
               <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-amber-200/60">
                 <img
-                  src="/Logo_192.png"
+                  src={logo}
                   alt="شعار DHURA ذُرى"
                   width="44"
                   height="44"

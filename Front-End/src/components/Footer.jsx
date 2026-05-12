@@ -7,6 +7,7 @@ import {
   Banknote,
   Instagram,
 } from "lucide-react";
+import logo from "../assets/Logo_192.png";
 
 const Footer = ({ storeInfo }) => {
   const phone = (storeInfo?.contactPhone || "774405120").trim();
@@ -28,7 +29,7 @@ const Footer = ({ storeInfo }) => {
           <div className="col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 mb-3">
               <img
-                src="/Logo_192.png"
+                src={logo}
                 alt="شعار DHURA ذُرى"
                 width="32"
                 height="32"
