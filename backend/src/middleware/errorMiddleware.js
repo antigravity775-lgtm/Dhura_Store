@@ -73,8 +73,7 @@ const errorHandler = (err, req, res, next) => {
 
 // Not found middleware
 const notFound = (req, res, next) => {
-  const error = new Error(`Not Found - ${req.originalUrl}`);
-  res.status(404);
+  const error = new AppError(`Not Found - ${req.originalUrl}`, 404);
   next(error);
 };
 
