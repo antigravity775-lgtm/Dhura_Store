@@ -80,8 +80,8 @@ class ProductController {
    */
   async updateProduct(req, res) {
     try {
-      // Check ID mismatch
-      if (req.params.id !== req.body.id) {
+      // Accept if body has no id (mobile client), or if it matches the param
+      if (req.body.id && req.params.id !== req.body.id) {
         res.status(400);
         throw new Error('ID mismatch');
       }
@@ -95,8 +95,8 @@ class ProductController {
         }
       }
 
-      await this.productService.updateProduct(req.params.id, req.body);
-      res.status(204).send();
+      const updated = await this.productService.updateProduct(req.params.id, req.body);
+      res.status(200).json(updated);
     } catch (error) {
       throw error;
     }

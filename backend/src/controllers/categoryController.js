@@ -91,7 +91,8 @@ class CategoryController {
    */
   async updateCategory(req, res) {
     try {
-      if (req.params.id !== req.body.id) {
+      // Accept if body has no id (mobile client), or if it matches the param
+      if (req.body.id && req.params.id !== req.body.id) {
         res.status(400);
         throw new Error('ID mismatch');
       }
@@ -102,7 +103,7 @@ class CategoryController {
         throw new Error('Category not found');
       }
 
-      await prisma.category.update({
+      const updated = await prisma.category.update({
         where: { id: req.params.id },
         data: {
           name: req.body.name,
@@ -110,7 +111,7 @@ class CategoryController {
         }
       });
 
-      res.status(204).send();
+      res.status(200).json(updated);
     } catch (error) {
       throw error;
     }
@@ -122,14 +123,27 @@ class CategoryController {
    */
   async deleteCategory(req, res) {
     try {
-      const existing = await prisma.category.findUnique({ where: { id: req.params.id } });
+      const existing = await prisma.category.findUnique({
+        where: { id: req.params.id },
+        include: { products: { select: { id: true } } }
+      });
       if (!existing) {
         res.status(404);
         throw new Error('Category not found');
       }
 
-      await prisma.category.delete({ where: { id: req.params.id } });
-      res.status(204).send();
+      const productIds = existing.products.map(p => p.id);
+
+      // Cascade delete: OrderItems -> CartItems -> Favorites -> Products -> Category
+      await prisma.$transaction([
+        prisma.orderItem.deleteMany({ where: { productId: { in: productIds } } }),
+        prisma.cartItem.deleteMany({ where: { productId: { in: productIds } } }),
+        prisma.favorite.deleteMany({ where: { productId: { in: productIds } } }),
+        prisma.product.deleteMany({ where: { categoryId: req.params.id } }),
+        prisma.category.delete({ where: { id: req.params.id } }),
+      ]);
+
+      res.status(200).json({ message: 'تم حذف القسم وجميع منتجاته بنجاح', deletedProducts: productIds.length });
     } catch (error) {
       throw error;
     }

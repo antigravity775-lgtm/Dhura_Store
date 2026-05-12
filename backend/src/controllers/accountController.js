@@ -33,12 +33,11 @@ class AccountController {
 
       const result = await this.authService.register(req.body);
       
-      // Set HttpOnly cookie
+      // Set HttpOnly cookie for Web
       res.cookie('auth_token', result.token, this.getAuthCookieOptions());
 
-      // Remove token from response payload to prevent XSS leaks
-      const { token, ...responsePayload } = result;
-      res.status(200).json(responsePayload);
+      // Send full result (including token) to support mobile explicitly storing the JWT
+      res.status(200).json(result);
     } catch (error) {
       throw error;
     }
@@ -57,12 +56,11 @@ class AccountController {
 
       const result = await this.authService.login(req.body);
       
-      // Set HttpOnly cookie
+      // Set HttpOnly cookie for Web
       res.cookie('auth_token', result.token, this.getAuthCookieOptions());
 
-      // Remove token from response payload to prevent XSS leaks
-      const { token, ...responsePayload } = result;
-      res.status(200).json(responsePayload);
+      // Send full result (including token) to support mobile explicitly storing the JWT
+      res.status(200).json(result);
     } catch (error) {
       throw error;
     }
