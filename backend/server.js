@@ -74,6 +74,7 @@ app.get('/', (req, res) => {
 
 // Ignore favicon requests to prevent 404 logs
 app.get('/favicon.ico', (req, res) => res.status(204).end());
+app.get('/favicon.png', (req, res) => res.status(204).end());
 
 // Routes
 app.use('/api/products', productRoutes);
