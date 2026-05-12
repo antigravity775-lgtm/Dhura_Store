@@ -23,6 +23,8 @@ model User {
   updatedAt    DateTime  @updatedAt
   orders       Order[]   @relation("BuyerOrders")
   products     Product[] @relation("SellerProducts")
+  cartItems    CartItem[]
+  favorites    Favorite[]
 
   @@index([phoneNumber])
   @@index([city])
@@ -57,6 +59,8 @@ model Product {
   isPromoted     Boolean     @default(false)
   promotionLabel String?
   OrderItem      OrderItem[]
+  cartItems      CartItem[]
+  favorites      Favorite[]
   category       Category    @relation("CategoryProducts", fields: [categoryId], references: [id])
   seller         User        @relation("SellerProducts", fields: [sellerId], references: [id])
 
@@ -150,4 +154,30 @@ model RateLimit {
   key       String   @id
   hits      Int      @default(0)
   resetTime DateTime
+}
+
+model CartItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String   @db.Uuid
+  productId String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+model Favorite {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now())
+  userId    String   @db.Uuid
+  productId String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
 }
