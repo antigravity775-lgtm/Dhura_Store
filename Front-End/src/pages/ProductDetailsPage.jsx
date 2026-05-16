@@ -170,7 +170,7 @@ const ProductDetailsPage = () => {
 
   const handleShare = async () => {
     const shareData = {
-      title: product?.title || "متجر ذُرى",
+      title: product?.title || "متجر طِيب",
       text: `شاهد هذا المنتج: ${product?.title}\n`,
       url: window.location.href,
     };

@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        // DHURA Brand Gold Palette
-        dhura: {
+        // TEEB Brand Gold Palette
+        teeb: {
           50:  '#FDF8EE',
           100: '#FAF0D7',
           200: '#F3DCAA',

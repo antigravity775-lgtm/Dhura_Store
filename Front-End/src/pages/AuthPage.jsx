@@ -15,7 +15,7 @@ import {
   Mail,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import logo from "../assets/Logo_192.png";
+const logo = "/Logo_192.png";
 
 const cities = [
   "صنعاء",
@@ -182,7 +182,7 @@ const AuthPage = () => {
             ease: "easeInOut",
             delay: 3,
           }}
-          className="absolute bottom-[-20%] left-[-10%] w-[55%] h-[55%] rounded-full bg-dhura-700/20 blur-[130px]"
+          className="absolute bottom-[-20%] left-[-10%] w-[55%] h-[55%] rounded-full bg-teeb-700/20 blur-[130px]"
         />
         <motion.div
           animate={{
@@ -221,13 +221,13 @@ const AuthPage = () => {
             <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-1 ring-amber-200/60">
               <img
                 src={logo}
-                alt="شعار DHURA ذُرى"
+                alt="شعار TEEB طِيب"
                 className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
               />
               <div className="absolute top-0 right-0 w-3 h-3 bg-amber-400 rounded-full border-2 border-white animate-pulse"></div>
             </div>
             <span className="font-extrabold text-3xl text-white tracking-tight drop-shadow-md font-display">
-              DHURA
+              TEEB
             </span>
           </Link>
           <p className="text-amber-200/50 text-sm mt-3 font-medium">
@@ -438,7 +438,7 @@ const AuthPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading || lockoutTimeLeft > 0}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 bg-dhura-500 text-white rounded-xl font-bold text-base hover:bg-dhura-400 focus:outline-none focus:ring-4 focus:ring-amber-500/40 transition-all shadow-xl shadow-dhura-600/20 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-2.5 py-4 bg-teeb-500 text-white rounded-xl font-bold text-base hover:bg-teeb-400 focus:outline-none focus:ring-4 focus:ring-amber-500/40 transition-all shadow-xl shadow-teeb-600/20 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
                 >
                   {isLoading ? (
                     <>

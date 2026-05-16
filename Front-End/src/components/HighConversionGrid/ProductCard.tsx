@@ -120,8 +120,8 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
       dir="ltr"
       className={`group flex flex-col bg-white dark:bg-[#1A1510]/50 rounded-2xl shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] border p-3 h-full transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] cursor-pointer ${
         isPromoted
-          ? 'border-dhura-300 dark:border-dhura-600 ring-2 ring-dhura-400/30 dark:ring-dhura-500/20'
-          : 'border-gray-100/60 dark:border-dhura-900'
+          ? 'border-teeb-300 dark:border-teeb-600 ring-2 ring-teeb-400/30 dark:ring-teeb-500/20'
+          : 'border-gray-100/60 dark:border-teeb-900'
       }`}
       role="button"
       tabIndex={0}
@@ -129,7 +129,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
       onClick={() => onClick?.(product)}
     >
       {/* Image Container with Badge */}
-      <div className="relative aspect-[4/5] w-full mb-3 bg-white dark:bg-[#1A1510] rounded-xl overflow-hidden flex items-center justify-center border border-gray-50 dark:border-dhura-900/50">
+      <div className="relative aspect-[4/5] w-full mb-3 bg-white dark:bg-[#1A1510] rounded-xl overflow-hidden flex items-center justify-center border border-gray-50 dark:border-teeb-900/50">
         <img
           src={getOptimizedImageUrl(image, 400)}
           alt={title}

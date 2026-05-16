@@ -19,7 +19,7 @@ const ContactPage = () => {
   const phoneE164 = useMemo(() => (phoneDigits.startsWith('967') ? phoneDigits : `967${phoneDigits}`), [phoneDigits]);
 
   const whatsappUrl = storeInfo?.whatsappUrl || `https://wa.me/${phoneE164}`;
-  const instagramUrl = storeInfo?.instagramUrl || 'https://instagram.com/dhura';
+  const instagramUrl = storeInfo?.instagramUrl || 'https://instagram.com/teeb';
 
   return (
     <Layout>

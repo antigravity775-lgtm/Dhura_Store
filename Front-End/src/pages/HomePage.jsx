@@ -39,7 +39,7 @@ const PREVIEW_COUNT = 8;
  * AR: رسائل العروض التي تتحرك تلقائياً في حزام الترويج النحيل.
  */
 const offerMessages = [
-  { icon: Truck, text: 'شحن مجاني للطلبات فوق 50$', color: 'text-emerald-300' },
+  { icon: Truck, text: 'شحن مجاني للطلبات فوق 200 ريال', color: 'text-emerald-300' },
   { icon: ShieldCheck, text: 'بائعون محليون موثوقون في 22 مدينة يمنية', color: 'text-sky-300' },
   { icon: Sparkles, text: 'ضمان جودة المنتج — استرجع أموالك بسهولة', color: 'text-purple-300' },
 ];
@@ -95,7 +95,7 @@ const OfferBelt = React.memo(({ shippingOfferText }) => {
 
   return (
     <div className="relative w-full bg-gradient-to-r from-[#120F09] via-[#2A1F0A] to-[#120F09] overflow-hidden select-none">
-      <div className="absolute inset-0 bg-gradient-to-r from-dhura-500/10 via-dhura-400/8 to-dhura-500/10 animate-pulse" />
+      <div className="absolute inset-0 bg-gradient-to-r from-teeb-500/10 via-teeb-400/8 to-teeb-500/10 animate-pulse" />
       <div className="offer-belt-track flex items-center gap-12 py-2.5 sm:py-3 whitespace-nowrap">
         {doubledMessages.map((msg, i) => {
           const Icon = msg.icon;
@@ -254,7 +254,7 @@ const HomePage = () => {
 
             <button
               onClick={() => navigate('/products')}
-              className="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-dhura-900/30"
+              className="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-teeb-900/30"
             >
               عرض الكل ←
             </button>
