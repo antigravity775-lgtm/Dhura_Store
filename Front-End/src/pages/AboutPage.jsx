@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import * as api from '../services/api';
 
-const DEFAULT_ABOUT = `متجر ذُرى هو المتجر الالكتروني الاول في اليمن لبيع العطور الاصلية فقط باسعار اقل من الموقع الرسمي ويوفر خدمة التوصيل باقل من 24 ساعة ويوفر خدمة عينات العطور لتجربة عطرية مميزة لا شبيه لها ☺️✨
+const DEFAULT_ABOUT = `متجر طيب هو المتجر الالكتروني الاول في اليمن لبيع العطور الاصلية فقط باسعار اقل من الموقع الرسمي ويوفر خدمة التوصيل باقل من 24 ساعة ويوفر خدمة عينات العطور لتجربة عطرية مميزة لا شبيه لها ☺️✨
 
-في عالم الكوبي - خليك مع ذُرى ✨`;
+في عالم الكوبي - خليك مع طيب ✨`;
 
 const AboutPage = () => {
   const [aboutText, setAboutText] = useState(DEFAULT_ABOUT);

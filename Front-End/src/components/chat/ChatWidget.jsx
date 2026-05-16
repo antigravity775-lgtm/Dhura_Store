@@ -46,7 +46,7 @@ const LazyMarkdown = ({ content }) => (
 export const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'مرحباً بك 👋\nأنا مساعد ذُرى. اكتب لي ما تبحث عنه وسأقترح لك من المنتجات المتوفرة في المتجر فقط.' }
+    { role: 'assistant', content: 'مرحباً بك 👋\nأنا مساعد طِيب. اكتب لي ما تبحث عنه وسأقترح لك من المنتجات المتوفرة في المتجر فقط.' }
   ]);
   const [inputVal, setInputVal] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -103,20 +103,20 @@ export const ChatWidget = () => {
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {/* Chat Window */}
       {isOpen && (
-        <div className="mb-4 w-[350px] max-w-[calc(100vw-3rem)] h-[500px] max-h-[80vh] bg-white dark:bg-[#1A1510] border border-slate-200 dark:border-dhura-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform origin-bottom-right">
+        <div className="mb-4 w-[350px] max-w-[calc(100vw-3rem)] h-[500px] max-h-[80vh] bg-white dark:bg-[#1A1510] border border-slate-200 dark:border-teeb-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform origin-bottom-right">
           
           {/* Header */}
-          <div className="bg-gradient-to-r from-dhura-600 to-dhura-500 p-4 flex items-center justify-between text-white">
+          <div className="bg-gradient-to-r from-teeb-600 to-teeb-500 p-4 flex items-center justify-between text-white">
             <div className="flex items-center gap-2">
               <Bot className="w-6 h-6" />
               <div>
-                <h3 className="font-semibold text-sm">مساعد DHURA</h3>
-                <p className="text-xs text-dhura-200">متصل الآن وجاهز للمساعدة</p>
+                <h3 className="font-semibold text-sm">مساعد TEEB</h3>
+                <p className="text-xs text-teeb-200">متصل الآن وجاهز للمساعدة</p>
               </div>
             </div>
             <button 
               onClick={() => setIsOpen(false)}
-              className="p-1 hover:bg-dhura-700/60 rounded-full transition-colors"
+              className="p-1 hover:bg-teeb-700/60 rounded-full transition-colors"
               aria-label="Close chat"
             >
               <X className="w-5 h-5" />
@@ -126,7 +126,7 @@ export const ChatWidget = () => {
           {/* Messages Area */}
           <div 
             ref={scrollContainerRef}
-            className="flex-1 p-4 overflow-y-auto bg-dhura-50 dark:bg-dhura-950 flex flex-col gap-3 overscroll-contain"
+            className="flex-1 p-4 overflow-y-auto bg-teeb-50 dark:bg-teeb-950 flex flex-col gap-3 overscroll-contain"
           >
             {messages.map((msg, idx) => {
               const isAssistant = msg.role === 'assistant';
@@ -138,7 +138,7 @@ export const ChatWidget = () => {
                   {/* Avatar */}
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                     isAssistant
-                      ? 'bg-dhura-100 text-dhura-600 dark:bg-dhura-900/60 dark:text-dhura-300'
+                      ? 'bg-teeb-100 text-teeb-600 dark:bg-teeb-900/60 dark:text-teeb-300'
                       : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                   }`}>
                     {isAssistant ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
@@ -147,8 +147,8 @@ export const ChatWidget = () => {
                   <div 
                     className={`p-3 rounded-2xl text-sm leading-relaxed ${
                       isAssistant 
-                        ? 'bg-white dark:bg-[#231D14] border border-dhura-100 dark:border-dhura-900 text-slate-700 dark:text-dhura-100 rounded-tl-none shadow-sm prose prose-sm dark:prose-invert max-w-none prose-p:leading-snug prose-ul:my-1 prose-li:my-0' 
-                        : 'bg-gradient-to-br from-dhura-500 to-dhura-600 text-white rounded-tr-none shadow-md'
+                        ? 'bg-white dark:bg-[#231D14] border border-teeb-100 dark:border-teeb-900 text-slate-700 dark:text-teeb-100 rounded-tl-none shadow-sm prose prose-sm dark:prose-invert max-w-none prose-p:leading-snug prose-ul:my-1 prose-li:my-0' 
+                        : 'bg-gradient-to-br from-teeb-500 to-teeb-600 text-white rounded-tr-none shadow-md'
                     }`}
                   >
                     {isAssistant ? (
@@ -164,12 +164,12 @@ export const ChatWidget = () => {
             {/* Loading Indicator */}
             {isLoading && (
               <div className="flex gap-2 max-w-[85%] self-start">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-dhura-100 text-dhura-600 dark:bg-dhura-900/60 dark:text-dhura-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-teeb-100 text-teeb-600 dark:bg-teeb-900/60 dark:text-teeb-300">
                     <Bot className="w-4 h-4" />
                   </div>
-                  <div className="p-3 rounded-2xl text-sm bg-white dark:bg-[#231D14] border border-dhura-100 dark:border-dhura-900 text-slate-700 dark:text-dhura-100 rounded-tl-none shadow-sm flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin text-dhura-500" />
-                    <span className="text-slate-500 dark:text-dhura-400">جاري التفكير...</span>
+                  <div className="p-3 rounded-2xl text-sm bg-white dark:bg-[#231D14] border border-teeb-100 dark:border-teeb-900 text-slate-700 dark:text-teeb-100 rounded-tl-none shadow-sm flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-teeb-500" />
+                    <span className="text-slate-500 dark:text-teeb-400">جاري التفكير...</span>
                   </div>
               </div>
             )}
@@ -178,20 +178,20 @@ export const ChatWidget = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-3 bg-white dark:bg-[#1A1510] border-t border-slate-100 dark:border-dhura-900">
+          <div className="p-3 bg-white dark:bg-[#1A1510] border-t border-slate-100 dark:border-teeb-900">
             <form onSubmit={handleSend} className="relative flex items-center">
               <input
                 type="text"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
                 placeholder={isRateLimited ? "يرجى الانتظار قليلاً..." : "اكتب رسالتك..."}
-                className="w-full bg-dhura-50 dark:bg-dhura-950/80 border border-dhura-100 dark:border-dhura-900 rounded-full py-3 pl-4 pr-12 text-sm text-slate-900 dark:text-dhura-100 focus:ring-2 focus:ring-dhura-500/50 focus:outline-none placeholder-slate-400 dark:placeholder-dhura-600"
+                className="w-full bg-teeb-50 dark:bg-teeb-950/80 border border-teeb-100 dark:border-teeb-900 rounded-full py-3 pl-4 pr-12 text-sm text-slate-900 dark:text-teeb-100 focus:ring-2 focus:ring-teeb-500/50 focus:outline-none placeholder-slate-400 dark:placeholder-teeb-600"
                 disabled={isLoading || isRateLimited}
               />
               <button
                 type="submit"
                 disabled={!inputVal.trim() || isLoading || isRateLimited}
-                className="absolute right-2 p-2 bg-dhura-500 hover:bg-dhura-400 text-white rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="absolute right-2 p-2 bg-teeb-500 hover:bg-teeb-400 text-white rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                 aria-label="Send message"
               >
                 <Send className="w-4 h-4" />
@@ -205,10 +205,10 @@ export const ChatWidget = () => {
       {/* FAB Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-dhura-600/30 transition-transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-dhura-500/30 ${
+        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-teeb-600/30 transition-transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-teeb-500/30 ${
           isOpen
-            ? 'bg-[#231D14] text-dhura-300 dark:bg-dhura-950 border border-dhura-800'
-            : 'bg-gradient-to-br from-dhura-400 to-dhura-600 text-white hover:from-dhura-300 hover:to-dhura-500'
+            ? 'bg-[#231D14] text-teeb-300 dark:bg-teeb-950 border border-teeb-800'
+            : 'bg-gradient-to-br from-teeb-400 to-teeb-600 text-white hover:from-teeb-300 hover:to-teeb-500'
         }`}
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >

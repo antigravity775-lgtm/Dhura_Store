@@ -44,7 +44,7 @@ const HomepageSections = React.memo(() => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/products')}
-          className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-dhura-500 via-dhura-600 to-dhura-700 text-white shadow-lg shadow-dhura-500/20 hover:shadow-xl hover:shadow-dhura-500/30 transition-shadow duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-dhura-950 text-right"
+          className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-teeb-500 via-teeb-600 to-teeb-700 text-white shadow-lg shadow-teeb-500/20 hover:shadow-xl hover:shadow-teeb-500/30 transition-shadow duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-teeb-950 text-right"
         >
           {/* Animated background pattern */}
           <div className="absolute inset-0 opacity-10">
@@ -58,7 +58,7 @@ const HomepageSections = React.memo(() => {
                 <ShoppingBag className="w-5 h-5 opacity-80" />
                 <span className="text-base sm:text-lg font-bold">تصفح جميع المنتجات</span>
               </div>
-              <span className="text-xs sm:text-sm text-dhura-200/80 font-medium">
+              <span className="text-xs sm:text-sm text-teeb-200/80 font-medium">
                 استعرض جميع المنتجات المتاحة
               </span>
             </div>
