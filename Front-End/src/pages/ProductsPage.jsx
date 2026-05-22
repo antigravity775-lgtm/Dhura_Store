@@ -21,7 +21,7 @@ import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import * as api from '../services/api';
-import { useProducts, useCategories } from '../hooks/useProducts';
+import { useProductsInfinite, useCategories } from '../hooks/useProducts';
 import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../utils/cloudinaryUrl';
 
 // ─── Helpers ───
@@ -59,18 +59,34 @@ const ProductsPage = () => {
 
   const [activeCategory, setActiveCategory] = useState('الكل');
   const [searchText, setSearchText] = useState(searchFromUrl);
+  const [debouncedSearch, setDebouncedSearch] = useState(searchFromUrl);
 
   React.useEffect(() => {
     setSearchText(searchFromUrl);
   }, [searchFromUrl]);
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchText);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchText]);
 
   // ─── SWR Data ───
   const {
     data: products,
     isLoading: productsLoading,
     isValidating: productsValidating,
+    isLoadingMore,
+    isReachingEnd,
+    size,
+    setSize,
     error: productsError
-  } = useProducts({});
+  } = useProductsInfinite({
+    specialOffers: offersOnly,
+    search: debouncedSearch,
+    categoryName: activeCategory === 'الكل' ? '' : activeCategory
+  });
 
   const { data: categories } = useCategories();
 
@@ -87,24 +103,11 @@ const ProductsPage = () => {
   }, [categories, activeProducts]);
 
   const filteredProducts = useMemo(() => {
-    let result = activeCategory === 'الكل'
-      ? activeProducts
-      : activeProducts.filter(p => p.categoryName === activeCategory);
+    // The backend now handles search, category, and specialOffers filtering.
+    // However, if there's any residual local logic needed, we can do it here.
+    let result = [...activeProducts];
 
-    if (searchText.trim()) {
-      const q = searchText.trim().toLowerCase();
-      result = result.filter(p =>
-        p.title?.toLowerCase().includes(q) ||
-        p.categoryName?.toLowerCase().includes(q) ||
-        p.description?.toLowerCase().includes(q)
-      );
-    }
-
-    if (offersOnly) {
-      result = result.filter(p => p.isPromoted);
-    }
-
-    // Sort by promoted first
+    // Backend already sorts by isPromoted desc, but just in case we need to maintain local sorting stability
     result.sort((a, b) => {
       if (a.isPromoted && !b.isPromoted) return -1;
       if (!a.isPromoted && b.isPromoted) return 1;
@@ -112,7 +115,7 @@ const ProductsPage = () => {
     });
 
     return result;
-  }, [activeProducts, activeCategory, searchText, offersOnly]);
+  }, [activeProducts]);
 
   const mappedGridProducts = useMemo(() => {
     return filteredProducts.map(p => {
@@ -153,14 +156,14 @@ const ProductsPage = () => {
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => navigate('/?scrollTo=categories')}
-            className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all shadow-sm"
+            className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-agate-600 dark:hover:text-agate-400 hover:border-agate-300 dark:hover:border-agate-600 transition-all shadow-sm"
             aria-label="العودة للرئيسية"
           >
             <ArrowRight className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-900/40">
-              <ShoppingBag className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400" />
+            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-agate-100 dark:bg-agate-900/40">
+              <ShoppingBag className="w-4.5 h-4.5 text-agate-600 dark:text-agate-400" />
             </div>
             <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               جميع المنتجات
@@ -180,7 +183,7 @@ const ProductsPage = () => {
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 placeholder="ابحث عن منتج..."
-                className="w-full pr-12 pl-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 shadow-sm transition-all"
+                className="w-full pr-12 pl-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 shadow-sm transition-all"
               />
               {searchText && (
                 <button
@@ -197,7 +200,7 @@ const ProductsPage = () => {
         {/* ── Category Pills ── */}
         <section className="mb-6">
           <div className="relative w-full overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent pointer-events-none md:hidden z-10" />
+            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-bone dark:from-slate-950 to-transparent pointer-events-none md:hidden z-10" />
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
               {categoryNames.map((name) => {
                 const isActive = activeCategory === name;
@@ -207,8 +210,8 @@ const ProductsPage = () => {
                     onClick={() => setActiveCategory(name)}
                     className={`relative whitespace-nowrap inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 focus:outline-none border ${
                       isActive
-                        ? 'text-white bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-500/25'
-                        : 'text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/30'
+                        ? 'text-white bg-agate-600 border-agate-600 shadow-md shadow-agate-500/25'
+                        : 'text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-agate-300 dark:hover:border-agate-600 hover:bg-agate-50/50 dark:hover:bg-agate-900/30'
                     }`}
                   >
                     {name}
@@ -249,7 +252,7 @@ const ProductsPage = () => {
           </div>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
             {productsValidating && !showSkeleton && (
-              <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+              <Loader2 className="w-3 h-3 animate-spin text-agate-400" />
             )}
             <LayoutGrid className="w-3.5 h-3.5" />
             {filteredProducts.length} منتج
@@ -276,6 +279,26 @@ const ProductsPage = () => {
                   onClick={(p) => navigate(`/product/${p.id}`)}
                   onFavorite={handleFavoriteToggle}
                 />
+                
+                {/* Load More Button */}
+                {!isReachingEnd && (
+                  <div className="flex justify-center mt-8 pb-4">
+                    <button
+                      onClick={() => setSize(size + 1)}
+                      disabled={isLoadingMore}
+                      className="px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 font-semibold shadow-sm hover:border-agate-300 dark:hover:border-agate-600 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      {isLoadingMore ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          جاري التحميل...
+                        </>
+                      ) : (
+                        'عرض المزيد'
+                      )}
+                    </button>
+                  </div>
+                )}
               </motion.div>
             ) : (
               <motion.div
@@ -296,7 +319,7 @@ const ProductsPage = () => {
                 </p>
                 <button
                   onClick={clearAllFilters}
-                  className="mt-5 px-5 py-2 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors text-sm"
+                  className="mt-5 px-5 py-2 bg-agate-600 text-white font-semibold rounded-xl hover:bg-agate-700 transition-colors text-sm"
                 >
                   مسح الفلاتر وعرض الكل
                 </button>

@@ -120,8 +120,8 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
       dir="ltr"
       className={`group flex flex-col bg-white dark:bg-[#1A1510]/50 rounded-2xl shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] border p-3 h-full transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] cursor-pointer ${
         isPromoted
-          ? 'border-teeb-300 dark:border-teeb-600 ring-2 ring-teeb-400/30 dark:ring-teeb-500/20'
-          : 'border-gray-100/60 dark:border-teeb-900'
+          ? 'border-agate-300 dark:border-agate-600 ring-2 ring-agate-400/30 dark:ring-agate-500/20'
+          : 'border-gray-100/60 dark:border-agate-900'
       }`}
       role="button"
       tabIndex={0}
@@ -129,7 +129,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
       onClick={() => onClick?.(product)}
     >
       {/* Image Container with Badge */}
-      <div className="relative aspect-[4/5] w-full mb-3 bg-white dark:bg-[#1A1510] rounded-xl overflow-hidden flex items-center justify-center border border-gray-50 dark:border-teeb-900/50">
+      <div className="relative aspect-[4/5] w-full mb-3 bg-white dark:bg-[#1A1510] rounded-xl overflow-hidden flex items-center justify-center border border-gray-50 dark:border-agate-900/50">
         <img
           src={getOptimizedImageUrl(image, 400)}
           alt={title}
@@ -140,7 +140,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         {/* Absolute Banner/Badge */}
         {badge && !hasPromoRibbon && (
           <div className="absolute top-0 left-0 z-10 w-full flex justify-start pointer-events-none">
-            <span className={`px-2.5 py-1 text-[10px] sm:text-xs font-bold tracking-wide text-white rounded-br-xl shadow-sm ${badge === 'Sale' ? 'bg-gradient-to-r from-orange-500 to-amber-500' : 'bg-gradient-to-r from-teal-500 to-emerald-500'
+            <span className={`px-2.5 py-1 text-[10px] sm:text-xs font-bold tracking-wide text-white rounded-br-xl shadow-sm ${badge === 'Sale' ? 'bg-gradient-to-r from-orange-500 to-agate-500' : 'bg-gradient-to-r from-teal-500 to-emerald-500'
               }`}>
               {badge === 'Sale' ? 'تخفيض' : badge === 'Local' ? 'محلي' : badge}
             </span>
@@ -150,7 +150,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         {/* Promotion Ribbon — Glassmorphism */}
         {hasPromoRibbon && (
           <div className="absolute top-0 left-0 z-10 w-full flex justify-start pointer-events-none">
-            <span className="px-2.5 py-1 text-[10px] sm:text-xs font-bold text-white rounded-br-xl shadow-lg bg-gradient-to-r from-indigo-600/90 via-purple-600/90 to-pink-500/90 backdrop-blur-md border-b border-r border-white/20">
+            <span className="px-2.5 py-1 text-[10px] sm:text-xs font-bold text-white rounded-br-xl shadow-lg bg-gradient-to-r from-agate-600/90 via-purple-600/90 to-pink-500/90 backdrop-blur-md border-b border-r border-white/20">
               {promotionLabel || '⭐ مميز'}
             </span>
           </div>
@@ -159,7 +159,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         {/* Discount Badge */}
         {hasDiscount && (
           <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
-            <span className="px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 rounded-md shadow-md">
+            <span className="px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-orange-500 to-agate-500 rounded-md shadow-md">
               -{discountPercentage}%
             </span>
           </div>
@@ -181,7 +181,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
       <div className="flex flex-col flex-grow">
         {/* Title: Truncated to 2 lines */}
         <h3
-          className="text-[13px] sm:text-sm font-medium text-gray-900 dark:text-slate-100 line-clamp-2 leading-snug mb-1.5 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors"
+          className="text-[13px] sm:text-sm font-medium text-gray-900 dark:text-slate-100 line-clamp-2 leading-snug mb-1.5 group-hover:text-agate-700 dark:group-hover:text-agate-400 transition-colors"
           title={title}
         >
           {title}
@@ -199,7 +199,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
                   <Star className="w-full h-full text-gray-200 dark:text-slate-600 absolute" />
                   {(isFilled || isHalf) && (
                     <div className={`absolute top-0 left-0 overflow-hidden ${isHalf ? 'w-1/2' : 'w-full'}`}>
-                      <Star className="w-full h-full text-amber-400 fill-amber-400" />
+                      <Star className="w-full h-full text-agate-400 fill-agate-400" />
                     </div>
                   )}
                 </div>
@@ -207,7 +207,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
             })}
           </div>
           <div className="flex items-center gap-1">
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-amber-400">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-agate-400">
               {Number(rating).toFixed(1)}/5
             </span>
             <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
@@ -256,7 +256,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
               onQuickAdd?.(product);
             }}
             aria-label={`Quick add ${title} to cart`}
-            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-blue-50 dark:bg-indigo-900/40 text-blue-600 dark:text-indigo-400 hover:bg-blue-600 dark:hover:bg-indigo-600 hover:text-white transition-all duration-200 active:scale-90 flex-shrink-0 shadow-sm"
+            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-blue-50 dark:bg-agate-900/40 text-blue-600 dark:text-agate-400 hover:bg-blue-600 dark:hover:bg-agate-600 hover:text-white transition-all duration-200 active:scale-90 flex-shrink-0 shadow-sm"
           >
             <Plus size={20} strokeWidth={2.5} />
           </button>

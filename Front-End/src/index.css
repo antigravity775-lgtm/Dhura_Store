@@ -11,10 +11,10 @@
     direction: rtl;
   }
 
-  /* EN: Light mode base — slate-50 background, slate-900 text
-     AR: قاعدة الوضع الفاتح — خلفية slate-50، نص slate-900 */
+  /* EN: Light mode base — bone background, slate-900 text
+     AR: قاعدة الوضع الفاتح — خلفية أبيض عظمي، نص slate-900 */
   body {
-    @apply bg-slate-50 text-slate-900 font-sans;
+    @apply bg-bone text-slate-900 font-sans;
   }
 
   /* EN: Dark mode base — slate-950 background for a premium feel (not pure black)
@@ -68,11 +68,11 @@
   }
 
   ::selection {
-    @apply bg-amber-200 text-amber-900;
+    @apply bg-agate-200 text-agate-900;
   }
 
   .dark ::selection {
-    @apply bg-amber-800 text-amber-100;
+    @apply bg-agate-800 text-agate-100;
   }
 
   /* EN: Smooth color transitions when toggling theme — prevents jarring changes
@@ -128,10 +128,10 @@
   }
 
   .focus-ring:focus {
-    @apply outline-none ring-2 ring-amber-500/50 ring-offset-2;
+    @apply outline-none ring-2 ring-agate-500/50 ring-offset-2;
   }
   .dark .focus-ring:focus {
-    @apply ring-offset-[#1A1510];
+    @apply ring-offset-[#2f0b12];
   }
 
   .img-placeholder {
@@ -151,23 +151,23 @@
     background: theme('colors.slate.100');
   }
   ::-webkit-scrollbar-thumb {
-    background: #C9A84C;
+    background: theme('colors.agate.700');
     border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #A07830;
+    background: theme('colors.agate.600');
   }
 
-  /* EN: Dark mode scrollbar — TEEB gold
-     AR: شريط تمرير الوضع الداكن — ذهبي طِيب */
+  /* EN: Dark mode scrollbar — Agate red
+     AR: شريط تمرير الوضع الداكن — أحمر عقيق */
   .dark ::-webkit-scrollbar-track {
-    background: #1A1510;
+    background: #2f0b12;
   }
   .dark ::-webkit-scrollbar-thumb {
-    background: #7A5C20;
+    background: theme('colors.agate.800');
   }
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: #C9A84C;
+    background: theme('colors.agate.700');
   }
 }
 
@@ -205,11 +205,11 @@
 
 /* EN: Skeleton pulse for category cards
    AR: نبض الهيكل العظمي لبطاقات الأقسام */
-.category-card-skeleton {
+  .category-card-skeleton {
   background: linear-gradient(
     110deg,
     theme('colors.white') 30%,
-    theme('colors.slate.50') 50%,
+    theme('colors.bone.DEFAULT') 50%,
     theme('colors.white') 70%
   );
   background-size: 200% 100%;

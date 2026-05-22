@@ -10,19 +10,34 @@ export default {
   theme: {
     extend: {
       colors: {
-        // TEEB Brand Gold Palette
-        teeb: {
-          50:  '#FDF8EE',
-          100: '#FAF0D7',
-          200: '#F3DCAA',
-          300: '#E8C96A',
-          400: '#D9B050',
-          500: '#C9A84C', // Primary Gold
-          600: '#A07830', // Gold Deep
-          700: '#7A5C20',
-          800: '#5A4118',
-          900: '#3A2A0E',
-          950: '#1A1510', // Midnight BG
+        // Agate Palette (Brand Red/Burgundy) - Centers on #791C2E
+        agate: {
+          50: '#FAF0F2',
+          100: '#F2D7DD',
+          200: '#E6B2BE',
+          300: '#D6899A',
+          400: '#C25D73',
+          500: '#A63B54',
+          600: '#8a2337',
+          700: '#791C2E', // Primary Dark Agate
+          800: '#631423',
+          900: '#4D101A',
+          950: '#210609',
+        },
+        // Bone Palette (Background/Light) - Centers on #F8F6EF
+        bone: {
+          DEFAULT: '#F8F6EF',
+          50: '#FCFBF8',
+          100: '#F8F6EF', // Primary Bone White
+          200: '#EFEADD',
+          300: '#E4DBCA',
+          400: '#D6C8B2',
+          500: '#C7B49A',
+          600: '#B59E81',
+          700: '#9E8669',
+          800: '#867056',
+          900: '#6D5B46',
+          950: '#40352A',
         },
       },
       fontFamily: {

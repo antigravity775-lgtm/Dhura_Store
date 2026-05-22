@@ -23,7 +23,7 @@ import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import * as api from '../services/api';
-import { useProducts } from '../hooks/useProducts';
+import { useProductsInfinite } from '../hooks/useProducts';
 import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../utils/cloudinaryUrl';
 
 // ─── Helpers ───
@@ -59,31 +59,39 @@ const CategoryPage = () => {
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const [searchText, setSearchText] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchText);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchText]);
 
   // ─── SWR Data ───
   const {
     data: products,
     isLoading: productsLoading,
     isValidating: productsValidating,
+    isLoadingMore,
+    isReachingEnd,
+    size,
+    setSize,
     error: productsError
-  } = useProducts({});
+  } = useProductsInfinite({
+    categoryName: decodedCategoryName,
+    search: debouncedSearch
+  });
 
   const activeProducts = productsError ? [] : (products || []);
   const showSkeleton = productsLoading && activeProducts.length === 0;
 
   // ─── Filter by category ───
   const filteredProducts = useMemo(() => {
-    let result = activeProducts.filter(p => p.categoryName === decodedCategoryName);
+    // Backend now handles search and category filters
+    let result = [...activeProducts];
 
-    if (searchText.trim()) {
-      const q = searchText.trim().toLowerCase();
-      result = result.filter(p =>
-        p.title?.toLowerCase().includes(q) ||
-        p.description?.toLowerCase().includes(q)
-      );
-    }
-
-    // Sort promoted first
+    // Maintain local sorting stability (promoted first)
     result.sort((a, b) => {
       if (a.isPromoted && !b.isPromoted) return -1;
       if (!a.isPromoted && b.isPromoted) return 1;
@@ -91,7 +99,7 @@ const CategoryPage = () => {
     });
 
     return result;
-  }, [activeProducts, decodedCategoryName, searchText]);
+  }, [activeProducts]);
 
   const mappedGridProducts = useMemo(() => {
     return filteredProducts.map(p => {
@@ -126,7 +134,7 @@ const CategoryPage = () => {
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => navigate('/')}
-            className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all shadow-sm"
+            className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-agate-600 dark:hover:text-agate-400 hover:border-agate-300 dark:hover:border-agate-600 transition-all shadow-sm"
             aria-label="العودة للرئيسية"
           >
             <ArrowRight className="w-5 h-5" />
@@ -157,7 +165,7 @@ const CategoryPage = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               placeholder={`ابحث في ${decodedCategoryName}...`}
-              className="w-full pr-12 pl-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 shadow-sm transition-all"
+              className="w-full pr-12 pl-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 shadow-sm transition-all"
             />
             {searchText && (
               <button
@@ -179,7 +187,7 @@ const CategoryPage = () => {
           </h2>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
             {productsValidating && !showSkeleton && (
-              <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+              <Loader2 className="w-3 h-3 animate-spin text-agate-400" />
             )}
             <LayoutGrid className="w-3.5 h-3.5" />
             {filteredProducts.length} منتج
@@ -206,6 +214,26 @@ const CategoryPage = () => {
                   onClick={(p) => navigate(`/product/${p.id}`)}
                   onFavorite={handleFavoriteToggle}
                 />
+                
+                {/* Load More Button */}
+                {!isReachingEnd && (
+                  <div className="flex justify-center mt-8 pb-4">
+                    <button
+                      onClick={() => setSize(size + 1)}
+                      disabled={isLoadingMore}
+                      className="px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 font-semibold shadow-sm hover:border-agate-300 dark:hover:border-agate-600 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      {isLoadingMore ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          جاري التحميل...
+                        </>
+                      ) : (
+                        'عرض المزيد'
+                      )}
+                    </button>
+                  </div>
+                )}
               </motion.div>
             ) : (
               <motion.div
@@ -226,7 +254,7 @@ const CategoryPage = () => {
                 </p>
                 <button
                   onClick={() => navigate('/')}
-                  className="mt-5 px-5 py-2 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors text-sm"
+                  className="mt-5 px-5 py-2 bg-agate-600 text-white font-semibold rounded-xl hover:bg-agate-700 transition-colors text-sm"
                 >
                   العودة للصفحة الرئيسية
                 </button>
