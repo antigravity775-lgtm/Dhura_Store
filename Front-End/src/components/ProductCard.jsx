@@ -37,7 +37,7 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
         to={`/product/${id}`}
         className={`group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col cursor-pointer border block h-full ${
           isPromoted
-            ? 'border-indigo-300 dark:border-indigo-600 ring-2 ring-indigo-400/30 dark:ring-indigo-500/20 shadow-md shadow-indigo-500/10'
+            ? 'border-agate-300 dark:border-agate-600 ring-2 ring-agate-400/30 dark:ring-agate-500/20 shadow-md shadow-agate-500/10'
             : 'border-gray-100/80 dark:border-slate-700'
         }`}
       >
@@ -67,13 +67,13 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
           <div className="absolute top-3 right-3 left-3 flex justify-between items-start">
             {/* Promotion Ribbon or Condition Badge */}
             {hasPromoRibbon ? (
-              <span className="px-2.5 py-1 text-xs font-bold rounded-lg shadow-lg bg-gradient-to-r from-indigo-600/90 via-purple-600/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20">
+              <span className="px-2.5 py-1 text-xs font-bold rounded-lg shadow-lg bg-gradient-to-r from-agate-600/90 via-purple-600/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20">
                 {promotionLabel || '⭐ مميز'}
               </span>
             ) : (
               <span className={`px-2.5 py-1 text-xs font-bold rounded-lg backdrop-blur-md shadow-sm ${
                 condition === 'New' 
-                  ? 'bg-indigo-500/90 text-white' 
+                  ? 'bg-agate-500/90 text-white' 
                   : 'bg-white/90 text-slate-700'
               }`}>
                 {conditionText}
@@ -102,7 +102,7 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
         
         {/* محتوى البطاقة */}
         <div className="p-4 flex flex-col flex-grow text-right">
-          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-[15px] mb-1.5 line-clamp-2 leading-snug group-hover:text-indigo-700 dark:group-hover:text-indigo-400 transition-colors">
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-[15px] mb-1.5 line-clamp-2 leading-snug group-hover:text-agate-700 dark:group-hover:text-agate-400 transition-colors">
             {title}
           </h3>
           
@@ -124,7 +124,7 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
                 </span>
               </div>
             ) : (
-              <span className="font-extrabold text-lg text-indigo-600 dark:text-indigo-400 tracking-tight">{price}</span>
+              <span className="font-extrabold text-lg text-agate-600 dark:text-agate-400 tracking-tight">{price}</span>
             )}
           </div>
         </div>

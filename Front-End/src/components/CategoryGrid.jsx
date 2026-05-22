@@ -44,8 +44,8 @@ const CategoryGrid = React.memo(({ categories = [], isLoading = false }) => {
     <section id="categories-section" className="mb-8 sm:mb-10">
       {/* Section Header */}
       <div className="flex items-center gap-2.5 mb-5 sm:mb-6">
-        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-900/40">
-          <LayoutGrid className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400" />
+        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-agate-100 dark:bg-agate-900/40">
+          <LayoutGrid className="w-4.5 h-4.5 text-agate-600 dark:text-agate-400" />
         </div>
         <div>
           <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">

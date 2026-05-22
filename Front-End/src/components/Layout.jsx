@@ -70,7 +70,7 @@ const Layout = React.memo(({ children }) => {
 
   return (
     <div
-      className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300"
+      className="min-h-screen bg-bone dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300"
       dir="rtl"
     >
       {/* شريط التنقل / Navigation Bar */}
@@ -88,7 +88,7 @@ const Layout = React.memo(({ children }) => {
               to="/"
               className="flex-shrink-0 flex items-center gap-3 cursor-pointer group select-none"
             >
-              <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-amber-200/60">
+              <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-agate-200/60">
                 <img
                   src={logo}
                   alt="شعار TEEB طِيب"
@@ -97,9 +97,9 @@ const Layout = React.memo(({ children }) => {
                   fetchpriority="high"
                   className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
                 />
-                <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-amber-400 rounded-full border-2 border-white animate-pulse hidden md:block"></div>
+                <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-agate-400 rounded-full border-2 border-white animate-pulse hidden md:block"></div>
               </div>
-              <span className="font-extrabold text-xl md:text-2xl tracking-tight text-slate-900 dark:text-amber-100 drop-shadow-sm font-display">
+              <span className="font-extrabold text-xl md:text-2xl tracking-tight text-slate-900 dark:text-agate-100 drop-shadow-sm font-display">
                 TEEB
               </span>
             </Link>
@@ -108,13 +108,13 @@ const Layout = React.memo(({ children }) => {
             <div className="hidden md:flex flex-1 max-w-2xl mx-8">
               <form onSubmit={handleSearch} className="relative w-full group">
                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400 dark:text-slate-500 group-focus-within:text-amber-500 transition-colors" />
+                  <Search className="h-5 w-5 text-gray-400 dark:text-slate-500 group-focus-within:text-agate-500 transition-colors" />
                 </div>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pr-11 pl-4 py-2.5 border border-gray-200 dark:border-teeb-800 rounded-full bg-gray-50/80 dark:bg-teeb-950/60 text-slate-900 dark:text-amber-50 placeholder-gray-400 dark:placeholder-teeb-600 focus:outline-none focus:bg-white dark:focus:bg-teeb-950/80 focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 transition-all shadow-sm text-sm text-right"
+                  className="block w-full pr-11 pl-4 py-2.5 border border-gray-200 dark:border-agate-800 rounded-full bg-gray-50/80 dark:bg-agate-950/60 text-slate-900 dark:text-agate-50 placeholder-gray-400 dark:placeholder-agate-600 focus:outline-none focus:bg-white dark:focus:bg-agate-950/80 focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 transition-all shadow-sm text-sm text-right"
                   placeholder="ابحث عن منتجات، فئات، بائعين..."
                 />
               </form>
@@ -126,7 +126,7 @@ const Layout = React.memo(({ children }) => {
                   AR: زر تبديل الوضع الداكن — متاح في سطح المكتب والجوال */}
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-xl text-gray-500 dark:text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-200 focus:outline-none"
+                className="p-2 rounded-xl text-gray-500 dark:text-slate-400 hover:text-agate-500 dark:hover:text-agate-400 hover:bg-agate-50 dark:hover:bg-agate-500/10 transition-all duration-200 focus:outline-none"
                 aria-label={
                   isDark ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن"
                 }
@@ -154,7 +154,7 @@ const Layout = React.memo(({ children }) => {
               {isSeller && !isAdmin && (
                 <Link
                   to="/seller"
-                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:border-indigo-300 dark:hover:border-indigo-700 hover:text-indigo-700 dark:hover:text-indigo-300 hover:shadow-sm transition-all"
+                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-agate-50 dark:hover:bg-agate-900/30 hover:border-agate-300 dark:hover:border-agate-700 hover:text-agate-700 dark:hover:text-agate-300 hover:shadow-sm transition-all"
                 >
                   <Store className="w-4 h-4" />
                   لوحة البائع
@@ -165,7 +165,7 @@ const Layout = React.memo(({ children }) => {
               {isAuthenticated && (!isSeller || isAdmin) && (
                 <Link
                   to="/my-orders"
-                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:border-indigo-300 dark:hover:border-indigo-700 hover:text-indigo-700 dark:hover:text-indigo-300 hover:shadow-sm transition-all"
+                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-agate-50 dark:hover:bg-agate-900/30 hover:border-agate-300 dark:hover:border-agate-700 hover:text-agate-700 dark:hover:text-agate-300 hover:shadow-sm transition-all"
                 >
                   <Package className="w-4 h-4" />
                   طلباتي
@@ -175,12 +175,12 @@ const Layout = React.memo(({ children }) => {
               {/* المفضلة / Favorites */}
               <Link
                 to="/favorites"
-                className="hidden sm:flex p-2 text-gray-400 dark:text-teeb-700 hover:text-rose-500 dark:hover:text-rose-400 transition-colors focus:outline-none rounded-xl hover:bg-rose-50 dark:hover:bg-rose-500/10 relative"
+                className="hidden sm:flex p-2 text-gray-400 dark:text-agate-700 hover:text-rose-500 dark:hover:text-rose-400 transition-colors focus:outline-none rounded-xl hover:bg-rose-50 dark:hover:bg-rose-500/10 relative"
                 title="المفضلة"
               >
                 <Heart className="h-5 w-5" />
                 {favoritesCount > 0 && (
-                  <span className="absolute -top-0.5 -left-1 min-w-[18px] h-[18px] bg-rose-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-[1.5px] border-white dark:border-teeb-950 px-1">
+                  <span className="absolute -top-0.5 -left-1 min-w-[18px] h-[18px] bg-rose-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-[1.5px] border-white dark:border-agate-950 px-1">
                     {favoritesCount > 99 ? "99+" : favoritesCount}
                   </span>
                 )}
@@ -189,11 +189,11 @@ const Layout = React.memo(({ children }) => {
               {/* سلة التسوق / Cart */}
               <Link
                 to="/cart"
-                className="p-2 text-gray-500 dark:text-teeb-600 hover:text-amber-600 dark:hover:text-amber-400 transition-colors relative group focus:outline-none rounded-xl hover:bg-amber-50 dark:hover:bg-amber-500/10"
+                className="p-2 text-gray-500 dark:text-agate-600 hover:text-agate-600 dark:hover:text-agate-400 transition-colors relative group focus:outline-none rounded-xl hover:bg-agate-50 dark:hover:bg-agate-500/10"
               >
                 <ShoppingBag className="h-5 w-5 group-hover:scale-110 transition-transform" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-0.5 -left-1 min-w-[18px] h-[18px] bg-amber-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-[1.5px] border-white dark:border-teeb-950 px-1">
+                  <span className="absolute -top-0.5 -left-1 min-w-[18px] h-[18px] bg-agate-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-[1.5px] border-white dark:border-agate-950 px-1">
                     {cartCount > 99 ? "99+" : cartCount}
                   </span>
                 )}
@@ -204,20 +204,20 @@ const Layout = React.memo(({ children }) => {
                 <div className="hidden sm:flex items-center gap-2">
                   <Link
                     to="/profile"
-                    className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-teeb-900/40 rounded-xl border border-amber-100 dark:border-teeb-800 hover:bg-amber-100 dark:hover:bg-teeb-900/60 transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-agate-50 dark:bg-agate-900/40 rounded-xl border border-agate-100 dark:border-agate-800 hover:bg-agate-100 dark:hover:bg-agate-900/60 transition-colors"
                   >
-                    <div className="w-7 h-7 rounded-full bg-teeb-500 flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-7 h-7 rounded-full bg-agate-500 flex items-center justify-center text-white text-xs font-bold">
                       {user?.fullName?.charAt(0) || (
                         <User className="w-4 h-4" />
                       )}
                     </div>
-                    <span className="text-sm font-semibold text-amber-900 dark:text-amber-200 max-w-[100px] truncate">
+                    <span className="text-sm font-semibold text-agate-900 dark:text-agate-200 max-w-[100px] truncate">
                       {user?.fullName || "المستخدم"}
                     </span>
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="p-2 text-gray-400 dark:text-teeb-700 hover:text-red-500 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10"
+                    className="p-2 text-gray-400 dark:text-agate-700 hover:text-red-500 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10"
                     title="تسجيل الخروج"
                   >
                     <LogOut className="w-5 h-5" />
@@ -226,7 +226,7 @@ const Layout = React.memo(({ children }) => {
               ) : (
                 <Link
                   to="/auth"
-                  className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 bg-teeb-500 text-white rounded-xl text-sm font-bold hover:bg-teeb-400 transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+                  className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 bg-agate-500 text-white rounded-xl text-sm font-bold hover:bg-agate-400 transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
                 >
                   <LogIn className="w-4 h-4" />
                   تسجيل الدخول
@@ -259,7 +259,7 @@ const Layout = React.memo(({ children }) => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pr-12 pl-4 py-3 border border-gray-200 dark:border-slate-700 rounded-full bg-gray-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm transition-shadow text-right text-sm"
+                  className="block w-full pr-12 pl-4 py-3 border border-gray-200 dark:border-slate-700 rounded-full bg-gray-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-agate-500 focus:border-agate-500 shadow-sm transition-shadow text-right text-sm"
                   placeholder="ابحث عن منتجات، فئات، بائعين..."
                   autoFocus
                 />
@@ -271,16 +271,16 @@ const Layout = React.memo(({ children }) => {
                     <Link
                       to="/profile"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 bg-amber-50 dark:bg-teeb-900/40 rounded-xl"
+                      className="flex items-center gap-3 px-3 py-2.5 bg-agate-50 dark:bg-agate-900/40 rounded-xl"
                     >
-                      <div className="w-8 h-8 rounded-full bg-teeb-500 flex items-center justify-center text-white text-sm font-bold">
+                      <div className="w-8 h-8 rounded-full bg-agate-500 flex items-center justify-center text-white text-sm font-bold">
                         {user?.fullName?.charAt(0) || "?"}
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-slate-800 dark:text-amber-100">
+                        <div className="text-sm font-bold text-slate-800 dark:text-agate-100">
                           {user?.fullName}
                         </div>
-                        <div className="text-xs text-slate-500 dark:text-teeb-600">
+                        <div className="text-xs text-slate-500 dark:text-agate-600">
                           {user?.role === "Admin"
                             ? "مسؤول"
                             : user?.role === "Seller"
@@ -342,7 +342,7 @@ const Layout = React.memo(({ children }) => {
                   <Link
                     to="/auth"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 px-4 py-3 bg-teeb-500 text-white font-bold rounded-xl text-sm hover:bg-teeb-400 transition-all"
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-agate-500 text-white font-bold rounded-xl text-sm hover:bg-agate-400 transition-all"
                   >
                     <LogIn className="w-4 h-4" /> تسجيل الدخول
                   </Link>

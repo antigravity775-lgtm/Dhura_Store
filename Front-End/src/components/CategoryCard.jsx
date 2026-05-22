@@ -87,7 +87,7 @@ const CategoryCard = React.memo(({ category, isLoading = false }) => {
   return (
     <button
       onClick={() => navigate(`/category/${encodeURIComponent(name)}`)}
-      className="category-card group relative flex flex-col justify-end rounded-2xl overflow-hidden h-36 sm:h-44 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 shadow-sm hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-black/40 transition-all duration-300 hover:-translate-y-1 active:scale-[0.97] w-full text-right"
+      className="category-card group relative flex flex-col justify-end rounded-2xl overflow-hidden h-36 sm:h-44 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-agate-500/60 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 shadow-sm hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-black/40 transition-all duration-300 hover:-translate-y-1 active:scale-[0.97] w-full text-right"
       aria-label={`تصفح قسم ${name}`}
     >
       {/* ── Background: Image or Gradient ── */}
@@ -128,7 +128,7 @@ const CategoryCard = React.memo(({ category, isLoading = false }) => {
 
       {/* ── Text content ── */}
       <div className="relative z-10 px-3 pb-3 sm:px-4 sm:pb-4">
-        <h3 className="text-sm sm:text-base font-extrabold text-white leading-tight line-clamp-1 drop-shadow-sm group-hover:text-indigo-200 transition-colors duration-300">
+        <h3 className="text-sm sm:text-base font-extrabold text-white leading-tight line-clamp-1 drop-shadow-sm group-hover:text-agate-200 transition-colors duration-300">
           {name}
         </h3>
         {productCount !== null && productCount !== undefined && (

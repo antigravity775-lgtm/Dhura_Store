@@ -157,7 +157,7 @@ const AuthPage = () => {
     >
       {/* ========== خلفية متحركة ========== */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-bl from-[#1A1510] via-[#231D14] to-[#0E0B07]"></div>
+        <div className="absolute inset-0 bg-gradient-to-bl from-[#210609] via-[#310810] to-[#0A0204]"></div>
 
         <motion.div
           animate={{
@@ -167,7 +167,7 @@ const AuthPage = () => {
             opacity: [0.15, 0.3, 0.15],
           }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-amber-500/15 blur-[140px]"
+          className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-agate-500/15 blur-[140px]"
         />
         <motion.div
           animate={{
@@ -182,7 +182,7 @@ const AuthPage = () => {
             ease: "easeInOut",
             delay: 3,
           }}
-          className="absolute bottom-[-20%] left-[-10%] w-[55%] h-[55%] rounded-full bg-teeb-700/20 blur-[130px]"
+          className="absolute bottom-[-20%] left-[-10%] w-[55%] h-[55%] rounded-full bg-agate-700/20 blur-[130px]"
         />
         <motion.div
           animate={{
@@ -195,7 +195,7 @@ const AuthPage = () => {
             ease: "easeInOut",
             delay: 5,
           }}
-          className="absolute top-[40%] left-[30%] w-[25%] h-[35%] rounded-full bg-amber-700/15 blur-[100px]"
+          className="absolute top-[40%] left-[30%] w-[25%] h-[35%] rounded-full bg-agate-700/15 blur-[100px]"
         />
 
         <div
@@ -218,19 +218,19 @@ const AuthPage = () => {
         {/* الشعار */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-3 group">
-            <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-1 ring-amber-200/60">
+            <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-1 ring-agate-200/60">
               <img
                 src={logo}
                 alt="شعار TEEB طِيب"
                 className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
               />
-              <div className="absolute top-0 right-0 w-3 h-3 bg-amber-400 rounded-full border-2 border-white animate-pulse"></div>
+              <div className="absolute top-0 right-0 w-3 h-3 bg-agate-400 rounded-full border-2 border-white animate-pulse"></div>
             </div>
             <span className="font-extrabold text-3xl text-white tracking-tight drop-shadow-md font-display">
               TEEB
             </span>
           </Link>
-          <p className="text-amber-200/50 text-sm mt-3 font-medium">
+          <p className="text-agate-200/50 text-sm mt-3 font-medium">
             {isLogin
               ? "مرحباً بعودتك! سجّل دخولك للمتابعة"
               : "أنشئ حسابك وابدأ التسوق"}
@@ -251,7 +251,7 @@ const AuthPage = () => {
               {isLogin && (
                 <motion.div
                   layoutId="authTab"
-                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-amber-400 rounded-full"
+                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-agate-400 rounded-full"
                 />
               )}
             </button>
@@ -265,7 +265,7 @@ const AuthPage = () => {
               {!isLogin && (
                 <motion.div
                   layoutId="authTab"
-                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-amber-400 rounded-full"
+                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-agate-400 rounded-full"
                 />
               )}
             </button>
@@ -323,7 +323,7 @@ const AuthPage = () => {
                         onChange={handleChange}
                         required
                         placeholder="أدخل اسمك الكامل"
-                        className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40 focus:bg-white/[0.08] transition-all"
+                        className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/60 focus:border-agate-500/40 focus:bg-white/[0.08] transition-all"
                       />
                     </div>
                   </div>
@@ -345,7 +345,7 @@ const AuthPage = () => {
                       onChange={handleChange}
                       required
                       placeholder="example@domain.com"
-                      className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500/40 focus:bg-white/[0.08] transition-all"
+                      className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/60 focus:border-agate-500/40 focus:bg-white/[0.08] transition-all"
                     />
                   </div>
                 </div>
@@ -365,7 +365,7 @@ const AuthPage = () => {
                         value={form.city}
                         onChange={handleChange}
                         required
-                        className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500/40 focus:bg-white/[0.08] transition-all appearance-none cursor-pointer"
+                        className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/60 focus:border-agate-500/40 focus:bg-white/[0.08] transition-all appearance-none cursor-pointer"
                       >
                         <option
                           value=""
@@ -405,7 +405,7 @@ const AuthPage = () => {
                       required
                       placeholder="أدخل كلمة المرور"
                       minLength={6}
-                      className="w-full pr-12 pl-12 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500/40 focus:bg-white/[0.08] transition-all"
+                      className="w-full pr-12 pl-12 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/60 focus:border-agate-500/40 focus:bg-white/[0.08] transition-all"
                     />
                     <button
                       type="button"
@@ -427,7 +427,7 @@ const AuthPage = () => {
                   <div className="text-left">
                     <button
                       type="button"
-                      className="text-xs text-amber-300/70 hover:text-amber-300 transition-colors font-medium"
+                      className="text-xs text-agate-300/70 hover:text-agate-300 transition-colors font-medium"
                     >
                       نسيت كلمة المرور؟
                     </button>
@@ -438,7 +438,7 @@ const AuthPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading || lockoutTimeLeft > 0}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 bg-teeb-500 text-white rounded-xl font-bold text-base hover:bg-teeb-400 focus:outline-none focus:ring-4 focus:ring-amber-500/40 transition-all shadow-xl shadow-teeb-600/20 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-2.5 py-4 bg-agate-500 text-white rounded-xl font-bold text-base hover:bg-agate-400 focus:outline-none focus:ring-4 focus:ring-agate-500/40 transition-all shadow-xl shadow-agate-600/20 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
                 >
                   {isLoading ? (
                     <>
@@ -469,7 +469,7 @@ const AuthPage = () => {
                   <button
                     type="button"
                     onClick={() => switchView(!isLogin)}
-                    className="text-amber-300 hover:text-amber-200 font-bold transition-colors"
+                    className="text-agate-300 hover:text-agate-200 font-bold transition-colors"
                   >
                     {isLogin ? "سجّل الآن" : "سجّل دخولك"}
                   </button>

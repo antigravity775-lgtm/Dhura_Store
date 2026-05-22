@@ -95,7 +95,7 @@ const OfferBelt = React.memo(({ shippingOfferText }) => {
 
   return (
     <div className="relative w-full bg-gradient-to-r from-[#120F09] via-[#2A1F0A] to-[#120F09] overflow-hidden select-none">
-      <div className="absolute inset-0 bg-gradient-to-r from-teeb-500/10 via-teeb-400/8 to-teeb-500/10 animate-pulse" />
+      <div className="absolute inset-0 bg-gradient-to-r from-agate-500/10 via-agate-400/8 to-agate-500/10 animate-pulse" />
       <div className="offer-belt-track flex items-center gap-12 py-2.5 sm:py-3 whitespace-nowrap">
         {doubledMessages.map((msg, i) => {
           const Icon = msg.icon;
@@ -239,8 +239,8 @@ const HomePage = () => {
           {/* Section Header */}
           <div className="flex items-center justify-between mb-5 sm:mb-6">
             <div className="flex items-center gap-2.5">
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/40">
-                <Eye className="w-4.5 h-4.5 text-amber-600 dark:text-amber-400" />
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-agate-100 dark:bg-agate-900/40">
+                <Eye className="w-4.5 h-4.5 text-agate-600 dark:text-agate-400" />
               </div>
               <div>
                 <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -254,7 +254,7 @@ const HomePage = () => {
 
             <button
               onClick={() => navigate('/products')}
-              className="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-teeb-900/30"
+              className="text-xs sm:text-sm font-bold text-agate-600 dark:text-agate-400 hover:text-agate-700 dark:hover:text-agate-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-agate-50 dark:hover:bg-agate-900/30"
             >
               عرض الكل ←
             </button>

@@ -379,7 +379,7 @@ const AdminDashboard = () => {
       Shipped: {
         label: "تم الشحن",
         color:
-          "bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800",
+          "bg-agate-100 text-agate-700 border-agate-200 dark:bg-agate-900/30 dark:text-agate-400 dark:border-agate-800",
         Icon: Truck,
       },
       Delivered: {
@@ -429,7 +429,7 @@ const AdminDashboard = () => {
       Seller:
         "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800",
       Buyer:
-        "bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700",
+        "bg-bone dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700",
     };
     const labels = { Admin: "مسؤول", Seller: "بائع", Buyer: "مشتري" };
     return (
@@ -443,14 +443,14 @@ const AdminDashboard = () => {
 
   return (
     <div
-      className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans"
+      className="min-h-screen bg-bone dark:bg-slate-950 font-sans"
       dir="rtl"
     >
       {/* Top Bar */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row gap-3 sm:items-center justify-between h-16">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-0 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700 ring-1 ring-amber-200/60">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-0 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700 ring-1 ring-agate-200/60">
               <img
                 src={logo}
                 alt="شعار TEEB طِيب"
@@ -468,7 +468,7 @@ const AdminDashboard = () => {
           </div>
           <Link
             to="/"
-            className="text-sm text-slate-500 hover:text-indigo-600 font-medium transition-colors flex items-center gap-1"
+            className="text-sm text-slate-500 hover:text-agate-600 font-medium transition-colors flex items-center gap-1"
           >
             <Home className="w-4 h-4" />
             الرئيسية
@@ -519,7 +519,7 @@ const AdminDashboard = () => {
               onClick={() => handleTabChange(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm"
+                  ? "bg-white dark:bg-slate-700 text-agate-700 dark:text-agate-300 shadow-sm"
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
               }`}
             >
@@ -534,7 +534,7 @@ const AdminDashboard = () => {
           <div>
             {statsLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                <Loader2 className="w-8 h-8 text-agate-500 animate-spin" />
               </div>
             ) : stats ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-5">
@@ -544,7 +544,7 @@ const AdminDashboard = () => {
                     value: stats.totalUsers,
                     icon: Users,
                     color:
-                      "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800/50",
+                      "bg-agate-50 dark:bg-agate-900/30 text-agate-600 dark:text-agate-400 border-agate-100 dark:border-agate-800/50",
                   },
                   {
                     label: "إجمالي المنتجات",
@@ -558,7 +558,7 @@ const AdminDashboard = () => {
                     value: stats.totalOrders,
                     icon: ShoppingCart,
                     color:
-                      "bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800/50",
+                      "bg-agate-50 dark:bg-agate-900/30 text-agate-600 dark:text-agate-400 border-agate-100 dark:border-agate-800/50",
                   },
                   {
                     label: "عدد البائعين",
@@ -621,13 +621,13 @@ const AdminDashboard = () => {
                     placeholder="بحث بالاسم أو رقم الطلب..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-white transition-all"
+                    className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-slate-900 dark:text-white transition-all"
                   />
                 </div>
                 <select
                   value={orderStatusFilter}
                   onChange={(e) => setOrderStatusFilter(e.target.value)}
-                  className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-700 dark:text-slate-200"
+                  className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-slate-700 dark:text-slate-200"
                 >
                   {orderStatusOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -640,7 +640,7 @@ const AdminDashboard = () => {
 
             {ordersLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                <Loader2 className="w-8 h-8 text-agate-500 animate-spin" />
               </div>
             ) : orders.length === 0 ? (
               <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
@@ -697,7 +697,7 @@ const AdminDashboard = () => {
                                       ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
                                       : order.status === "Cancelled"
                                         ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
-                                        : "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+                                        : "bg-agate-100 dark:bg-agate-900/30 text-agate-600 dark:text-agate-400"
                                 }`}
                               >
                                 <Package className="w-5 h-5" />
@@ -741,7 +741,7 @@ const AdminDashboard = () => {
                                   ? "تحويل بنكي"
                                   : order.paymentMethod}
                             </span>
-                            <span className="font-bold text-indigo-600 dark:text-indigo-400">
+                            <span className="font-bold text-agate-600 dark:text-agate-400">
                               الإجمالي:{" "}
                               {Number(order.totalAmount || 0).toLocaleString(
                                 "en-US",
@@ -757,7 +757,7 @@ const AdminDashboard = () => {
                               onClick={() =>
                                 setExpandedOrderId(isExpanded ? null : order.id)
                               }
-                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
+                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-agate-600 dark:hover:text-agate-400 bg-bone dark:bg-slate-800 hover:bg-agate-50 dark:hover:bg-agate-900/30 rounded-lg transition-all"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               {orderItems.length} منتج
@@ -805,7 +805,7 @@ const AdminDashboard = () => {
                                   onClick={() =>
                                     handleOrderStatusUpdate(order.id, "Shipped")
                                   }
-                                  className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl transition-all shadow-sm shadow-indigo-600/20 active:scale-[0.97]"
+                                  className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-agate-600 hover:bg-agate-500 rounded-xl transition-all shadow-sm shadow-agate-600/20 active:scale-[0.97]"
                                 >
                                   <Truck className="w-3.5 h-3.5" />
                                   شحن الطلب
@@ -866,7 +866,7 @@ const AdminDashboard = () => {
                                 {orderItems.map((item) => (
                                   <div
                                     key={item.id}
-                                    className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3"
+                                    className="flex items-center gap-3 bg-bone dark:bg-slate-800/50 rounded-xl p-3"
                                   >
                                     <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0 border border-slate-200 dark:border-slate-600">
                                       <img
@@ -896,7 +896,7 @@ const AdminDashboard = () => {
                                         )}
                                       </p>
                                     </div>
-                                    <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex-shrink-0">
+                                    <span className="text-sm font-bold text-agate-600 dark:text-agate-400 flex-shrink-0">
                                       {(
                                         item.quantity *
                                         Number(item.unitPrice || 0)
@@ -930,13 +930,13 @@ const AdminDashboard = () => {
                   placeholder="بحث عن مستخدم..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-white transition-all"
+                  className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-slate-900 dark:text-white transition-all"
                 />
               </div>
             </div>
             {usersLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                <Loader2 className="w-8 h-8 text-agate-500 animate-spin" />
               </div>
             ) : users.length === 0 ? (
               <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
@@ -1005,7 +1005,7 @@ const AdminDashboard = () => {
                           className={`p-2 rounded-xl transition-all text-sm ${
                             u.isBlocked
                               ? "text-green-500 hover:bg-green-50 hover:text-green-700"
-                              : "text-amber-500 hover:bg-amber-50 hover:text-amber-700"
+                              : "text-agate-500 hover:bg-agate-50 hover:text-agate-700"
                           }`}
                           title={u.isBlocked ? "إلغاء الحظر" : "حظر"}
                         >
@@ -1030,7 +1030,7 @@ const AdminDashboard = () => {
                         {u.role === "Seller" && (
                           <button
                             onClick={() => handleChangeRole(u.id, "Buyer")}
-                            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-all"
+                            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-bone rounded-xl transition-all"
                             title="تخفيض إلى مشتري"
                           >
                             <UserCog className="w-4 h-4" />
@@ -1070,13 +1070,13 @@ const AdminDashboard = () => {
                     placeholder="بحث في المحتوى..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-white transition-all"
+                    className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-slate-900 dark:text-white transition-all"
                   />
                 </div>
                 <select
                   value={productVisibilityFilter}
                   onChange={(e) => setProductVisibilityFilter(e.target.value)}
-                  className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-700 dark:text-slate-200"
+                  className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-slate-700 dark:text-slate-200"
                 >
                   <option value="all">الكل</option>
                   <option value="visible">مرئي فقط</option>
@@ -1087,7 +1087,7 @@ const AdminDashboard = () => {
                     setEditingProduct(null);
                     setShowProductForm(true);
                   }}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98]"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-agate-600 text-white text-sm font-bold rounded-xl hover:bg-agate-500 transition-all shadow-lg shadow-agate-600/20 active:scale-[0.98]"
                 >
                   <Plus className="w-4 h-4" />
                   إضافة منتج
@@ -1135,7 +1135,7 @@ const AdminDashboard = () => {
 
             {productsLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                <Loader2 className="w-8 h-8 text-agate-500 animate-spin" />
               </div>
             ) : products.length === 0 ? (
               <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
@@ -1193,7 +1193,7 @@ const AdminDashboard = () => {
                             {product.title}
                           </h3>
                           {product.isPromoted && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[10px] font-bold rounded-md shadow-sm">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-agate-500 to-purple-500 text-white text-[10px] font-bold rounded-md shadow-sm">
                               ⭐ مُروَّج
                             </span>
                           )}
@@ -1222,7 +1222,7 @@ const AdminDashboard = () => {
                               </span>
                             </>
                           ) : (
-                            <span className="text-indigo-600 dark:text-indigo-400 font-bold text-sm">
+                            <span className="text-agate-600 dark:text-agate-400 font-bold text-sm">
                               {Number(product.price || 0).toLocaleString(
                                 "en-US",
                               )}{" "}
@@ -1239,12 +1239,12 @@ const AdminDashboard = () => {
                             {product.isHidden ? "مخفي" : "نشط"}
                           </span>
                           {product.categoryName && (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-600">
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-bone dark:bg-slate-700 text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-600">
                               {product.categoryName}
                             </span>
                           )}
                           {product.promotionLabel && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-agate-50 dark:bg-agate-900/30 text-agate-600 dark:text-agate-400 border border-agate-100 dark:border-agate-800">
                               {product.promotionLabel}
                             </span>
                           )}
@@ -1256,7 +1256,7 @@ const AdminDashboard = () => {
                       <div className="flex items-center gap-1 flex-shrink-0 w-full sm:w-auto justify-end sm:justify-start border-t sm:border-0 border-slate-100 dark:border-slate-800 pt-3 sm:pt-0 mt-2 sm:mt-0">
                         <button
                           onClick={() => openEditProductModal(product)}
-                          className="p-2.5 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                          className="p-2.5 text-slate-300 hover:text-agate-600 hover:bg-agate-50 rounded-xl transition-all"
                           title="تعديل المنتج"
                         >
                           <Edit3 className="w-5 h-5" />
@@ -1291,12 +1291,12 @@ const AdminDashboard = () => {
                     placeholder="بحث في التصنيفات..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-white transition-all"
+                    className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-slate-900 dark:text-white transition-all"
                   />
                 </div>
                 <button
                   onClick={() => openCategoryForm()}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98]"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-agate-600 text-white text-sm font-bold rounded-xl hover:bg-agate-500 transition-all shadow-lg shadow-agate-600/20 active:scale-[0.98]"
                 >
                   <Plus className="w-4 h-4" />
                   إضافة تصنيف
@@ -1345,7 +1345,7 @@ const AdminDashboard = () => {
                               name: e.target.value,
                             }))
                           }
-                          className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400"
+                          className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-agate-500/50 focus:border-agate-400"
                           placeholder="مثال: عسل بلدي"
                         />
                       </div>
@@ -1386,13 +1386,13 @@ const AdminDashboard = () => {
                               );
                             }
                           }}
-                          className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                          className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-agate-500/50 focus:border-agate-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-agate-50 file:text-agate-700 hover:file:bg-agate-100"
                         />
                       </div>
                       <div className="flex gap-3 pt-2">
                         <button
                           onClick={handleSaveCategory}
-                          className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-500 transition-all"
+                          className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-agate-600 text-white text-sm font-bold rounded-xl hover:bg-agate-500 transition-all"
                         >
                           <Save className="w-4 h-4" />
                           {editingCategory ? "تحديث" : "إضافة"}
@@ -1412,7 +1412,7 @@ const AdminDashboard = () => {
 
             {categoriesLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                <Loader2 className="w-8 h-8 text-agate-500 animate-spin" />
               </div>
             ) : categories.length === 0 ? (
               <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
@@ -1442,8 +1442,8 @@ const AdminDashboard = () => {
                             className="w-10 h-10 rounded-xl object-cover border border-slate-100 dark:border-slate-700"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
-                            <Tag className="w-5 h-5 text-indigo-400 dark:text-indigo-400" />
+                          <div className="w-10 h-10 rounded-xl bg-agate-50 dark:bg-agate-900/30 flex items-center justify-center">
+                            <Tag className="w-5 h-5 text-agate-400 dark:text-agate-400" />
                           </div>
                         )}
                         <span className="font-bold text-slate-800 dark:text-slate-100">
@@ -1453,7 +1453,7 @@ const AdminDashboard = () => {
                       <div className="flex flex-wrap gap-1">
                         <button
                           onClick={() => openCategoryForm(cat)}
-                          className="p-2 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                          className="p-2 text-slate-300 hover:text-agate-600 hover:bg-agate-50 rounded-xl transition-all"
                           title="تعديل"
                         >
                           <Edit3 className="w-4 h-4" />
@@ -1481,7 +1481,7 @@ const AdminDashboard = () => {
             </h2>
             {ratesLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                <Loader2 className="w-8 h-8 text-agate-500 animate-spin" />
               </div>
             ) : (
               <div className="max-w-lg">
@@ -1491,13 +1491,13 @@ const AdminDashboard = () => {
                   className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm"
                 >
                   {/* Header Alert */}
-                  <div className="flex items-center gap-3 mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-2xl">
-                    <DollarSign className="w-6 h-6 text-amber-600 flex-shrink-0" />
+                  <div className="flex items-center gap-3 mb-6 p-4 bg-agate-50 dark:bg-agate-900/20 border border-agate-200 dark:border-agate-800/50 rounded-2xl">
+                    <DollarSign className="w-6 h-6 text-agate-600 flex-shrink-0" />
                     <div>
-                      <p className="font-bold text-amber-800 dark:text-amber-400 text-sm">
+                      <p className="font-bold text-agate-800 dark:text-agate-400 text-sm">
                         تحديث سعر الصرف اليومي
                       </p>
-                      <p className="text-xs text-amber-600 dark:text-amber-500 mt-0.5">
+                      <p className="text-xs text-agate-600 dark:text-agate-500 mt-0.5">
                         تحديث الأسعار هنا سيؤثر على جميع أسعار المنتجات في
                         الموقع تلقائياً
                       </p>
@@ -1520,7 +1520,7 @@ const AdminDashboard = () => {
                               USD_to_YER_Sanaa: parseFloat(e.target.value) || 0,
                             }))
                           }
-                          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-lg font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400"
+                          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-lg font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-agate-500/50 focus:border-agate-400"
                           dir="ltr"
                           min="1"
                           step="0.01"
@@ -1551,7 +1551,7 @@ const AdminDashboard = () => {
                               USD_to_YER_Aden: parseFloat(e.target.value) || 0,
                             }))
                           }
-                          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-lg font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400"
+                          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-lg font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-agate-500/50 focus:border-agate-400"
                           dir="ltr"
                           min="1"
                           step="0.01"
@@ -1571,7 +1571,7 @@ const AdminDashboard = () => {
                     <button
                       onClick={handleUpdateRates}
                       disabled={ratesSaving}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:from-indigo-500 hover:to-purple-500 transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-60 active:scale-[0.98]"
+                      className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-agate-600 to-purple-600 text-white font-bold rounded-xl hover:from-agate-500 hover:to-purple-500 transition-all shadow-lg shadow-agate-600/20 disabled:opacity-60 active:scale-[0.98]"
                     >
                       {ratesSaving ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -1622,7 +1622,7 @@ const AdminDashboard = () => {
                         aboutUsText: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 min-h-[120px] resize-y"
+                    className="w-full px-4 py-3 bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-agate-500/50 min-h-[120px] resize-y"
                     placeholder="نبذة عن المتجر ورؤيته..."
                   />
                 </div>
@@ -1643,7 +1643,7 @@ const AdminDashboard = () => {
                           shippingOfferText: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                      className="w-full px-4 py-3 bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-agate-500/50"
                       placeholder="مثال: شحن مجاني للطلبات فوق 50$"
                     />
                     <p className="text-xs text-slate-400 mt-1">
@@ -1666,7 +1666,7 @@ const AdminDashboard = () => {
                           contactEmail: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                      className="w-full px-4 py-3 bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-left"
                       dir="ltr"
                       placeholder="info@store.com"
                     />
@@ -1687,7 +1687,7 @@ const AdminDashboard = () => {
                           contactPhone: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                      className="w-full px-4 py-3 bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-left"
                       dir="ltr"
                       placeholder="+967 77..."
                     />
@@ -1708,7 +1708,7 @@ const AdminDashboard = () => {
                           whatsappUrl: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                      className="w-full px-4 py-3 bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-left"
                       dir="ltr"
                       placeholder="https://wa.me/..."
                     />
@@ -1729,7 +1729,7 @@ const AdminDashboard = () => {
                           facebookUrl: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                      className="w-full px-4 py-3 bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-left"
                       dir="ltr"
                       placeholder="https://facebook.com/..."
                     />
@@ -1750,7 +1750,7 @@ const AdminDashboard = () => {
                           twitterUrl: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                      className="w-full px-4 py-3 bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-left"
                       dir="ltr"
                       placeholder="https://x.com/..."
                     />
@@ -1771,7 +1771,7 @@ const AdminDashboard = () => {
                           instagramUrl: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-left"
+                      className="w-full px-4 py-3 bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-left"
                       dir="ltr"
                       placeholder="https://instagram.com/..."
                     />
@@ -1783,7 +1783,7 @@ const AdminDashboard = () => {
                   <button
                     onClick={handleUpdateStoreInfo}
                     disabled={storeInfoSaving}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:from-indigo-500 hover:to-purple-500 transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-60 active:scale-[0.98]"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-agate-600 to-purple-600 text-white font-bold rounded-xl hover:from-agate-500 hover:to-purple-500 transition-all shadow-lg shadow-agate-600/20 disabled:opacity-60 active:scale-[0.98]"
                   >
                     {storeInfoSaving ? (
                       <Loader2 className="w-5 h-5 animate-spin" />

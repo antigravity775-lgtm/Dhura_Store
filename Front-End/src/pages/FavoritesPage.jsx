@@ -40,7 +40,7 @@ const FavoritesPage = () => {
           </div>
           <Link
             to="/"
-            className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-indigo-600 transition-colors"
+            className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-agate-600 transition-colors"
           >
             <ArrowRight className="w-4 h-4" />
             تصفح المنتجات
@@ -85,7 +85,7 @@ const FavoritesPage = () => {
             </p>
             <Link
               to="/"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-agate-600 text-white font-bold rounded-xl hover:bg-agate-700 transition-colors"
             >
               <ShoppingBag className="w-5 h-5" />
               تصفح المنتجات

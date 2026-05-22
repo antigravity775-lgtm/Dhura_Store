@@ -60,7 +60,7 @@ class ProductService {
    * @returns {Promise<Array>} List of products
    */
   async getProducts(filters, pagination) {
-    const { city, maxPriceUsd, condition, specialOffers } = filters;
+    const { city, maxPriceUsd, condition, specialOffers, search, categoryName } = filters;
     const { pageNumber = 1, pageSize = 10 } = pagination;
     
     // Build where clause
@@ -84,6 +84,19 @@ class ProductService {
     // Filter for special offers (products with a discount price)
     if (specialOffers) {
       where.discountPrice = { not: null };
+    }
+    
+    if (categoryName) {
+      where.category = {
+        name: { equals: categoryName }
+      };
+    }
+    
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } }
+      ];
     }
     
     // Get total count for pagination metadata

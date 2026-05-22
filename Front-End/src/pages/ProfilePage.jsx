@@ -134,7 +134,7 @@ const ProfilePage = () => {
     return (
       <Layout>
         <div className="flex items-center justify-center py-32">
-          <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+          <Loader2 className="w-10 h-10 text-agate-500 animate-spin" />
         </div>
       </Layout>
     );
@@ -147,8 +147,8 @@ const ProfilePage = () => {
         {/* العنوان */}
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-            <div className="p-2.5 bg-indigo-100 dark:bg-indigo-900/40 rounded-2xl">
-              <User className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
+            <div className="p-2.5 bg-agate-100 dark:bg-agate-900/40 rounded-2xl">
+              <User className="w-7 h-7 text-agate-600 dark:text-agate-400" />
             </div>
             الملف الشخصي
           </h1>
@@ -166,7 +166,7 @@ const ProfilePage = () => {
             {/* قسم المعلومات الشخصية */}
             <div className="p-6 sm:p-8 space-y-6">
               <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <div className="w-1 h-5 bg-indigo-500 rounded-full"></div>
+                <div className="w-1 h-5 bg-agate-500 rounded-full"></div>
                 المعلومات الشخصية
               </h2>
 
@@ -183,7 +183,7 @@ const ProfilePage = () => {
                     value={form.fullName}
                     onChange={handleChange}
                     required
-                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-700 transition-all"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 focus:bg-white dark:focus:bg-slate-700 transition-all"
                     placeholder="أدخل اسمك الكامل"
                   />
                 </div>
@@ -219,7 +219,7 @@ const ProfilePage = () => {
                     value={form.city}
                     onChange={handleChange}
                     required
-                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-700 transition-all appearance-none cursor-pointer"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 focus:bg-white dark:focus:bg-slate-700 transition-all appearance-none cursor-pointer"
                   >
                     <option value="" disabled>اختر مدينتك</option>
                     {cities.map(city => (
@@ -236,7 +236,7 @@ const ProfilePage = () => {
             {/* قسم الإعدادات */}
             <div className="p-6 sm:p-8 space-y-6">
               <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <div className="w-1 h-5 bg-indigo-500 rounded-full"></div>
+                <div className="w-1 h-5 bg-agate-500 rounded-full"></div>
                 الإعدادات
               </h2>
 
@@ -249,26 +249,26 @@ const ProfilePage = () => {
                     onClick={() => handleCurrencyChange('YER')}
                     className={`flex items-center justify-center gap-2.5 py-4 rounded-xl border-2 text-sm font-bold transition-all ${
                       preferredCurrency === 'YER'
-                        ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 dark:text-indigo-300 shadow-sm'
-                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                        ? 'bg-agate-50 dark:bg-agate-900/30 border-agate-500 text-agate-700 dark:text-agate-300 shadow-sm'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300 hover:bg-bone dark:hover:bg-slate-700'
                     }`}
                   >
                     <span className="text-lg">🇾🇪</span>
                     ريال يمني
-                    {preferredCurrency === 'YER' && <Check className="w-4 h-4 text-indigo-600" />}
+                    {preferredCurrency === 'YER' && <Check className="w-4 h-4 text-agate-600" />}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleCurrencyChange('USD')}
                     className={`flex items-center justify-center gap-2.5 py-4 rounded-xl border-2 text-sm font-bold transition-all ${
                       preferredCurrency === 'USD'
-                        ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 dark:text-indigo-300 shadow-sm'
-                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                        ? 'bg-agate-50 dark:bg-agate-900/30 border-agate-500 text-agate-700 dark:text-agate-300 shadow-sm'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300 hover:bg-bone dark:hover:bg-slate-700'
                     }`}
                   >
                     <DollarSign className="w-5 h-5" />
                     دولار أمريكي
-                    {preferredCurrency === 'USD' && <Check className="w-4 h-4 text-indigo-600" />}
+                    {preferredCurrency === 'USD' && <Check className="w-4 h-4 text-agate-600" />}
                   </button>
                 </div>
                 <p className="text-xs text-slate-400 mt-2">هذا يحدد العملة المعروضة أولاً في الأسعار</p>
@@ -278,7 +278,7 @@ const ProfilePage = () => {
               <div>
                 <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">نوع الحساب</label>
                 <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                  <span className={`w-2.5 h-2.5 rounded-full ${user?.role === 'Seller' ? 'bg-amber-400' : 'bg-green-400'}`}></span>
+                  <span className={`w-2.5 h-2.5 rounded-full ${user?.role === 'Seller' ? 'bg-agate-400' : 'bg-green-400'}`}></span>
                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                     {user?.role === 'Seller' ? 'بائع' : user?.role === 'Admin' ? 'مدير' : 'مشتري'}
                   </span>
@@ -316,7 +316,7 @@ const ProfilePage = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full flex items-center justify-center gap-2.5 py-4 bg-indigo-600 text-white rounded-xl font-bold text-base hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/30 transition-all shadow-lg shadow-indigo-600/15 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2.5 py-4 bg-agate-600 text-white rounded-xl font-bold text-base hover:bg-agate-500 focus:outline-none focus:ring-4 focus:ring-agate-500/30 transition-all shadow-lg shadow-agate-600/15 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
               >
                 {saving ? (
                   <>
@@ -362,7 +362,7 @@ const ProfilePage = () => {
                     onChange={handlePwdChange}
                     required
                     dir="ltr"
-                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 focus:bg-white dark:focus:bg-slate-700 transition-all text-left"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 focus:bg-white dark:focus:bg-slate-700 transition-all text-left"
                     placeholder="••••••••"
                   />
                 </div>
@@ -382,7 +382,7 @@ const ProfilePage = () => {
                     onChange={handlePwdChange}
                     required
                     dir="ltr"
-                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 focus:bg-white dark:focus:bg-slate-700 transition-all text-left"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 focus:bg-white dark:focus:bg-slate-700 transition-all text-left"
                     placeholder="••••••••"
                   />
                 </div>
@@ -402,7 +402,7 @@ const ProfilePage = () => {
                     onChange={handlePwdChange}
                     required
                     dir="ltr"
-                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 focus:bg-white dark:focus:bg-slate-700 transition-all text-left"
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/40 focus:border-pink-400 focus:bg-white dark:focus:bg-slate-700 transition-all text-left"
                     placeholder="••••••••"
                   />
                 </div>

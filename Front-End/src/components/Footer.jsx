@@ -33,11 +33,11 @@ const Footer = ({ storeInfo }) => {
                 alt="شعار TEEB طِيب"
                 width="32"
                 height="32"
-                className="w-8 h-8 rounded-full bg-white object-cover object-center scale-[1.16] border-2 border-teeb-800"
+                className="w-8 h-8 rounded-full bg-white object-cover object-center scale-[1.16] border-2 border-agate-800"
                 loading="lazy"
               />
               <span className="font-extrabold text-white text-lg tracking-tight font-display">
-                TEEB <span className="text-teeb-400 text-base">طِيب</span>
+                TEEB <span className="text-agate-400 text-base">طِيب</span>
               </span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500 max-w-xs">
@@ -55,7 +55,7 @@ const Footer = ({ storeInfo }) => {
                   to="/about"
                   className="hover:text-white transition-colors flex items-center gap-1.5 group"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-teeb-500 transition-colors"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-agate-500 transition-colors"></span>
                   من نحن
                 </Link>
               </li>
@@ -64,7 +64,7 @@ const Footer = ({ storeInfo }) => {
                   to="/privacy-policy"
                   className="hover:text-white transition-colors flex items-center gap-1.5 group"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-teeb-500 transition-colors"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-agate-500 transition-colors"></span>
                   سياسة الخصوصية
                 </Link>
               </li>
@@ -80,7 +80,7 @@ const Footer = ({ storeInfo }) => {
                   to="/contact"
                   className="hover:text-white transition-colors flex items-center gap-1.5 group"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-indigo-500 transition-colors"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-agate-500 transition-colors"></span>
                   اتصل بنا
                 </Link>
               </li>
@@ -90,7 +90,7 @@ const Footer = ({ storeInfo }) => {
                     href={`tel:${phoneDigits}`}
                     className="hover:text-white transition-colors flex items-center gap-1.5 group"
                   >
-                    <Mail className="w-3.5 h-3.5 text-slate-600 group-hover:text-amber-400 transition-colors" />
+                    <Mail className="w-3.5 h-3.5 text-slate-600 group-hover:text-agate-400 transition-colors" />
                     راسلنا للإستفسار
                   </a>
                 </li>

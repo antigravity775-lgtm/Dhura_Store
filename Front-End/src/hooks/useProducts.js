@@ -29,6 +29,7 @@
  */
 
 import useSWR from 'swr';
+import useSWRInfinite from 'swr/infinite';
 import * as api from '../services/api';
 
 // ─── Products Hook / خطاف المنتجات ───
@@ -170,3 +171,73 @@ export function useCategories() {
     error,
   };
 }
+
+// ─── Products Infinite Hook / خطاف المنتجات (التمرير اللانهائي) ───
+
+export function useProductsInfinite({ city = '', condition = '', maxPriceUsd = '', specialOffers = false, search = '', categoryName = '' } = {}) {
+  const params = { city, condition, maxPriceUsd, specialOffers, search, categoryName };
+
+  const getKey = (pageIndex, previousPageData) => {
+    // EN: Reached the end
+    // AR: وصلنا إلى النهاية
+    if (previousPageData && !previousPageData.length) return null;
+    
+    // EN: pageIndex is 0-based, our API uses 1-based pageNumber
+    // AR: الـ pageIndex يبدأ من 0، والـ API لدينا يستخدم pageNumber يبدأ من 1
+    const pageNumber = pageIndex + 1;
+    
+    const parts = ['products-infinite', `page:${pageNumber}`];
+    if (params.city) parts.push(`city:${params.city}`);
+    if (params.condition) parts.push(`cond:${params.condition}`);
+    if (params.maxPriceUsd) parts.push(`max:${params.maxPriceUsd}`);
+    if (params.specialOffers) parts.push('offers');
+    if (params.search) parts.push(`search:${params.search}`);
+    if (params.categoryName) parts.push(`cat:${params.categoryName}`);
+    return [parts.join('|'), pageNumber, params]; // SWR array key
+  };
+
+  const fetcher = async ([_key, pageNumber, p]) => {
+    const apiParams = { pageSize: 50, pageNumber };
+    if (p.city) apiParams.city = p.city;
+    if (p.condition) apiParams.condition = parseInt(p.condition);
+    if (p.maxPriceUsd) apiParams.maxPriceUsd = parseFloat(p.maxPriceUsd);
+    if (p.specialOffers) apiParams.specialOffers = true;
+    if (p.search) apiParams.search = p.search;
+    if (p.categoryName) apiParams.categoryName = p.categoryName;
+    
+    const data = await api.getProducts(apiParams);
+    return data || [];
+  };
+
+  const { data, error, size, setSize, isLoading, isValidating, mutate } = useSWRInfinite(
+    getKey,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+      dedupingInterval: 60000,
+      keepPreviousData: true,
+      errorRetryCount: 3,
+    }
+  );
+
+  const products = data ? [].concat(...data) : [];
+  const isLoadingMore =
+    isLoading || (size > 0 && data && typeof data[size - 1] === 'undefined');
+  const isEmpty = data?.[0]?.length === 0;
+  const isReachingEnd =
+    isEmpty || (data && data[data.length - 1]?.length < 50);
+
+  return {
+    data: products,
+    isLoading: isLoading && !products.length,
+    isLoadingMore,
+    isValidating,
+    isReachingEnd,
+    size,
+    setSize,
+    error,
+    mutate,
+  };
+}
+

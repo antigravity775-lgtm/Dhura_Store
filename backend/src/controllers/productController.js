@@ -17,6 +17,8 @@ class ProductController {
         maxPriceUsd: req.query.maxPriceUsd ? parseFloat(req.query.maxPriceUsd) : undefined,
         condition: req.query.condition ? parseInt(req.query.condition) : undefined,
         specialOffers: req.query.specialOffers === 'true',
+        search: req.query.search,
+        categoryName: req.query.categoryName,
       };
       
       const pagination = {

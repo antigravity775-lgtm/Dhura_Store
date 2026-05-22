@@ -175,7 +175,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           onChange={handleChange}
           required
           placeholder="مثال: آيفون 15 برو ماكس 256 جيجا"
-          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
+          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400"
         />
       </div>
 
@@ -191,7 +191,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             required
             min="1"
             placeholder="0"
-            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400"
           />
         </div>
         <div>
@@ -200,7 +200,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             name="currency"
             value={form.currency}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 appearance-none cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 appearance-none cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           >
             <option value="USD">دولار ($)</option>
             <option value="SAR">ريال سعودي (SAR)</option>
@@ -211,7 +211,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
       </div>
 
       {/* ── إعدادات الظهور ── */}
-      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+      <div className="flex items-center justify-between p-4 bg-bone dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
         <div>
           <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">إخفاء المنتج</label>
           <span className="text-xs text-slate-500 dark:text-slate-400">عند تفعيله، لن يظهر المنتج للعملاء في المتجر</span>
@@ -221,7 +221,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           role="switch"
           aria-checked={form.isHidden}
           onClick={() => setForm(prev => ({ ...prev, isHidden: !prev.isHidden }))}
-          className={`relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 ${
+          className={`relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-agate-500/40 ${
             form.isHidden
               ? 'bg-red-500 shadow-lg shadow-red-500/25'
               : 'bg-slate-200 dark:bg-slate-600'
@@ -236,10 +236,10 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
       </div>
 
       {/* ── ترويج المنتج / Promotion Section ── */}
-      <div className="bg-gradient-to-br from-indigo-50/50 via-purple-50/30 to-pink-50/30 dark:from-indigo-900/20 dark:via-purple-900/10 dark:to-pink-900/10 rounded-2xl border border-indigo-100 dark:border-indigo-800/40 p-4 space-y-3">
+      <div className="bg-gradient-to-br from-agate-50/50 via-purple-50/30 to-pink-50/30 dark:from-agate-900/20 dark:via-purple-900/10 dark:to-pink-900/10 rounded-2xl border border-agate-100 dark:border-agate-800/40 p-4 space-y-3">
         <div className="flex items-center gap-2 mb-1">
-          <Sparkles className="w-4 h-4 text-indigo-500" />
-          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">إعدادات الترويج</span>
+          <Sparkles className="w-4 h-4 text-agate-500" />
+          <span className="text-xs font-bold text-agate-600 dark:text-agate-400 uppercase tracking-wider">إعدادات الترويج</span>
         </div>
 
         {/* Toggle Switch for isPromoted */}
@@ -250,9 +250,9 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             role="switch"
             aria-checked={form.isPromoted}
             onClick={() => setForm(prev => ({ ...prev, isPromoted: !prev.isPromoted }))}
-            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 ${
+            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-agate-500/40 ${
               form.isPromoted
-                ? 'bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg shadow-indigo-500/25'
+                ? 'bg-gradient-to-r from-agate-500 to-purple-500 shadow-lg shadow-agate-500/25'
                 : 'bg-slate-200 dark:bg-slate-600'
             }`}
           >
@@ -275,7 +275,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             min="0"
             step="0.01"
             placeholder="أقل من السعر الأصلي"
-            className={`w-full px-4 py-3 border rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 ${
+            className={`w-full px-4 py-3 border rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 ${
               form.discountPrice && form.price && parseFloat(form.discountPrice) >= parseFloat(form.price)
                 ? 'border-red-400 dark:border-red-500 ring-2 ring-red-400/30'
                 : 'border-slate-200 dark:border-slate-600'
@@ -303,7 +303,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             value={form.promotionLabel}
             onChange={handleChange}
             placeholder='مثال: "عرض محدود" أو "الأكثر مبيعاً"'
-            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400"
           />
         </div>
       </div>
@@ -317,7 +317,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             value={form.categoryId}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 appearance-none cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 appearance-none cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           >
             <option value="" disabled>اختر القسم</option>
             {categories.map(cat => (
@@ -342,7 +342,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
                 onClick={() => setForm(prev => ({ ...prev, condition: opt.val }))}
                 className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                   parseInt(form.condition) === opt.val
-                    ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-300 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300'
+                    ? 'bg-agate-50 dark:bg-agate-900/30 border-agate-300 dark:border-agate-600 text-agate-700 dark:text-agate-300'
                     : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300'
                 }`}
               >
@@ -359,7 +359,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
             value={form.stockQuantity}
             onChange={handleChange}
             min="1"
-            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400"
           />
         </div>
       </div>
@@ -370,7 +370,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           
           {form.mainImageUrl ? (
             <div 
-              className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 cursor-pointer group"
+              className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 bg-bone dark:bg-slate-700 cursor-pointer group"
               onClick={() => fileInputRef.current?.click()}
               title="اضغط لتغيير الصورة"
             >
@@ -403,19 +403,19 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
               onDragLeave={handleDragLeave}
               className={`relative flex flex-col items-center justify-center gap-2 py-8 rounded-xl border-2 border-dashed cursor-pointer transition-all ${
                 dragActive
-                  ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20'
-                  : 'border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20'
+                  ? 'border-agate-400 bg-agate-50 dark:bg-agate-900/20'
+                  : 'border-slate-200 dark:border-slate-600 bg-bone dark:bg-slate-700 hover:border-agate-300 hover:bg-agate-50/50 dark:hover:bg-agate-900/20'
               }`}
             >
               {uploading ? (
                 <>
-                  <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
-                  <span className="text-sm font-medium text-indigo-600">جاري رفع الصورة...</span>
+                  <Loader2 className="w-8 h-8 text-agate-500 animate-spin" />
+                  <span className="text-sm font-medium text-agate-600">جاري رفع الصورة...</span>
                 </>
               ) : (
                 <>
-                  <div className="p-3 bg-indigo-100 rounded-xl">
-                    <Cloud className="w-6 h-6 text-indigo-500" />
+                  <div className="p-3 bg-agate-100 rounded-xl">
+                    <Cloud className="w-6 h-6 text-agate-500" />
                   </div>
                   <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">اسحب الصورة هنا أو اضغط للاختيار</span>
                   <span className="text-[10px] text-slate-400">PNG, JPG — حد أقصى 5 ميجابايت</span>
@@ -438,7 +438,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           {/* رابط يدوي بديل */}
           <div className="mt-2">
             <details className="text-xs">
-              <summary className="text-slate-400 cursor-pointer hover:text-indigo-500 transition-colors">أو أدخل رابط الصورة يدوياً</summary>
+              <summary className="text-slate-400 cursor-pointer hover:text-agate-500 transition-colors">أو أدخل رابط الصورة يدوياً</summary>
               <input
                 type="url"
                 name="mainImageUrl"
@@ -446,7 +446,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
                 onChange={handleChange}
                 placeholder="https://example.com/image.jpg"
                 dir="ltr"
-                className="mt-2 w-full px-3 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 text-left"
+                className="mt-2 w-full px-3 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 text-left"
               />
             </details>
           </div>
@@ -462,7 +462,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           required
           rows={4}
           placeholder="اكتب وصفاً تفصيلياً للمنتج..."
-          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 resize-none"
+          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 resize-none"
         />
       </div>
 
@@ -471,7 +471,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 py-3.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="flex-1 py-3.5 bg-agate-600 text-white font-bold rounded-xl hover:bg-agate-500 transition-all shadow-lg shadow-agate-600/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {loading ? (
             <>

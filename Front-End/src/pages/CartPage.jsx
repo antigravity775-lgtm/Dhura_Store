@@ -105,7 +105,7 @@ const CartPage = () => {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/my-orders"
-              className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition-colors"
+              className="px-6 py-3 bg-agate-600 text-white font-bold rounded-xl hover:bg-agate-500 transition-colors"
             >
               متابعة طلباتي
             </Link>
@@ -132,7 +132,7 @@ const CartPage = () => {
           <p className="text-slate-500 dark:text-slate-400 mb-8">لم تقم بإضافة أي منتجات بعد. ابدأ بتصفح المنتجات!</p>
           <Link
             to="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-agate-600 text-white font-bold rounded-xl hover:bg-agate-500 transition-colors"
           >
             <ArrowRight className="w-5 h-5" />
             تصفح المنتجات
@@ -149,7 +149,7 @@ const CartPage = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-            <ShoppingBag className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+            <ShoppingBag className="w-8 h-8 text-agate-600 dark:text-agate-400" />
             سلة التسوق
           </h1>
           <button
@@ -188,11 +188,11 @@ const CartPage = () => {
                   {/* التفاصيل */}
                   <div className="flex-1 min-w-0">
                     <Link to={`/product/${item.productId}`}>
-                      <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base truncate hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                      <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base truncate hover:text-agate-600 dark:hover:text-agate-400 transition-colors">
                         {item.title}
                       </h3>
                     </Link>
-                    <p className="text-indigo-600 dark:text-indigo-400 font-bold text-sm sm:text-base mt-1">
+                    <p className="text-agate-600 dark:text-agate-400 font-bold text-sm sm:text-base mt-1">
                       {formatPrice(item.price, item.currency)}
                     </p>
 
@@ -210,7 +210,7 @@ const CartPage = () => {
                         disabled={item.quantity >= (item.stockQuantity || 9999)}
                         className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
                           item.quantity >= (item.stockQuantity || 9999)
-                            ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                            ? 'bg-bone dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
                             : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300'
                         }`}
                       >
@@ -218,7 +218,7 @@ const CartPage = () => {
                       </button>
                     </div>
                     {item.quantity >= (item.stockQuantity || 9999) && (
-                      <div className="flex items-center gap-1 mt-1.5 text-amber-600 dark:text-amber-400">
+                      <div className="flex items-center gap-1 mt-1.5 text-agate-600 dark:text-agate-400">
                         <AlertTriangle className="w-3 h-3" />
                         <span className="text-[11px] font-medium">الحد الأقصى للمخزون ({item.stockQuantity})</span>
                       </div>
@@ -254,14 +254,14 @@ const CartPage = () => {
                 <hr className="border-slate-100 dark:border-slate-700" />
                 <div className="flex justify-between">
                   <span className="font-bold text-slate-900 dark:text-white text-base">الإجمالي</span>
-                  <span className="font-extrabold text-indigo-600 dark:text-indigo-400 text-lg">{cartTotal.toLocaleString('en-US')}</span>
+                  <span className="font-extrabold text-agate-600 dark:text-agate-400 text-lg">{cartTotal.toLocaleString('en-US')}</span>
                 </div>
               </div>
 
               {!showCheckout ? (
                 <button
                   onClick={() => setShowCheckout(true)}
-                  className="w-full py-3.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98]"
+                  className="w-full py-3.5 bg-agate-600 text-white font-bold rounded-xl hover:bg-agate-500 transition-all shadow-lg shadow-agate-600/20 active:scale-[0.98]"
                 >
                   إتمام الطلب
                 </button>
@@ -281,7 +281,7 @@ const CartPage = () => {
                         onChange={(e) => { setCheckoutForm({...checkoutForm, shippingAddress: e.target.value}); setError(''); }}
                         placeholder="المدينة، الحي، الشارع..."
                         rows={2}
-                        className="w-full pr-10 pl-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 resize-none"
+                        className="w-full pr-10 pl-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 resize-none"
                       />
                     </div>
                   </div>
@@ -294,7 +294,7 @@ const CartPage = () => {
                         onClick={() => setCheckoutForm({...checkoutForm, paymentMethod: 0})}
                         className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border text-xs font-bold transition-all ${
                           checkoutForm.paymentMethod === 0
-                            ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
+                            ? 'bg-agate-50 border-agate-300 text-agate-700'
                             : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
                         }`}
                       >

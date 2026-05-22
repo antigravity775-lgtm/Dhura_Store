@@ -46,6 +46,32 @@
     <link rel="manifest" href="/manifest.json" />
     <title>TEEB | طِيب — متجر العطور الفاخرة</title>
 
+    <!-- EN: JSON-LD Structured Data to tell Google this is the official logo for Search Results 
+         AR: بيانات JSON-LD مهيكلة لإخبار جوجل أن هذا هو الشعار الرسمي لنتائج البحث -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://teeb-perfumes.com",
+      "logo": "https://teeb-perfumes.com/Logo_192.png",
+      "image": "https://teeb-perfumes.com/search-thumbnail.png",
+      "name": "TEEB | طِيب"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "TEEB | طِيب",
+      "url": "https://teeb-perfumes.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://teeb-perfumes.com/products?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
     <!--
       EN: ANTI-FLICKER SCRIPT — Critical inline script that runs BEFORE React hydrates.
           This prevents the "white flash" (FOUC) when dark mode is active.

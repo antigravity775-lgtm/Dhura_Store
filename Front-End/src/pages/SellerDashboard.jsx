@@ -127,13 +127,13 @@ const SellerDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans" dir="rtl">
+    <div className="min-h-screen bg-bone dark:bg-slate-950 font-sans" dir="rtl">
 
       {/* Top Bar */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-agate-600 rounded-xl flex items-center justify-center">
               <LayoutDashboard className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -152,14 +152,14 @@ const SellerDashboard = () => {
           <div className="flex items-center gap-3">
             <Link
               to="/profile"
-              className="text-sm text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors hidden sm:block"
+              className="text-sm text-slate-400 hover:text-agate-600 dark:hover:text-agate-400 font-medium transition-colors hidden sm:block"
             >
               <User className="w-4 h-4 inline ml-1" />
               الملف الشخصي
             </Link>
             <Link
               to="/"
-              className="text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors flex items-center gap-1"
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-agate-600 dark:hover:text-agate-400 font-medium transition-colors flex items-center gap-1"
             >
               <Home className="w-4 h-4" />
               الرئيسية
@@ -173,10 +173,10 @@ const SellerDashboard = () => {
         {/* Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 mb-8">
           {[
-            { label: 'إجمالي المنتجات', value: products.length, icon: Package, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800' },
+            { label: 'إجمالي المنتجات', value: products.length, icon: Package, color: 'bg-agate-50 dark:bg-agate-900/30 text-agate-600 dark:text-agate-400 border-agate-100 dark:border-agate-800' },
             { label: 'منتج نشط', value: activeProducts.length, icon: Eye, color: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border-green-100 dark:border-green-800' },
             { label: 'منتج مخفي', value: hiddenProducts.length, icon: EyeOff, color: 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700' },
-            { label: 'المبيعات', value: sales.length, icon: DollarSign, color: 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800' },
+            { label: 'المبيعات', value: sales.length, icon: DollarSign, color: 'bg-agate-50 dark:bg-agate-900/30 text-agate-600 dark:text-agate-400 border-agate-100 dark:border-agate-800' },
           ].map(stat => (
             <div key={stat.label} className={`rounded-2xl border p-4 sm:p-5 ${stat.color}`}>
               <stat.icon className="w-6 h-6 mb-2 opacity-80" />
@@ -220,7 +220,7 @@ const SellerDashboard = () => {
               onClick={() => handleTabChange(tab.id)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm'
+                  ? 'bg-white dark:bg-slate-700 text-agate-700 dark:text-agate-300 shadow-sm'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
@@ -240,7 +240,7 @@ const SellerDashboard = () => {
                 <select
                   value={visibilityFilter}
                   onChange={(e) => setVisibilityFilter(e.target.value)}
-                  className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-700 dark:text-slate-200 flex-1 sm:flex-none"
+                  className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-agate-500/50 text-slate-700 dark:text-slate-200 flex-1 sm:flex-none"
                 >
                   <option value="all">الكل</option>
                   <option value="visible">مرئي فقط</option>
@@ -248,7 +248,7 @@ const SellerDashboard = () => {
                 </select>
                 <button
                   onClick={() => { setEditingProduct(null); setShowAddForm(true); }}
-                  className="flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98] flex-1 sm:flex-none"
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 bg-agate-600 text-white text-sm font-bold rounded-xl hover:bg-agate-500 transition-all shadow-lg shadow-agate-600/20 active:scale-[0.98] flex-1 sm:flex-none"
                 >
                   <Plus className="w-4 h-4" />
                   إضافة منتج
@@ -293,7 +293,7 @@ const SellerDashboard = () => {
 
             {loading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                <Loader2 className="w-8 h-8 text-agate-500 animate-spin" />
               </div>
             ) : products.length === 0 ? (
               <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
@@ -302,7 +302,7 @@ const SellerDashboard = () => {
                 <p className="text-slate-500 dark:text-slate-400 mb-6">ابدأ بإضافة أول منتج لك!</p>
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500"
+                  className="px-6 py-2.5 bg-agate-600 text-white font-bold rounded-xl hover:bg-agate-500"
                 >
                   إضافة منتج
                 </button>
@@ -334,7 +334,7 @@ const SellerDashboard = () => {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">{product.title}</h3>
                       <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                        <span className="text-indigo-600 dark:text-indigo-400 font-bold text-sm">
+                        <span className="text-agate-600 dark:text-agate-400 font-bold text-sm">
                           {product.price?.toLocaleString('en-US') || 0} {api.CurrencySymbol[product.currency] || 'ريال'}
                         </span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
@@ -343,7 +343,7 @@ const SellerDashboard = () => {
                           {product.isHidden ? 'مخفي' : 'نشط'}
                         </span>
                         {product.categoryName && (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-400 border border-slate-100 dark:border-slate-700">
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-bone dark:bg-slate-800 text-slate-400 border border-slate-100 dark:border-slate-700">
                             {product.categoryName}
                           </span>
                         )}
@@ -358,7 +358,7 @@ const SellerDashboard = () => {
                       {/* تعديل */}
                       <button
                         onClick={() => openEditModal(product)}
-                        className="p-2 text-slate-300 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all"
+                        className="p-2 text-slate-300 dark:text-slate-500 hover:text-agate-600 dark:hover:text-agate-400 hover:bg-agate-50 dark:hover:bg-agate-900/30 rounded-xl transition-all"
                         title="تعديل المنتج"
                       >
                         <Edit3 className="w-4 h-4" />
@@ -370,7 +370,7 @@ const SellerDashboard = () => {
                         className={`p-2 rounded-xl transition-all disabled:opacity-50 ${
                           product.isHidden
                             ? 'text-green-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30'
-                            : 'text-amber-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30'
+                            : 'text-agate-400 hover:text-agate-600 hover:bg-agate-50 dark:hover:bg-agate-900/30'
                         }`}
                         title={product.isHidden ? 'إظهار المنتج' : 'إخفاء المنتج'}
                       >
@@ -404,7 +404,7 @@ const SellerDashboard = () => {
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">المبيعات</h2>
             {salesLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                <Loader2 className="w-8 h-8 text-agate-500 animate-spin" />
               </div>
             ) : sales.length === 0 ? (
               <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
@@ -426,7 +426,7 @@ const SellerDashboard = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-slate-500 dark:text-slate-400">{order.items?.length || 0} منتج</span>
-                      <span className="text-lg font-extrabold text-indigo-600 dark:text-indigo-400">
+                      <span className="text-lg font-extrabold text-agate-600 dark:text-agate-400">
                         {order.totalAmount?.toLocaleString('en-US') || 0} {api.getCurrencySymbol(displayCurrency) || 'ريال'}
                       </span>
                     </div>
