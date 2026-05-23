@@ -10,19 +10,28 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Agate Palette (Brand Red/Burgundy) - Centers on #791C2E
-        agate: {
-          50: '#FAF0F2',
-          100: '#F2D7DD',
-          200: '#E6B2BE',
-          300: '#D6899A',
-          400: '#C25D73',
-          500: '#A63B54',
-          600: '#8a2337',
-          700: '#791C2E', // Primary Dark Agate
-          800: '#631423',
-          900: '#4D101A',
-          950: '#210609',
+        // Gisaah Gold Palette
+        gold: {
+          50: '#FBF8F1',
+          100: '#F7F0E2',
+          200: '#F0E2C5',
+          300: '#E8D4A8',
+          400: '#B8860B', // Night Mode Gisaah Gold
+          500: '#DAA520', // Light Mode Gisaah Gold
+          600: '#DAA520', // Light Mode Gisaah Gold
+          700: '#B8860B', // Night Mode Gisaah Gold
+          800: '#916A09',
+          900: '#6D5007',
+          950: '#362803',
+        },
+        // Gisaah Neutral Overrides
+        slate: {
+          900: '#232323', // Gisaah Text (LIGHT)
+          950: '#0F0F0F', // Screen Background (NIGHT)
+        },
+        gray: {
+          900: '#232323', // Gisaah Text (LIGHT)
+          950: '#0F0F0F', // Screen Background (NIGHT)
         },
         // Bone Palette (Background/Light) - Centers on #F8F6EF
         bone: {

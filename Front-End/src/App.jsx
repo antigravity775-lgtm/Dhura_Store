@@ -43,7 +43,7 @@ const ChatWidget = React.lazy(() => import("./components/chat/ChatWidget"));
  */
 const PageLoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[60vh]">
-    <div className="w-8 h-8 border-3 border-agate-200 dark:border-slate-700 border-t-agate-600 dark:border-t-agate-400 rounded-full animate-spin" />
+    <div className="w-8 h-8 border-3 border-gold-200 dark:border-slate-700 border-t-gold-600 dark:border-t-gold-400 rounded-full animate-spin" />
   </div>
 );
 

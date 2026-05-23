@@ -16,8 +16,8 @@ const CreditsPage = () => {
     <Layout>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-start gap-3 mb-6">
-          <div className="w-11 h-11 rounded-2xl bg-agate-100 dark:bg-agate-900/40 flex items-center justify-center flex-shrink-0">
-            <Code2 className="w-5 h-5 text-agate-700 dark:text-agate-400" />
+          <div className="w-11 h-11 rounded-2xl bg-gold-100 dark:bg-gold-900/40 flex items-center justify-center flex-shrink-0">
+            <Code2 className="w-5 h-5 text-gold-700 dark:text-gold-400" />
           </div>
           <div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -76,10 +76,10 @@ const CreditsPage = () => {
               {developer.email && (
                 <a
                   href={`mailto:${developer.email}`}
-                  className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-agate-300 dark:hover:border-agate-500/60 hover:bg-agate-50/60 dark:hover:bg-agate-500/10 transition-colors"
+                  className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-gold-300 dark:hover:border-gold-500/60 hover:bg-gold-50/60 dark:hover:bg-gold-500/10 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-agate-100 dark:bg-agate-900/30 flex items-center justify-center">
-                    <Mail className="w-5 h-5 text-agate-600 dark:text-agate-400" />
+                  <div className="w-10 h-10 rounded-xl bg-gold-100 dark:bg-gold-900/30 flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-gold-600 dark:text-gold-400" />
                   </div>
                   <div className="min-w-0">
                     <div className="text-sm font-extrabold text-slate-900 dark:text-white">Email</div>
@@ -91,10 +91,10 @@ const CreditsPage = () => {
               {developer.phone && (
                 <a
                   href={`tel:${developer.phone}`}
-                  className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-agate-300 dark:hover:border-agate-500/60 hover:bg-agate-50/60 dark:hover:bg-agate-500/10 transition-colors"
+                  className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-gold-300 dark:hover:border-gold-500/60 hover:bg-gold-50/60 dark:hover:bg-gold-500/10 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-agate-100 dark:bg-agate-900/40 flex items-center justify-center">
-                    <Phone className="w-5 h-5 text-agate-600 dark:text-agate-400" />
+                  <div className="w-10 h-10 rounded-xl bg-gold-100 dark:bg-gold-900/40 flex items-center justify-center">
+                    <Phone className="w-5 h-5 text-gold-600 dark:text-gold-400" />
                   </div>
                   <div className="min-w-0">
                     <div className="text-sm font-extrabold text-slate-900 dark:text-white">Phone</div>

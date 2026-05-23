@@ -2,7 +2,7 @@ const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@googl
 const prisma = require('../prismaClient');
 
 const SYSTEM_PROMPT = `
-أنت مساعد تسوق لمتجر Teeb.
+أنت مساعد تسوق لمتجر Gisaah.
 
 قواعد إلزامية:
 1) اللغة الافتراضية للرد هي العربية.

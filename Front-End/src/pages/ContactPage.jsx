@@ -19,7 +19,7 @@ const ContactPage = () => {
   const phoneE164 = useMemo(() => (phoneDigits.startsWith('967') ? phoneDigits : `967${phoneDigits}`), [phoneDigits]);
 
   const whatsappUrl = storeInfo?.whatsappUrl || `https://wa.me/${phoneE164}`;
-  const instagramUrl = storeInfo?.instagramUrl || 'https://instagram.com/teeb';
+  const instagramUrl = storeInfo?.instagramUrl || 'https://instagram.com/gisaah';
 
   return (
     <Layout>
@@ -36,10 +36,10 @@ const ContactPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <a
               href={`tel:${phoneDigits}`}
-              className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-agate-300 dark:hover:border-agate-500/60 hover:bg-agate-50/60 dark:hover:bg-agate-500/10 transition-colors"
+              className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-gold-300 dark:hover:border-gold-500/60 hover:bg-gold-50/60 dark:hover:bg-gold-500/10 transition-colors"
             >
-              <div className="w-10 h-10 rounded-xl bg-agate-100 dark:bg-agate-900/40 flex items-center justify-center">
-                <Phone className="w-5 h-5 text-agate-600 dark:text-agate-400" />
+              <div className="w-10 h-10 rounded-xl bg-gold-100 dark:bg-gold-900/40 flex items-center justify-center">
+                <Phone className="w-5 h-5 text-gold-600 dark:text-gold-400" />
               </div>
               <div className="min-w-0">
                 <div className="text-sm font-extrabold text-slate-900 dark:text-white">اتصل بنا</div>
@@ -80,10 +80,10 @@ const ContactPage = () => {
             {storeInfo?.contactEmail && (
               <a
                 href={`mailto:${storeInfo.contactEmail}`}
-                className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-agate-300 dark:hover:border-agate-500/60 hover:bg-agate-50/60 dark:hover:bg-agate-500/10 transition-colors"
+                className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-gold-300 dark:hover:border-gold-500/60 hover:bg-gold-50/60 dark:hover:bg-gold-500/10 transition-colors"
               >
-                <div className="w-10 h-10 rounded-xl bg-agate-100 dark:bg-agate-900/30 flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-agate-600 dark:text-agate-400" />
+                <div className="w-10 h-10 rounded-xl bg-gold-100 dark:bg-gold-900/30 flex items-center justify-center">
+                  <Mail className="w-5 h-5 text-gold-600 dark:text-gold-400" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-sm font-extrabold text-slate-900 dark:text-white">راسلنا</div>

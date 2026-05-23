@@ -16,7 +16,7 @@ const Footer = ({ storeInfo }) => {
     ? phoneDigits
     : `967${phoneDigits}`;
   const whatsappUrl = storeInfo?.whatsappUrl || `https://wa.me/${phoneE164}`;
-  const instagramUrl = storeInfo?.instagramUrl || "https://instagram.com/teeb";
+  const instagramUrl = storeInfo?.instagramUrl || "https://instagram.com/gisaah";
   return (
     <footer
       className="bg-[#120F09] text-slate-400 py-8 border-t border-[#2A1F0A] mt-auto"
@@ -30,18 +30,18 @@ const Footer = ({ storeInfo }) => {
             <div className="flex items-center gap-2 mb-3">
               <img
                 src={logo}
-                alt="شعار TEEB طِيب"
+                alt="شعار GISAAH قصة"
                 width="32"
                 height="32"
-                className="w-8 h-8 rounded-full bg-white object-cover object-center scale-[1.16] border-2 border-agate-800"
+                className="w-8 h-8 rounded-full bg-white object-cover object-center scale-[1.16] border-2 border-gold-800"
                 loading="lazy"
               />
               <span className="font-extrabold text-white text-lg tracking-tight font-display">
-                TEEB <span className="text-agate-400 text-base">طِيب</span>
+                GISAAH <span className="text-gold-400 text-base">قصة</span>
               </span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500 max-w-xs">
-              متجر طِيب هو المتجر الالكتروني الاول في اليمن لبيع العطور الاصلية
+              متجر قصة هو المتجر الالكتروني الاول في اليمن لبيع العطور الاصلية
               فقط بأسعار أقل من الموقع الرسمي.
             </p>
           </div>
@@ -55,7 +55,7 @@ const Footer = ({ storeInfo }) => {
                   to="/about"
                   className="hover:text-white transition-colors flex items-center gap-1.5 group"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-agate-500 transition-colors"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-gold-500 transition-colors"></span>
                   من نحن
                 </Link>
               </li>
@@ -64,7 +64,7 @@ const Footer = ({ storeInfo }) => {
                   to="/privacy-policy"
                   className="hover:text-white transition-colors flex items-center gap-1.5 group"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-agate-500 transition-colors"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-gold-500 transition-colors"></span>
                   سياسة الخصوصية
                 </Link>
               </li>
@@ -80,7 +80,7 @@ const Footer = ({ storeInfo }) => {
                   to="/contact"
                   className="hover:text-white transition-colors flex items-center gap-1.5 group"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-agate-500 transition-colors"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-gold-500 transition-colors"></span>
                   اتصل بنا
                 </Link>
               </li>
@@ -90,7 +90,7 @@ const Footer = ({ storeInfo }) => {
                     href={`tel:${phoneDigits}`}
                     className="hover:text-white transition-colors flex items-center gap-1.5 group"
                   >
-                    <Mail className="w-3.5 h-3.5 text-slate-600 group-hover:text-agate-400 transition-colors" />
+                    <Mail className="w-3.5 h-3.5 text-slate-600 group-hover:text-gold-400 transition-colors" />
                     راسلنا للإستفسار
                   </a>
                 </li>
@@ -137,7 +137,7 @@ const Footer = ({ storeInfo }) => {
         {/* Bottom Socket */}
         <div className="pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-[11px] text-slate-600 font-medium flex flex-wrap items-center gap-x-2 gap-y-1 justify-center sm:justify-start text-center sm:text-right">
-            <span>&copy; 2026 طِيب. جميع الحقوق محفوظة.</span>
+            <span>&copy; 2026 قصة. جميع الحقوق محفوظة.</span>
             <span className="text-slate-800/70 dark:text-slate-700/70 hidden sm:inline">
               |
             </span>

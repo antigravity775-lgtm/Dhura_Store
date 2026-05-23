@@ -15,7 +15,7 @@ const statusConfig = {
   Pending: { label: 'قيد الانتظار', color: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800', icon: Clock },
   Confirmed: { label: 'تم التأكيد', color: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800', icon: ShieldCheck },
   Processing: { label: 'جاري التجهيز', color: 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800', icon: Package },
-  Shipped: { label: 'تم الشحن', color: 'bg-agate-100 text-agate-700 border-agate-200 dark:bg-agate-900/30 dark:text-agate-400 dark:border-agate-800', icon: Truck },
+  Shipped: { label: 'تم الشحن', color: 'bg-gold-100 text-gold-700 border-gold-200 dark:bg-gold-900/30 dark:text-gold-400 dark:border-gold-800', icon: Truck },
   Delivered: { label: 'تم التوصيل', color: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800', icon: CheckCircle },
   Cancelled: { label: 'ملغي', color: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800', icon: XCircle },
 };
@@ -47,7 +47,7 @@ const MyOrdersPage = () => {
       <Layout>
         <div className="flex items-center justify-center py-32">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="w-10 h-10 text-agate-500 animate-spin" />
+            <Loader2 className="w-10 h-10 text-gold-500 animate-spin" />
             <p className="text-slate-500 dark:text-slate-400 font-medium">جاري تحميل الطلبات...</p>
           </div>
         </div>
@@ -61,12 +61,12 @@ const MyOrdersPage = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-            <Package className="w-8 h-8 text-agate-600 dark:text-agate-400" />
+            <Package className="w-8 h-8 text-gold-600 dark:text-gold-400" />
             طلباتي
           </h1>
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-agate-600 dark:hover:text-agate-400 transition-colors font-medium"
+            className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 transition-colors font-medium"
           >
             <ArrowRight className="w-4 h-4" />
             متابعة التسوق
@@ -89,7 +89,7 @@ const MyOrdersPage = () => {
             <p className="text-slate-500 dark:text-slate-400 mb-8">لم تقم بإنشاء أي طلبات بعد. ابدأ بتصفح المنتجات!</p>
             <Link
               to="/"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-agate-600 text-white font-bold rounded-xl hover:bg-agate-500"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gold-600 text-white font-bold rounded-xl hover:bg-gold-500"
             >
               تصفح المنتجات
             </Link>
@@ -120,7 +120,7 @@ const MyOrdersPage = () => {
                   <div className="p-5 sm:p-6">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-agate-100 dark:bg-agate-900/30 text-agate-600 dark:text-agate-400 rounded-xl flex items-center justify-center">
+                        <div className="w-10 h-10 bg-gold-100 dark:bg-gold-900/30 text-gold-600 dark:text-gold-400 rounded-xl flex items-center justify-center">
                           <Package className="w-5 h-5" />
                         </div>
                         <div>
@@ -155,14 +155,14 @@ const MyOrdersPage = () => {
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700">
                       <button
                         onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
-                        className="flex items-center gap-1.5 text-sm text-agate-600 dark:text-agate-400 hover:text-agate-700 dark:hover:text-agate-300 font-semibold transition-colors"
+                        className="flex items-center gap-1.5 text-sm text-gold-600 dark:text-gold-400 hover:text-gold-700 dark:hover:text-gold-300 font-semibold transition-colors"
                       >
                         {orderItems.length} منتج
                         {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </button>
                       <div className="text-left">
                         <span className="text-xs text-slate-400">الإجمالي</span>
-                        <div className="text-lg font-extrabold text-agate-600 dark:text-agate-400">
+                        <div className="text-lg font-extrabold text-gold-600 dark:text-gold-400">
                           {Number(order.totalAmount || 0).toLocaleString('en-US')} {api.getCurrencySymbol(displayCurrency) || 'ريال'}
                         </div>
                       </div>
@@ -195,7 +195,7 @@ const MyOrdersPage = () => {
                                   الكمية: {item.quantity} × {Number(item.unitPrice || 0).toLocaleString('en-US')}
                                 </p>
                               </div>
-                              <span className="text-sm font-bold text-agate-600 dark:text-agate-400 flex-shrink-0">
+                              <span className="text-sm font-bold text-gold-600 dark:text-gold-400 flex-shrink-0">
                                 {(item.quantity * Number(item.unitPrice || 0)).toLocaleString('en-US')}
                               </span>
                             </div>

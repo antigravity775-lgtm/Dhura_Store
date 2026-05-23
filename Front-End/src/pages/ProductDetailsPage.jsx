@@ -256,7 +256,7 @@ const ProductDetailsPage = () => {
           <button onClick={() => {
             if (errorType === 'server_error') window.location.reload();
             else navigate('/');
-          }} className="px-8 py-3.5 bg-agate-600 text-white font-bold rounded-2xl hover:bg-agate-700 transition-all shadow-lg shadow-agate-200 dark:shadow-none active:scale-95">
+          }} className="px-8 py-3.5 bg-gold-600 text-white font-bold rounded-2xl hover:bg-gold-700 transition-all shadow-lg shadow-gold-200 dark:shadow-none active:scale-95">
             {errorType === 'server_error' ? 'إعادة المحاولة' : 'العودة للصفحة الرئيسية'}
           </button>
         </div>
@@ -276,7 +276,7 @@ const ProductDetailsPage = () => {
         {/* زر الرجوع */}
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-agate-600 transition-colors mb-8 group font-medium text-sm focus:outline-none"
+          className="inline-flex items-center gap-2 text-slate-400 hover:text-gold-600 transition-colors mb-8 group font-medium text-sm focus:outline-none"
         >
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           العودة للمنتجات
@@ -303,8 +303,8 @@ const ProductDetailsPage = () => {
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide ${product.condition === 1
-                  ? "bg-agate-100 dark:bg-agate-900/40 text-agate-700 dark:text-agate-300 border border-agate-200 dark:border-agate-700"
-                  : "bg-agate-50 dark:bg-agate-900/30 text-agate-700 dark:text-agate-300 border border-agate-200 dark:border-agate-700"
+                  ? "bg-gold-100 dark:bg-gold-900/40 text-gold-700 dark:text-gold-300 border border-gold-200 dark:border-gold-700"
+                  : "bg-gold-50 dark:bg-gold-900/30 text-gold-700 dark:text-gold-300 border border-gold-200 dark:border-gold-700"
                   }`}
               >
                 <Package className="w-3.5 h-3.5" />
@@ -322,12 +322,12 @@ const ProductDetailsPage = () => {
                 </span>
               )}
               {product.isPromoted && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-agate-500 to-purple-500 text-white shadow-md shadow-agate-500/20">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-gold-500 to-purple-500 text-white shadow-md shadow-gold-500/20">
                   ⭐ منتج مميز
                 </span>
               )}
               {product.promotionLabel && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-agate-50 dark:bg-agate-900/30 text-agate-700 dark:text-agate-300 border border-agate-200 dark:border-agate-700">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gold-50 dark:bg-gold-900/30 text-gold-700 dark:text-gold-300 border border-gold-200 dark:border-gold-700">
                   {product.promotionLabel}
                 </span>
               )}
@@ -365,7 +365,7 @@ const ProductDetailsPage = () => {
                     </div>
                   </>
                 ) : (
-                  <div className="text-3xl sm:text-4xl font-black text-agate-600 dark:text-agate-400 tracking-tight">
+                  <div className="text-3xl sm:text-4xl font-black text-gold-600 dark:text-gold-400 tracking-tight">
                     {formatPrice(product.price, product.currency)}
                   </div>
                 )}
@@ -390,7 +390,7 @@ const ProductDetailsPage = () => {
                 </button>
                 <button
                   onClick={handleShare}
-                  className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 hover:text-agate-600 dark:hover:text-agate-400 hover:border-agate-200 dark:hover:border-agate-700 transition-all"
+                  className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 hover:border-gold-200 dark:hover:border-gold-700 transition-all"
                   aria-label="مشاركة المنتج"
                 >
                   <Share2 className="w-5 h-5" />
@@ -404,7 +404,7 @@ const ProductDetailsPage = () => {
             {product.description && (
               <div className="mb-6">
                 <h3 className="text-base font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                  <div className="w-1 h-5 bg-agate-500 rounded-full"></div>
+                  <div className="w-1 h-5 bg-gold-500 rounded-full"></div>
                   الوصف
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-[15px] whitespace-pre-line">
@@ -423,8 +423,8 @@ const ProductDetailsPage = () => {
                 disabled={addedToCart}
                 className={`w-full flex items-center justify-center gap-3 py-4 px-8 rounded-2xl font-bold text-lg shadow-lg transition-all ${addedToCart
                   ? "bg-green-500 text-white shadow-green-500/25"
-                  : "bg-agate-600 text-white shadow-agate-600/25 hover:bg-agate-500"
-                  } focus:outline-none focus:ring-4 focus:ring-agate-400/50`}
+                  : "bg-gold-600 text-white shadow-gold-600/25 hover:bg-gold-500"
+                  } focus:outline-none focus:ring-4 focus:ring-gold-400/50`}
                 whileHover={!addedToCart ? { scale: 1.02 } : {}}
                 whileTap={!addedToCart ? { scale: 0.98 } : {}}
               >
@@ -454,9 +454,9 @@ const ProductDetailsPage = () => {
                 تواصل عبر واتساب
               </motion.a>
 
-              <div className="text-center bg-agate-50 dark:bg-agate-900/20 rounded-xl py-2.5 px-4 border border-agate-100 dark:border-agate-800">
-                <p className="text-xs text-agate-700 font-medium flex items-center justify-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-agate-400"></span>
+              <div className="text-center bg-gold-50 dark:bg-gold-900/20 rounded-xl py-2.5 px-4 border border-gold-100 dark:border-gold-800">
+                <p className="text-xs text-gold-700 font-medium flex items-center justify-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold-400"></span>
                   🚚 توصيل سريع لجميع المناطق في اليمن – اطلب الآن
                 </p>
               </div>
