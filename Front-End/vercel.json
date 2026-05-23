@@ -79,7 +79,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://dhura-store.vercel.app/api/:path*"
+      "destination": "https://gisaah-store.vercel.app/api/:path*"
     },
     {
       "source": "/((?!.*\\.[a-zA-Z0-9]+$).*)",
