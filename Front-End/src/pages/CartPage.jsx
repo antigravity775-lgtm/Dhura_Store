@@ -75,7 +75,30 @@ const CartPage = () => {
       const phoneDigits = phone.replace(/[^\d]/g, "");
       const phoneE164 = phoneDigits ? (phoneDigits.startsWith("967") ? phoneDigits : `967${phoneDigits}`) : "";
 
-      const whatsappTarget = storeInfo?.whatsappUrl || (phoneE164 ? `https://wa.me/${phoneE164}?text=${encodeURIComponent(message)}` : "");
+      let baseWhatsappUrl = (storeInfo?.whatsappUrl || "").trim();
+      
+      if (baseWhatsappUrl && !baseWhatsappUrl.startsWith('http')) {
+        const linkDigits = baseWhatsappUrl.replace(/\D/g, "");
+        if (linkDigits) {
+          baseWhatsappUrl = `https://wa.me/${linkDigits.startsWith("967") ? linkDigits : `967${linkDigits}`}`;
+        }
+      }
+
+      if (!baseWhatsappUrl && phoneE164) {
+        baseWhatsappUrl = `https://wa.me/${phoneE164}`;
+      }
+
+      let whatsappTarget = "";
+      if (baseWhatsappUrl) {
+        try {
+          const url = new URL(baseWhatsappUrl);
+          url.searchParams.set("text", message);
+          whatsappTarget = url.toString();
+        } catch {
+          const separator = baseWhatsappUrl.includes('?') ? '&' : '?';
+          whatsappTarget = `${baseWhatsappUrl}${separator}text=${encodeURIComponent(message)}`;
+        }
+      }
 
       if (!whatsappTarget) {
         setError('رقم التواصل عبر واتساب غير متوفر.');
