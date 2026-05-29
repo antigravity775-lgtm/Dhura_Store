@@ -138,17 +138,6 @@ const Footer = ({ storeInfo }) => {
         <div className="pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-[11px] text-slate-600 font-medium flex flex-wrap items-center gap-x-2 gap-y-1 justify-center sm:justify-start text-center sm:text-right">
             <span>&copy; 2026 قصة. جميع الحقوق محفوظة.</span>
-            <span className="text-slate-800/70 dark:text-slate-700/70 hidden sm:inline">
-              |
-            </span>
-            <span className="text-slate-600/90">
-              <Link
-                to="/credits"
-                className="text-slate-500 hover:text-white transition-colors underline underline-offset-4 decoration-slate-700 hover:decoration-white"
-              >
-                صفحة المطوّر
-              </Link>
-            </span>
           </div>
 
           <div className="flex items-center gap-3 opacity-60 mix-blend-luminosity hover:mix-blend-normal transition-all">

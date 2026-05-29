@@ -27,7 +27,6 @@ const ProductGridDemo = React.lazy(
 const AboutPage = React.lazy(() => import("./pages/AboutPage"));
 const PrivacyPolicyPage = React.lazy(() => import("./pages/PrivacyPolicyPage"));
 const ContactPage = React.lazy(() => import("./pages/ContactPage"));
-const CreditsPage = React.lazy(() => import("./pages/CreditsPage"));
 
 // EN: ChatWidget is lazy-loaded because it imports react-markdown + remark-gfm (~45KB gzip).
 //     The FAB button still appears immediately via a lightweight wrapper.
@@ -72,7 +71,6 @@ const App = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/credits" element={<CreditsPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
