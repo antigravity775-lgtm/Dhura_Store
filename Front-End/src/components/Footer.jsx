@@ -10,13 +10,11 @@ import {
 const logo = "/Logo_192.png";
 
 const Footer = ({ storeInfo }) => {
-  const phone = (storeInfo?.contactPhone || "774405120").trim();
+  const phone = (storeInfo?.contactPhone || "").trim();
   const phoneDigits = phone.replace(/[^\d]/g, "");
-  const phoneE164 = phoneDigits.startsWith("967")
-    ? phoneDigits
-    : `967${phoneDigits}`;
-  const whatsappUrl = storeInfo?.whatsappUrl || `https://wa.me/${phoneE164}`;
-  const instagramUrl = storeInfo?.instagramUrl || "https://instagram.com/gisaah";
+  const phoneE164 = phoneDigits ? (phoneDigits.startsWith("967") ? phoneDigits : `967${phoneDigits}`) : "";
+  const whatsappUrl = storeInfo?.whatsappUrl || (phoneE164 ? `https://wa.me/${phoneE164}` : "");
+  const instagramUrl = storeInfo?.instagramUrl || "";
   return (
     <footer
       className="bg-[#120F09] text-slate-400 py-8 border-t border-[#2A1F0A] mt-auto"
@@ -108,28 +106,32 @@ const Footer = ({ storeInfo }) => {
                   صفحة فيسبوك
                 </a>
               </li> */}
-              <li>
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-white transition-colors flex items-center gap-1.5 group"
-                >
-                  <MessageCircle className="w-3.5 h-3.5 text-slate-600 group-hover:text-green-500 transition-colors" />
-                  واتساب
-                </a>
-              </li>
-              <li>
-                <a
-                  href={instagramUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-white transition-colors flex items-center gap-1.5 group"
-                >
-                  <Instagram className="w-3.5 h-3.5 text-slate-600 group-hover:text-pink-500 transition-colors" />
-                  انستغرام
-                </a>
-              </li>
+              {whatsappUrl && (
+                <li>
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-white transition-colors flex items-center gap-1.5 group"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 text-slate-600 group-hover:text-green-500 transition-colors" />
+                    واتساب
+                  </a>
+                </li>
+              )}
+              {instagramUrl && (
+                <li>
+                  <a
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-white transition-colors flex items-center gap-1.5 group"
+                  >
+                    <Instagram className="w-3.5 h-3.5 text-slate-600 group-hover:text-pink-500 transition-colors" />
+                    انستغرام
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>

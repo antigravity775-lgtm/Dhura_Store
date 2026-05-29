@@ -14,12 +14,12 @@ const ContactPage = () => {
     return () => { mounted = false; };
   }, []);
 
-  const phone = useMemo(() => (storeInfo?.contactPhone || '774405120').trim(), [storeInfo]);
+  const phone = useMemo(() => (storeInfo?.contactPhone || '').trim(), [storeInfo]);
   const phoneDigits = useMemo(() => phone.replace(/[^\d]/g, ''), [phone]);
-  const phoneE164 = useMemo(() => (phoneDigits.startsWith('967') ? phoneDigits : `967${phoneDigits}`), [phoneDigits]);
+  const phoneE164 = useMemo(() => (phoneDigits ? (phoneDigits.startsWith('967') ? phoneDigits : `967${phoneDigits}`) : ''), [phoneDigits]);
 
-  const whatsappUrl = storeInfo?.whatsappUrl || `https://wa.me/${phoneE164}`;
-  const instagramUrl = storeInfo?.instagramUrl || 'https://instagram.com/gisaah';
+  const whatsappUrl = storeInfo?.whatsappUrl || (phoneE164 ? `https://wa.me/${phoneE164}` : '');
+  const instagramUrl = storeInfo?.instagramUrl || '';
 
   return (
     <Layout>
@@ -34,33 +34,37 @@ const ContactPage = () => {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <a
-              href={`tel:${phoneDigits}`}
-              className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-gold-300 dark:hover:border-gold-500/60 hover:bg-gold-50/60 dark:hover:bg-gold-500/10 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-xl bg-gold-100 dark:bg-gold-900/40 flex items-center justify-center">
-                <Phone className="w-5 h-5 text-gold-600 dark:text-gold-400" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-sm font-extrabold text-slate-900 dark:text-white">اتصل بنا</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{phone}</div>
-              </div>
-            </a>
+            {phoneDigits && (
+              <a
+                href={`tel:${phoneDigits}`}
+                className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-gold-300 dark:hover:border-gold-500/60 hover:bg-gold-50/60 dark:hover:bg-gold-500/10 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-gold-100 dark:bg-gold-900/40 flex items-center justify-center">
+                  <Phone className="w-5 h-5 text-gold-600 dark:text-gold-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-extrabold text-slate-900 dark:text-white">اتصل بنا</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{phone}</div>
+                </div>
+              </a>
+            )}
 
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-500/60 hover:bg-emerald-50/60 dark:hover:bg-emerald-500/10 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
-                <MessageCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-sm font-extrabold text-slate-900 dark:text-white">واتساب</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{phone}</div>
-              </div>
-            </a>
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-500/60 hover:bg-emerald-50/60 dark:hover:bg-emerald-500/10 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
+                  <MessageCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-extrabold text-slate-900 dark:text-white">واتساب</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{phone}</div>
+                </div>
+              </a>
+            )}
 
             <a
               href={instagramUrl}

@@ -71,13 +71,19 @@ const CartPage = () => {
       message += `العنوان: ${checkoutForm.shippingAddress}\n`;
       message += `طريقة الدفع: ${checkoutForm.paymentMethod === 0 ? 'عند الاستلام' : 'أخرى'}`;
 
-      const phone = (storeInfo?.contactPhone || "774405120").trim();
+      const phone = (storeInfo?.contactPhone || "").trim();
       const phoneDigits = phone.replace(/[^\d]/g, "");
-      const phoneE164 = phoneDigits.startsWith("967") ? phoneDigits : `967${phoneDigits}`;
-      
-      const whatsappUrl = `https://wa.me/${phoneE164}?text=${encodeURIComponent(message)}`;
-      
-      window.open(whatsappUrl, '_blank');
+      const phoneE164 = phoneDigits ? (phoneDigits.startsWith("967") ? phoneDigits : `967${phoneDigits}`) : "";
+
+      const whatsappTarget = storeInfo?.whatsappUrl || (phoneE164 ? `https://wa.me/${phoneE164}?text=${encodeURIComponent(message)}` : "");
+
+      if (!whatsappTarget) {
+        setError('رقم التواصل عبر واتساب غير متوفر.');
+        setCheckoutLoading(false);
+        return;
+      }
+
+      window.open(whatsappTarget, '_blank');
       
       setCheckoutDone(true);
       clearCart();

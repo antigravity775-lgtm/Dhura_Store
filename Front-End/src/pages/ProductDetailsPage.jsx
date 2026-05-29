@@ -188,18 +188,17 @@ const ProductDetailsPage = () => {
 
   const whatsappMessage = `مرحباً! أنا مهتم بالمنتج: ${product?.title || ""}
 الرابط: ${window.location.href}`;
-  const defaultWhatsAppPhone = "967775181863";
   const formattedContactPhone = useMemo(() => {
     const rawPhone = storeInfo?.contactPhone || "";
     const digits = rawPhone.replace(/\D/g, "");
-    if (!digits) return defaultWhatsAppPhone;
+    if (!digits) return "";
     return digits.startsWith("967") ? digits : `967${digits}`;
   }, [storeInfo?.contactPhone]);
 
   const whatsappBaseUrl = useMemo(() => {
     const link = (storeInfo?.whatsappUrl || "").trim();
     if (!link || link.includes("chat.whatsapp.com")) {
-      return `https://wa.me/${formattedContactPhone || defaultWhatsAppPhone}`;
+      return formattedContactPhone ? `https://wa.me/${formattedContactPhone}` : "";
     }
     const normalized = link.startsWith("http") ? link : `https://${link}`;
     try {
@@ -207,17 +206,18 @@ const ProductDetailsPage = () => {
       if (url.hostname.includes("whatsapp.com")) {
         return normalized;
       }
-      return `https://wa.me/${formattedContactPhone || defaultWhatsAppPhone}`;
+      return formattedContactPhone ? `https://wa.me/${formattedContactPhone}` : "";
     } catch {
       const digits = link.replace(/\D/g, "");
       if (digits) {
         return `https://wa.me/${digits.startsWith("967") ? digits : `967${digits}`}`;
       }
-      return `https://wa.me/${formattedContactPhone || defaultWhatsAppPhone}`;
+      return formattedContactPhone ? `https://wa.me/${formattedContactPhone}` : "";
     }
   }, [storeInfo?.whatsappUrl, formattedContactPhone]);
 
   const productWhatsAppUrl = useMemo(() => {
+    if (!whatsappBaseUrl) return "";
     try {
       const url = new URL(whatsappBaseUrl);
       if (url.searchParams.has("text")) {
