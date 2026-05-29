@@ -10,7 +10,7 @@ import {
   Loader2,
   X,
 } from 'lucide-react';
-import AddProductForm from '../components/AddProductForm';
+import AddProductForm from '../../components/AddProductForm';
 import * as api from '../../services/api';
 
 const SellerProductsTab = () => {
