@@ -21,6 +21,7 @@ import {
   Truck, BadgePercent, ShieldCheck, Sparkles, Eye
 } from 'lucide-react';
 import Layout from '../components/Layout';
+import SEO from '../components/SEO';
 import CategoryGrid from '../components/CategoryGrid';
 import HomepageSections from '../components/HomepageSections';
 import { ProductGrid } from '../components/HighConversionGrid';
@@ -214,6 +215,7 @@ const HomePage = () => {
 
   return (
     <Layout>
+      <SEO title="الصفحة الرئيسية" />
       {/* ═══════ حزام العروض / Offer Belt ═══════ */}
       <OfferBelt shippingOfferText={shippingOfferText} />
 

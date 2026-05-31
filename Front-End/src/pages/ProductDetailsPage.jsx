@@ -19,6 +19,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Layout from "../components/Layout";
+import SEO from "../components/SEO";
 import * as api from "../services/api";
 import { getOptimizedImageUrl, IMAGE_WIDTHS } from "../utils/cloudinaryUrl";
 import { useCart } from "../context/CartContext";
@@ -272,6 +273,11 @@ const ProductDetailsPage = () => {
 
   return (
     <Layout>
+      <SEO 
+        title={product.title} 
+        description={product.description?.substring(0, 160) || `تسوق ${product.title} بأفضل الأسعار على متجر قصة.`}
+        image={imageUrl}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 mb-12 w-full">
         {/* زر الرجوع */}
         <Link

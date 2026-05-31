@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /seller
+Disallow: /profile
+Disallow: /my-orders
 
-Sitemap: https://gisaah.com/sitemap.xml
+Sitemap: https://www.gisaah.com/sitemap.xml

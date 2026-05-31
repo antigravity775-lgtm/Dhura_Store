@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node generate-sitemap.mjs && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -13,6 +13,7 @@
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-helmet-async": "^3.0.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.1.0",
     "recharts": "^3.8.1",

@@ -17,6 +17,7 @@ import {
   Search, LayoutGrid, Loader2, X, ArrowRight, ShoppingBag
 } from 'lucide-react';
 import Layout from '../components/Layout';
+import SEO from '../components/SEO';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -150,6 +151,7 @@ const ProductsPage = () => {
 
   return (
     <Layout>
+      <SEO title="جميع المنتجات" description="تصفح جميع العطور الفاخرة المتاحة في متجر قصة." />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
 
         {/* ── Page Header ── */}

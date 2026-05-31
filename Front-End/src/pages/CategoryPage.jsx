@@ -19,6 +19,7 @@ import {
   Search, LayoutGrid, Loader2, X, ArrowRight, Tag
 } from 'lucide-react';
 import Layout from '../components/Layout';
+import SEO from '../components/SEO';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -128,6 +129,10 @@ const CategoryPage = () => {
 
   return (
     <Layout>
+      <SEO 
+        title={`قسم ${decodedCategoryName}`} 
+        description={`تصفح أحدث وأفضل المنتجات في قسم ${decodedCategoryName} على متجر قصة.`}
+      />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
 
         {/* ── Page Header ── */}
