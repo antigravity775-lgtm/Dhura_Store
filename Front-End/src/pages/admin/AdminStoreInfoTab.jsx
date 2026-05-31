@@ -114,6 +114,31 @@ const AdminStoreInfoTab = ({ storeInfo, setStoreInfo, handleUpdateStoreInfo, sto
             <div className="md:col-span-2">
               <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
                 <Info className="w-4 h-4 text-slate-400" />
+                عنوان الموقع (SEO Title)
+              </label>
+              <input
+                type="text"
+                value={storeInfo.seoTitle}
+                onChange={(e) => setStoreInfo({ ...storeInfo, seoTitle: e.target.value })}
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-gold-500/50 text-slate-900 dark:text-white"
+                placeholder="مثال: قصة | Gisaah"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                <Info className="w-4 h-4 text-slate-400" />
+                وصف الموقع لمحركات البحث (SEO Description)
+              </label>
+              <textarea
+                value={storeInfo.seoDescription}
+                onChange={(e) => setStoreInfo({ ...storeInfo, seoDescription: e.target.value })}
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-gold-500/50 min-h-[80px] text-slate-900 dark:text-white"
+                placeholder="وصف مختصر للمتجر يظهر في نتائج بحث جوجل..."
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                <Info className="w-4 h-4 text-slate-400" />
                 عن المتجر
               </label>
               <textarea

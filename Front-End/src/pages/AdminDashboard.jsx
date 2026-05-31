@@ -107,7 +107,7 @@ const AdminDashboard = () => {
   } = useSWR(isAuth && activeTab === "storeInfo" ? "adminStoreInfo" : null, api.getStoreInfo);
 
   const [storeInfo, setStoreInfo] = useState({
-    aboutUsText: "", contactEmail: "", contactPhone: "", facebookUrl: "", twitterUrl: "", whatsappUrl: "", instagramUrl: "", shippingOfferText: "",
+    aboutUsText: "", contactEmail: "", contactPhone: "", facebookUrl: "", twitterUrl: "", whatsappUrl: "", instagramUrl: "", shippingOfferText: "", seoTitle: "", seoDescription: "",
   });
   const [storeInfoSaving, setStoreInfoSaving] = useState(false);
 
@@ -122,6 +122,8 @@ const AdminDashboard = () => {
         whatsappUrl: storeInfoData.whatsappUrl || "",
         instagramUrl: storeInfoData.instagramUrl || "",
         shippingOfferText: storeInfoData.shippingOfferText || "",
+        seoTitle: storeInfoData.seoTitle || "",
+        seoDescription: storeInfoData.seoDescription || "",
       });
     }
   }, [storeInfoData]);
