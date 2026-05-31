@@ -18,13 +18,20 @@ class AuthService {
    * @returns {Promise<Object>} Auth response with user info and token
    */
   async register(userData) {
-    const { fullName, password, city } = userData;
-    const email = userData.email ? userData.email.trim() : '';
+    const { fullName, phoneNumber, password, city } = userData;
+    const email = `${phoneNumber}@gisaah.com`;
 
     // Check if user already exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findFirst({ 
+      where: { 
+        OR: [
+          { email },
+          { phoneNumber }
+        ]
+      } 
+    });
     if (existingUser) {
-      throw new BadRequestError('Email is already registered');
+      throw new BadRequestError('رقم الهاتف مسجل بالفعل');
     }
 
     // Hash password
@@ -35,6 +42,7 @@ class AuthService {
     const user = await prisma.user.create({
       data: {
         fullName,
+        phoneNumber,
         email,
         passwordHash,
         city,
@@ -61,13 +69,12 @@ class AuthService {
    * @returns {Promise<Object>} Auth response with user info and token
    */
   async login(loginData) {
-    const { password } = loginData;
-    const email = loginData.email ? loginData.email.trim() : '';
+    const { phoneNumber, password } = loginData;
 
-    // Find user by email
-    const user = await prisma.user.findUnique({ where: { email } });
+    // Find user by phone number
+    const user = await prisma.user.findFirst({ where: { phoneNumber } });
     if (!user) {
-      throw new UnauthorizedError('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+      throw new UnauthorizedError('رقم الهاتف أو كلمة المرور غير صحيحة');
     }
 
     // Check if user is blocked by admin

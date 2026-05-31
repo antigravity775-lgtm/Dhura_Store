@@ -27,7 +27,6 @@ class AccountController {
       const requiredFields = [
         { key: 'fullName', label: 'الاسم الكامل' },
         { key: 'phoneNumber', label: 'رقم الهاتف' },
-        { key: 'email', label: 'البريد الإلكتروني' },
         { key: 'password', label: 'كلمة المرور' }
       ];
       for (const field of requiredFields) {
@@ -55,8 +54,8 @@ class AccountController {
   async login(req, res) {
     try {
       // Validate required fields
-      if (!req.body.email || !req.body.password) {
-        throw new ValidationError('Email and password are required');
+      if (!req.body.phoneNumber || !req.body.password) {
+        throw new ValidationError('رقم الهاتف وكلمة المرور مطلوبة');
       }
 
       const result = await this.authService.login(req.body);

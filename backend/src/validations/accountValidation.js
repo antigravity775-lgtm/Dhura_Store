@@ -10,11 +10,7 @@ const registerSchema = Joi.object({
     'string.empty': 'رقم الهاتف مطلوب',
     'any.required': 'رقم الهاتف مطلوب'
   }),
-  email: Joi.string().email().required().messages({
-    'string.empty': 'البريد الإلكتروني مطلوب',
-    'string.email': 'البريد الإلكتروني غير صالح',
-    'any.required': 'البريد الإلكتروني مطلوب'
-  }),
+
   password: Joi.string().min(6).max(100).required().messages({
     'string.empty': 'كلمة المرور مطلوبة',
     'string.min': 'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
@@ -24,7 +20,7 @@ const registerSchema = Joi.object({
 });
 
 const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
+  phoneNumber: Joi.string().required(),
   password: Joi.string().required()
 });
 

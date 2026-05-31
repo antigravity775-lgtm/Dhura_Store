@@ -58,7 +58,7 @@ const AuthPage = () => {
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
-    email: "",
+    phoneNumber: "",
     password: "",
     name: "",
     phoneNumber: "",
@@ -124,11 +124,10 @@ const AuthPage = () => {
 
     try {
       if (isLogin) {
-        await login(form.email.trim(), form.password);
+        await login(form.phoneNumber.trim(), form.password);
       } else {
         await register({
           fullName: form.name,
-          email: form.email.trim(),
           phoneNumber: form.phoneNumber.trim(),
           password: form.password,
           city: form.city,
@@ -331,50 +330,27 @@ const AuthPage = () => {
                   </div>
                 )}
 
-                {/* البريد الإلكتروني - كلا النموذجين */}
+                {/* رقم الهاتف - كلا النموذجين */}
                 <div>
                   <label className="block text-xs font-bold text-white/60 mb-2 uppercase tracking-wider">
-                    البريد الإلكتروني
+                    رقم الهاتف
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                      <Mail className="w-5 h-5 text-white/30" />
+                      <Phone className="w-5 h-5 text-white/30" />
                     </div>
                     <input
-                      type="email"
-                      name="email"
-                      value={form.email}
+                      type="tel"
+                      name="phoneNumber"
+                      value={form.phoneNumber}
                       onChange={handleChange}
                       required
-                      placeholder="example@domain.com"
-                      className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500/40 focus:bg-white/[0.08] transition-all"
+                      dir="ltr"
+                      placeholder="77xxxxxxx"
+                      className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500/40 focus:bg-white/[0.08] transition-all text-right"
                     />
                   </div>
                 </div>
-
-                {/* رقم الهاتف - التسجيل فقط */}
-                {!isLogin && (
-                  <div>
-                    <label className="block text-xs font-bold text-white/60 mb-2 uppercase tracking-wider">
-                      رقم الهاتف
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                        <Phone className="w-5 h-5 text-white/30" />
-                      </div>
-                      <input
-                        type="tel"
-                        name="phoneNumber"
-                        value={form.phoneNumber}
-                        onChange={handleChange}
-                        required
-                        dir="ltr"
-                        placeholder="77xxxxxxx"
-                        className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500/40 focus:bg-white/[0.08] transition-all text-right"
-                      />
-                    </div>
-                  </div>
-                )}
 
                 {/* المدينة - التسجيل فقط */}
                 {!isLogin && (

@@ -96,11 +96,11 @@ async function request(url, options = {}) {
 }
 
 // ─── Account ───
-export async function login(email, password) {
+export async function login(phoneNumber, password) {
   return request('/account/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ phoneNumber, password }),
   });
 }
 
@@ -111,11 +111,11 @@ export async function logout() {
   });
 }
 
-export async function register({ fullName, phoneNumber, email = '', password, city, role = 3 }) {
+export async function register({ fullName, phoneNumber, password, city, role = 3 }) {
   return request('/account/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fullName, phoneNumber, email, password, city, role }),
+    body: JSON.stringify({ fullName, phoneNumber, password, city, role }),
   });
 }
 
