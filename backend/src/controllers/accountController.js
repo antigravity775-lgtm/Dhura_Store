@@ -23,11 +23,16 @@ class AccountController {
    */
   async register(req, res) {
     try {
-      // Validate required fields
-      const requiredFields = ['fullName', 'email', 'password'];
+      // Validate required fields (fallback)
+      const requiredFields = [
+        { key: 'fullName', label: 'الاسم الكامل' },
+        { key: 'phoneNumber', label: 'رقم الهاتف' },
+        { key: 'email', label: 'البريد الإلكتروني' },
+        { key: 'password', label: 'كلمة المرور' }
+      ];
       for (const field of requiredFields) {
-        if (!req.body[field]) {
-          throw new ValidationError(`${field} is required`);
+        if (!req.body[field.key]) {
+          throw new ValidationError(`${field.label} مطلوب`);
         }
       }
 

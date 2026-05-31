@@ -1,9 +1,25 @@
 const Joi = require('joi');
 
 const registerSchema = Joi.object({
-  fullName: Joi.string().min(3).max(100).required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).max(100).required(),
+  fullName: Joi.string().min(3).max(100).required().messages({
+    'string.empty': 'الاسم الكامل مطلوب',
+    'string.min': 'الاسم يجب أن يكون 3 أحرف على الأقل',
+    'any.required': 'الاسم الكامل مطلوب'
+  }),
+  phoneNumber: Joi.string().required().messages({
+    'string.empty': 'رقم الهاتف مطلوب',
+    'any.required': 'رقم الهاتف مطلوب'
+  }),
+  email: Joi.string().email().required().messages({
+    'string.empty': 'البريد الإلكتروني مطلوب',
+    'string.email': 'البريد الإلكتروني غير صالح',
+    'any.required': 'البريد الإلكتروني مطلوب'
+  }),
+  password: Joi.string().min(6).max(100).required().messages({
+    'string.empty': 'كلمة المرور مطلوبة',
+    'string.min': 'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
+    'any.required': 'كلمة المرور مطلوبة'
+  }),
   city: Joi.string().allow('', null).optional()
 });
 
