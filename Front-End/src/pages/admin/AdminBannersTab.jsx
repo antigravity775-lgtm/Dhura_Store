@@ -22,6 +22,17 @@ const PLACEMENTS = [
   { value: 'popup',        label: 'نافذة منبثقة' },
 ];
 
+const DIMENSION_HINTS = {
+  hero:         { desktop: '1920x820 بكسل (أو 21:9)', mobile: '800x1200 بكسل (أو 4:5)' },
+  promo_home:   { desktop: '1200x300 بكسل (أو 4:1)',  mobile: '800x400 بكسل (أو 2:1)' },
+  announcement: { desktop: 'لا يحتاج إلى صورة عادة',    mobile: 'لا يحتاج إلى صورة عادة' },
+  category:     { desktop: '1200x400 بكسل (أو 3:1)',  mobile: '800x400 بكسل (أو 2:1)' },
+  product:      { desktop: '1200x400 بكسل (أو 3:1)',  mobile: '800x400 بكسل (أو 2:1)' },
+  sidebar:      { desktop: '400x710 بكسل (أو 9:16)',  mobile: '400x710 بكسل (أو 9:16)' },
+  footer:       { desktop: '1200x240 بكسل (أو 5:1)',  mobile: '800x400 بكسل (أو 2:1)' },
+  popup:        { desktop: '800x600 بكسل (أو 4:3)',   mobile: '600x600 بكسل (أو 1:1)' },
+};
+
 const STATUSES = [
   { value: 'active',    label: 'نشط',     color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' },
   { value: 'draft',     label: 'مسودة',   color: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300' },
@@ -130,16 +141,16 @@ function EditorPanel({ banner, onClose, onSaved, showSuccess, setError }) {
     expiresAt:   banner.expiresAt   ? banner.expiresAt.slice(0, 16)   : '',
   } : { ...EMPTY_FORM });
   const [saving, setSaving]       = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploadingField, setUploadingField] = useState(null);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleImageUpload = async (e, field) => {
     const file = e.target.files?.[0]; if (!file) return;
-    setUploading(true);
+    setUploadingField(field);
     try { set(field, await api.uploadBannerImage(file)); }
     catch (err) { setError('فشل رفع الصورة: ' + err.message); }
-    finally { setUploading(false); }
+    finally { setUploadingField(null); }
   };
 
   const handleSave = async () => {
@@ -203,13 +214,29 @@ function EditorPanel({ banner, onClose, onSaved, showSuccess, setError }) {
 
           {/* Images */}
           <div className="grid grid-cols-1 gap-4">
-            <Field label={`صورة البانر${uploading ? ' (جاري الرفع...)' : ''}`}>
+            <Field label={
+              <div className="flex justify-between items-center w-full">
+                <span>صورة البانر الأساسية (سطح المكتب)</span>
+                <span className="text-xs text-slate-400 font-normal" dir="ltr">{DIMENSION_HINTS[form.placement]?.desktop}</span>
+              </div>
+            }>
               {form.imageUrl && <img src={form.imageUrl} className="h-20 rounded-lg object-cover mb-2 border border-slate-200 dark:border-slate-700" alt="" />}
-              <input type="file" accept="image/*" onChange={e => handleImageUpload(e, 'imageUrl')} className={inputCls + ' file:mr-3 file:rounded-lg file:border-0 file:bg-gold-50 dark:file:bg-gold-900/40 file:text-gold-700 dark:file:text-gold-300 file:font-semibold file:text-sm cursor-pointer'} />
+              <div className="relative">
+                <input type="file" accept="image/*" onChange={e => handleImageUpload(e, 'imageUrl')} disabled={uploadingField === 'imageUrl'} className={inputCls + ' file:mr-3 file:rounded-lg file:border-0 file:bg-gold-50 dark:file:bg-gold-900/40 file:text-gold-700 dark:file:text-gold-300 file:font-semibold file:text-sm cursor-pointer disabled:opacity-50'} />
+                {uploadingField === 'imageUrl' && <div className="absolute inset-y-0 left-4 flex items-center"><Loader2 className="w-5 h-5 text-gold-600 animate-spin" /></div>}
+              </div>
             </Field>
-            <Field label="صورة الجوال (اختياري)">
+            <Field label={
+              <div className="flex justify-between items-center w-full">
+                <span>صورة الجوال (اختياري)</span>
+                <span className="text-xs text-slate-400 font-normal" dir="ltr">{DIMENSION_HINTS[form.placement]?.mobile}</span>
+              </div>
+            }>
               {form.mobileImageUrl && <img src={form.mobileImageUrl} className="h-16 rounded-lg object-cover mb-2 border border-slate-200 dark:border-slate-700" alt="" />}
-              <input type="file" accept="image/*" onChange={e => handleImageUpload(e, 'mobileImageUrl')} className={inputCls + ' file:mr-3 file:rounded-lg file:border-0 file:bg-gold-50 dark:file:bg-gold-900/40 file:text-gold-700 dark:file:text-gold-300 file:font-semibold file:text-sm cursor-pointer'} />
+              <div className="relative">
+                <input type="file" accept="image/*" onChange={e => handleImageUpload(e, 'mobileImageUrl')} disabled={uploadingField === 'mobileImageUrl'} className={inputCls + ' file:mr-3 file:rounded-lg file:border-0 file:bg-gold-50 dark:file:bg-gold-900/40 file:text-gold-700 dark:file:text-gold-300 file:font-semibold file:text-sm cursor-pointer disabled:opacity-50'} />
+                {uploadingField === 'mobileImageUrl' && <div className="absolute inset-y-0 left-4 flex items-center"><Loader2 className="w-5 h-5 text-gold-600 animate-spin" /></div>}
+              </div>
             </Field>
           </div>
 
@@ -281,7 +308,7 @@ function EditorPanel({ banner, onClose, onSaved, showSuccess, setError }) {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex gap-3 sticky bottom-0 bg-white dark:bg-slate-900">
-          <button onClick={handleSave} disabled={saving || uploading}
+          <button onClick={handleSave} disabled={saving || !!uploadingField}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gold-600 hover:bg-gold-500 text-white font-bold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed">
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {isEdit ? 'حفظ التغييرات' : 'إنشاء البانر'}

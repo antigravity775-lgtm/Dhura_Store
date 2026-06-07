@@ -213,7 +213,7 @@
 }
 
 .offer-belt-track {
-  animation: offer-belt-scroll 25s linear infinite;
+  animation: offer-belt-scroll 15s linear infinite;
   will-change: transform;
 }
 
