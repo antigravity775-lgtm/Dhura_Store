@@ -16,6 +16,7 @@ const systemSettingsRoutes = require('./src/routes/systemSettingsRoutes');
 const chatRoutes = require('./src/routes/chatRoutes');
 const favoriteRoutes = require('./src/routes/favoriteRoutes');
 const cartRoutes = require('./src/routes/cartRoutes');
+const bannerRoutes = require('./src/routes/bannerRoutes');
 const { errorHandler, notFound } = require('./src/middleware/errorMiddleware');
 const { sanitizeMiddleware } = require('./src/utils/sanitize');
 
@@ -86,6 +87,7 @@ app.use('/api/SystemSettings', systemSettingsRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/banners', bannerRoutes);
 
 // Error handling
 app.use(notFound);

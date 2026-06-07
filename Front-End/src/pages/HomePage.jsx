@@ -24,6 +24,9 @@ import Layout from '../components/Layout';
 import SEO from '../components/SEO';
 import CategoryGrid from '../components/CategoryGrid';
 import HomepageSections from '../components/HomepageSections';
+import HeroSection from '../components/HeroSection';
+import TrustStrip from '../components/TrustStrip';
+import BannerRenderer from '../components/BannerRenderer';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -39,11 +42,6 @@ const PREVIEW_COUNT = 8;
  * EN: Offer messages that auto-scroll in the slim promotional belt.
  * AR: رسائل العروض التي تتحرك تلقائياً في حزام الترويج النحيل.
  */
-const offerMessages = [
-  { icon: Truck, text: 'شحن مجاني للطلبات فوق 200 ريال', color: 'text-emerald-300' },
-  { icon: ShieldCheck, text: 'بائعون محليون موثوقون في 22 مدينة يمنية', color: 'text-sky-300' },
-  { icon: Sparkles, text: 'ضمان جودة المنتج — استرجع أموالك بسهولة', color: 'text-purple-300' },
-];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -87,18 +85,20 @@ function shuffleArray(arr) {
 // OfferBelt — حزام العروض الترويجية
 // ────────────────────────────────────────────────────────────────────
 const OfferBelt = React.memo(({ shippingOfferText }) => {
-  const dynamicMessages = useMemo(() => {
-    const next = [...offerMessages];
-    next[0] = { ...next[0], text: shippingOfferText || next[0].text };
-    return next;
-  }, [shippingOfferText]);
-  const doubledMessages = [...dynamicMessages, ...dynamicMessages];
+  if (!shippingOfferText || !shippingOfferText.trim()) return null;
+
+  // Create an array of identical messages to ensure enough width for continuous scrolling
+  const messages = Array(8).fill({
+    icon: Sparkles,
+    text: shippingOfferText,
+    color: 'text-gold-300'
+  });
 
   return (
     <div className="relative w-full bg-gradient-to-r from-[#120F09] via-[#2A1F0A] to-[#120F09] overflow-hidden select-none">
       <div className="absolute inset-0 bg-gradient-to-r from-gold-500/10 via-gold-400/8 to-gold-500/10 animate-pulse" />
       <div className="offer-belt-track flex items-center gap-12 py-2.5 sm:py-3 whitespace-nowrap">
-        {doubledMessages.map((msg, i) => {
+        {messages.map((msg, i) => {
           const Icon = msg.icon;
           return (
             <span
@@ -126,7 +126,13 @@ const HomePage = () => {
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const [shuffleSeed, setShuffleSeed] = useState(0);
-  const [shippingOfferText, setShippingOfferText] = useState('');
+  const [shippingOfferText, setShippingOfferText] = useState(() => {
+    try {
+      const cached = localStorage.getItem('gisaah_store_info');
+      if (cached) return JSON.parse(cached).shippingOfferText || '';
+    } catch { return ''; }
+    return '';
+  });
 
   // ─── Auto-scroll handling ───
   useEffect(() => {
@@ -147,6 +153,7 @@ const HomePage = () => {
     let mounted = true;
     api.getStoreInfo()
       .then((info) => {
+        try { localStorage.setItem('gisaah_store_info', JSON.stringify(info)); } catch {}
         if (mounted) setShippingOfferText(info?.shippingOfferText || '');
       })
       .catch(() => {
@@ -216,22 +223,30 @@ const HomePage = () => {
   return (
     <Layout>
       <SEO title="الصفحة الرئيسية" />
+
       {/* ═══════ حزام العروض / Offer Belt ═══════ */}
       <OfferBelt shippingOfferText={shippingOfferText} />
+      <BannerRenderer placement="announcement" />
+
+      {/* ═══════ 0. هيرو / Hero Section ═══════ */}
+      <HeroSection />
 
       {/* ═══════ المحتوى الرئيسي / Main Content ═══════ */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 lg:pb-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12 lg:pb-16">
 
-        {/* ═══════ 1. الأقسام / Category Grid ═══════ */}
+        {/* ═══════ 2. الأقسام / Category Grid ═══════ */}
         <CategoryGrid
           categories={categories}
           isLoading={categoriesLoading}
         />
 
-        {/* ═══════ 2. ابدأ التسوق / Start Shopping CTAs ═══════ */}
+        {/* ═══════ بانر ترويجي / Promo Banner ═══════ */}
+        <BannerRenderer placement="promo_home" />
+
+        {/* ═══════ 3. ابدأ التسوق / Start Shopping CTAs ═══════ */}
         <HomepageSections />
 
-        {/* ═══════ 3. معاينة المنتجات / Product Preview ═══════ */}
+        {/* ═══════ 4. معاينة المنتجات / Product Preview ═══════ */}
         <section>
           {productsError && (
             <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">

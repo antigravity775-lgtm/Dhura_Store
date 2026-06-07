@@ -106,8 +106,8 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
 
   const hasDiscount = numDiscountPrice !== null && !isNaN(numDiscountPrice);
   const displayPrice = hasDiscount ? numDiscountPrice : numPrice;
-  const discountPercentage = hasDiscount 
-    ? Math.round(((numPrice - numDiscountPrice) / numPrice) * 100) 
+  const discountPercentage = hasDiscount
+    ? Math.round(((numPrice - numDiscountPrice) / numPrice) * 100)
     : (numOriginalPrice ? Math.round(((numOriginalPrice - numPrice) / numOriginalPrice) * 100) : 0);
   const hasPromoRibbon = isPromoted || !!promotionLabel;
 
@@ -118,11 +118,10 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
   return (
     <div
       dir="ltr"
-      className={`group flex flex-col bg-white dark:bg-[#1A1510]/50 rounded-2xl shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] border p-3 h-full transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] cursor-pointer ${
-        isPromoted
-          ? 'border-gold-300 dark:border-gold-600 ring-2 ring-gold-400/30 dark:ring-gold-500/20'
-          : 'border-gray-100/60 dark:border-gold-900'
-      }`}
+      className={`group flex flex-col bg-white dark:bg-[#1A1510]/50 rounded-2xl shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] border p-3 h-full transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] cursor-pointer ${isPromoted
+        ? 'border-gold-300 dark:border-gold-600 ring-2 ring-gold-400/30 dark:ring-gold-500/20'
+        : 'border-gray-100/60 dark:border-gold-900'
+        }`}
       role="button"
       tabIndex={0}
       aria-label={`View details for ${title}`}
@@ -171,9 +170,9 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
           className="absolute top-2 right-2 z-20 p-1.5 rounded-full bg-white/80 hover:bg-white text-gray-400 hover:text-red-500 shadow-sm backdrop-blur-sm transition-all duration-200"
           aria-label={isFavoriteLocal ? "Remove from favorites" : "Add to favorites"}
         >
-          <Heart 
-            size={16} 
-            className={isFavoriteLocal ? 'fill-red-500 text-red-500' : ''} 
+          <Heart
+            size={16}
+            className={isFavoriteLocal ? 'fill-red-500 text-red-500' : ''}
           />
         </button>
       </div>
@@ -240,9 +239,8 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
             )}
 
             {/* Prominent Price Display */}
-            <div className={`flex items-start leading-none ${
-              hasDiscount ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-slate-100'
-            }`}>
+            <div className={`flex items-start leading-none ${hasDiscount ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-slate-100'
+              }`}>
               <span className="text-xs font-semibold mt-[2px] ml-1">{currencySymbol}</span>
               <span className="text-xl sm:text-2xl font-bold">{priceWhole}</span>
               <span className="text-xs font-semibold mt-[2px]">.{priceFraction}</span>

@@ -37,9 +37,10 @@ import {
   ChevronUp,
   ClipboardList,
   Eye,
+  Megaphone,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import useSWR from "swr";
+import useSWR, { preload } from "swr";
 import * as api from "../services/api";
 import AddProductForm from "../components/AddProductForm";
 
@@ -50,8 +51,37 @@ import AdminUsersTab from "./admin/AdminUsersTab";
 import AdminProductsTab from "./admin/AdminProductsTab";
 import AdminCategoriesTab from "./admin/AdminCategoriesTab";
 import AdminStoreInfoTab from "./admin/AdminStoreInfoTab";
+import AdminBannersTab from "./admin/AdminBannersTab";
 
 const logo = "/Logo_192.png";
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    this.setState({ errorInfo });
+    console.error("AdminDashboard ErrorBoundary caught an error:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-10 bg-white text-red-600 font-mono">
+          <h1 className="text-2xl font-bold mb-4">Something went wrong in AdminDashboard.</h1>
+          <p className="mb-4">{this.state.error && this.state.error.toString()}</p>
+          <pre className="text-sm bg-red-50 p-4 rounded overflow-auto">
+            {this.state.errorInfo && this.state.errorInfo.componentStack}
+          </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const AdminDashboard = () => {
   const { user, isAuthenticated } = useAuth();
@@ -77,19 +107,14 @@ const AdminDashboard = () => {
   } = useSWR(isAuth && activeTab === "users" ? "adminUsers" : null, api.getAdminUsers);
   const users = usersData || [];
 
-  const {
-    data: productsData,
-    isLoading: productsLoading,
-    mutate: mutateProducts,
-  } = useSWR(isAuth && activeTab === "products" ? "adminProducts" : null, api.getAdminProducts);
-  const products = productsData || [];
-
-  const {
-    data: categoriesData,
-    isLoading: categoriesLoading,
-    mutate: mutateCategories,
-  } = useSWR(isAuth && activeTab === "categories" ? "adminCategories" : null, api.getCategories);
-  const categories = categoriesData || [];
+  // Dashboard Warm-Up (Predictive Prefetching)
+  useEffect(() => {
+    if (isAuth) {
+      preload("adminDashboard", api.getAdminDashboard);
+      preload(["adminOrders", "All"], () => api.getAdminOrders("All"));
+      preload("adminStoreInfo", api.getStoreInfo);
+    }
+  }, [isAuth]);
 
   // Orders
   const {
@@ -261,15 +286,17 @@ const AdminDashboard = () => {
 
   const tabItems = [
     { id: "dashboard", label: "لوحة التحكم", icon: LayoutDashboard },
-    { id: "orders", label: "إدارة الطلبات", icon: ClipboardList },
-    { id: "users", label: "المستخدمين", icon: Users },
-    { id: "products", label: "المحتوى", icon: Package },
-    { id: "categories", label: "التصنيفات", icon: Tag },
+    { id: "orders",    label: "إدارة الطلبات", icon: ClipboardList },
+    { id: "users",     label: "المستخدمين",    icon: Users },
+    { id: "products",  label: "المحتوى",        icon: Package },
+    { id: "categories",label: "التصنيفات",    icon: Tag },
+    { id: "banners",   label: "الإعلانات",    icon: Megaphone },
     { id: "storeInfo", label: "معلومات المتجر", icon: Info },
   ];
 
   return (
-    <div className="min-h-screen bg-bone dark:bg-slate-950 font-sans" dir="rtl">
+    <ErrorBoundary>
+      <div className="min-h-screen bg-bone dark:bg-slate-950 font-sans" dir="rtl">
       {/* Top Bar */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row gap-3 sm:items-center justify-between h-16">
@@ -316,12 +343,13 @@ const AdminDashboard = () => {
         </div>
 
         {/* Active Tab Content */}
-        {activeTab === "dashboard" && <AdminDashboardTab stats={stats} statsLoading={statsLoading} orders={orders} />}
-        {activeTab === "orders" && <AdminOrdersTab orders={orders} ordersLoading={ordersLoading} mutateOrders={mutateOrders} showSuccess={showSuccessMsg} setError={setError} />}
-        {activeTab === "users" && <AdminUsersTab users={users} usersLoading={usersLoading} handleBlockUser={handleBlockUser} handleChangeRole={handleChangeRole} handleDeleteUser={handleDeleteUser} />}
-        {activeTab === "products" && <AdminProductsTab products={products} productsLoading={productsLoading} openEditProductModal={openEditProductModal} handleDeleteProduct={handleDeleteProduct} />}
-        {activeTab === "categories" && <AdminCategoriesTab categories={categories} categoriesLoading={categoriesLoading} openCategoryForm={openCategoryForm} handleDeleteCategory={handleDeleteCategory} />}
-        {activeTab === "storeInfo" && <AdminStoreInfoTab storeInfo={storeInfo} setStoreInfo={setStoreInfo} handleUpdateStoreInfo={handleUpdateStoreInfo} storeInfoSaving={storeInfoSaving} />}
+        {activeTab === "dashboard"  && <AdminDashboardTab stats={stats} statsLoading={statsLoading} orders={orders} />}
+        {activeTab === "orders"     && <AdminOrdersTab orders={orders} ordersLoading={ordersLoading} mutateOrders={mutateOrders} showSuccess={showSuccessMsg} setError={setError} />}
+        {activeTab === "users"      && <AdminUsersTab users={users} usersLoading={usersLoading} handleBlockUser={handleBlockUser} handleChangeRole={handleChangeRole} handleDeleteUser={handleDeleteUser} />}
+        {activeTab === "products"   && <AdminProductsTab openEditProductModal={openEditProductModal} />}
+        {activeTab === "categories" && <AdminCategoriesTab openCategoryForm={openCategoryForm} />}
+        {activeTab === "banners"    && <AdminBannersTab showSuccess={showSuccessMsg} setError={setError} />}
+        {activeTab === "storeInfo"  && <AdminStoreInfoTab storeInfo={storeInfo} setStoreInfo={setStoreInfo} handleUpdateStoreInfo={handleUpdateStoreInfo} storeInfoSaving={storeInfoSaving} />}
 
       </div>
 
@@ -385,6 +413,7 @@ const AdminDashboard = () => {
         )}
       </AnimatePresence>
     </div>
+    </ErrorBoundary>
   );
 };
 

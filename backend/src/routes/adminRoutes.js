@@ -17,6 +17,9 @@ router.patch('/users/:id/block', validate(idParamSchema, 'params'), asyncHandler
 router.patch('/users/:id/role', validate(idParamSchema, 'params'), validate(changeRoleSchema), asyncHandler(adminController.changeUserRole.bind(adminController)));
 router.delete('/users/:id', validate(idParamSchema, 'params'), asyncHandler(adminController.deleteUser.bind(adminController)));
 router.get('/products', asyncHandler(adminController.getAllProducts.bind(adminController)));
+router.patch('/products/bulk-status', asyncHandler(adminController.bulkUpdateProductStatus.bind(adminController)));
+router.patch('/products/bulk-category', asyncHandler(adminController.bulkUpdateProductCategory.bind(adminController)));
+router.delete('/products/bulk-delete', asyncHandler(adminController.bulkDeleteProducts.bind(adminController)));
 router.delete('/products/:id', validate(idParamSchema, 'params'), asyncHandler(adminController.deleteProduct.bind(adminController)));
 
 // Order management

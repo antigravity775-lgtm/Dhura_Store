@@ -214,8 +214,12 @@ export async function uploadImageToCloudinary(file) {
 }
 
 // ─── Categories ───
-export async function getCategories() {
-  return request('/categories', { headers: jsonHeaders() });
+export async function getCategories({ pageNumber, pageSize } = {}) {
+  const params = new URLSearchParams();
+  if (pageNumber) params.set('pageNumber', pageNumber);
+  if (pageSize) params.set('pageSize', pageSize);
+  const qs = params.toString();
+  return request(`/categories${qs ? `?${qs}` : ''}`, { headers: jsonHeaders() });
 }
 
 export async function getProductsByCategory(categoryId) {
@@ -300,8 +304,14 @@ export async function deleteUser(id) {
   });
 }
 
-export async function getAdminProducts() {
-  const data = await request('/admin/products', { headers: jsonHeaders() });
+export async function getAdminProducts({ pageNumber, pageSize, search, status } = {}) {
+  const params = new URLSearchParams();
+  if (pageNumber) params.set('pageNumber', pageNumber);
+  if (pageSize) params.set('pageSize', pageSize);
+  if (search) params.set('search', search);
+  if (status && status !== 'all') params.set('status', status);
+  const qs = params.toString();
+  const data = await request(`/admin/products${qs ? `?${qs}` : ''}`, { headers: jsonHeaders() });
   return normalizeProductsListResponse(data);
 }
 
@@ -309,6 +319,31 @@ export async function deleteAdminProduct(id) {
   return request(`/admin/products/${id}`, {
     method: 'DELETE',
     headers: jsonHeaders(),
+  });
+}
+
+// ─── Bulk Product Actions ───
+export async function bulkUpdateAdminProductStatus(ids, isHidden) {
+  return request(`/admin/products/bulk-status`, {
+    method: 'PATCH',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ ids, isHidden }),
+  });
+}
+
+export async function bulkUpdateAdminProductCategory(ids, categoryId) {
+  return request(`/admin/products/bulk-category`, {
+    method: 'PATCH',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ ids, categoryId }),
+  });
+}
+
+export async function bulkDeleteAdminProducts(ids) {
+  return request(`/admin/products/bulk-delete`, {
+    method: 'DELETE',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ ids }),
   });
 }
 
@@ -404,4 +439,93 @@ export function getCurrencySymbol(currency) {
 export const ConditionMap = { 1: 'جديد', 2: 'مستعمل', 3: 'مجدد' };
 export const ConditionEn = { 1: 'New', 2: 'Used', 3: 'Refurbished' };
 export const RoleMap = { 1: 'Admin', 2: 'Seller', 3: 'Buyer' };
+
+// ─── Banners ──────────────────────────────────────────────────────────────────
+
+/** Get active banners for storefront (public). */
+export async function getBanners(placement) {
+  const params = new URLSearchParams();
+  if (placement) params.set('placement', placement);
+  return request(`/banners${params.toString() ? `?${params}` : ''}`, { headers: jsonHeaders() });
+}
+
+/** Track impression or click event (public). */
+export async function trackBannerEvent(id, type) {
+  return request(`/banners/${id}/track`, {
+    method: 'POST',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ type }),
+  });
+}
+
+/** Get all banners for admin dashboard. */
+export async function getAdminBanners() {
+  return request('/banners/admin', { headers: jsonHeaders() });
+}
+
+/** Create a new banner. */
+export async function createAdminBanner(data) {
+  return request('/banners/admin', {
+    method: 'POST',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+/** Update an existing banner. */
+export async function updateAdminBanner(id, data) {
+  return request(`/banners/admin/${id}`, {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+/** Permanently delete a banner. */
+export async function deleteAdminBanner(id) {
+  return request(`/banners/admin/${id}`, {
+    method: 'DELETE',
+    headers: jsonHeaders(),
+  });
+}
+
+/** Duplicate a banner (creates a draft copy). */
+export async function duplicateAdminBanner(id) {
+  return request(`/banners/admin/${id}/duplicate`, {
+    method: 'POST',
+    headers: jsonHeaders(),
+  });
+}
+
+/** Reorder banners by supplying ordered array of IDs. */
+export async function reorderAdminBanners(ids) {
+  return request('/banners/admin/reorder', {
+    method: 'PATCH',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ ids }),
+  });
+}
+
+/** Archive a banner (soft delete — keeps analytics). */
+export async function archiveAdminBanner(id) {
+  return request(`/banners/admin/${id}/archive`, {
+    method: 'PATCH',
+    headers: jsonHeaders(),
+  });
+}
+
+/** Upload a banner image to Cloudinary via the backend proxy. */
+export async function uploadBannerImage(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(`${BASE_URL}/banners/admin/upload-image`, {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error('فشل رفع صورة البانر');
+  const data = await res.json();
+  return data.url;
+}
+
 

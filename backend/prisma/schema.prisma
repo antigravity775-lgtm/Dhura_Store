@@ -122,6 +122,52 @@ enum Role {
   Buyer
 }
 
+enum BannerPlacement {
+  promo_home
+  announcement
+  category
+  product
+  sidebar
+  footer
+  popup
+  hero
+}
+
+enum BannerStatus {
+  active
+  draft
+  scheduled
+  archived
+}
+
+model Banner {
+  id             String          @id @default(uuid()) @db.Uuid
+  title          String
+  subtitle       String?
+  description    String?
+  ctaText        String?
+  ctaUrl         String?
+  imageUrl       String?
+  mobileImageUrl String?
+  bgColor        String?
+  textAlign      String          @default("right")
+  overlayOpacity Int             @default(30)
+  placement      BannerPlacement @default(promo_home)
+  status         BannerStatus    @default(draft)
+  showOnDesktop  Boolean         @default(true)
+  showOnMobile   Boolean         @default(true)
+  priority       Int             @default(0)
+  scheduledAt    DateTime?
+  expiresAt      DateTime?
+  impressions    Int             @default(0)
+  clicks         Int             @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([placement, status, priority])
+  @@index([status, scheduledAt])
+}
+
 enum Condition {
   New
   Used

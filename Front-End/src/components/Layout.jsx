@@ -23,6 +23,9 @@ import { useFavorites } from "../context/FavoritesContext";
 import { useTheme } from "../context/ThemeContext";
 import * as api from "../services/api";
 import Footer from "./Footer";
+import MobileBottomNav from "./MobileBottomNav";
+import BannerRenderer from "./BannerRenderer";
+import TrustStrip from "./TrustStrip";
 const logo = "/Logo_192.png";
 const Layout = React.memo(({ children }) => {
   const { user, isAuthenticated, isSeller, isAdmin, logout } = useAuth();
@@ -34,7 +37,13 @@ const Layout = React.memo(({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [storeInfo, setStoreInfo] = useState(null);
+  const [storeInfo, setStoreInfo] = useState(() => {
+    try {
+      const cached = localStorage.getItem('gisaah_store_info');
+      if (cached) return JSON.parse(cached);
+    } catch { return null; }
+    return null;
+  });
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -43,7 +52,10 @@ const Layout = React.memo(({ children }) => {
     // Fetch dynamic store info for footer
     api
       .getStoreInfo()
-      .then((data) => setStoreInfo(data))
+      .then((data) => {
+        try { localStorage.setItem('gisaah_store_info', JSON.stringify(data)); } catch {}
+        setStoreInfo(data);
+      })
       .catch((err) => console.error("Failed to load store info:", err));
 
     return () => window.removeEventListener("scroll", handleScroll);
@@ -75,11 +87,10 @@ const Layout = React.memo(({ children }) => {
     >
       {/* شريط التنقل / Navigation Bar */}
       <header
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled
+        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
             ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-md border-b border-gray-100 dark:border-slate-800"
             : "bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-gray-200 dark:border-slate-800 shadow-sm"
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 relative">
@@ -353,11 +364,40 @@ const Layout = React.memo(({ children }) => {
         </div>
       </header>
 
+      {/* شريط البحث الجوال الثابت / Mobile Persistent Search Bar */}
+      <div className="md:hidden sticky top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-4 py-2">
+        <form onSubmit={handleSearch} className="relative w-full">
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-gray-400 dark:text-slate-500" />
+          </div>
+          <input
+            type="text"
+            inputMode="search"
+            enterKeyHint="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="block w-full pr-10 pl-4 py-2 border border-gray-200 dark:border-slate-700 rounded-full bg-gray-50/80 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-sm text-right"
+            placeholder="ابحث عن عطور فاخرة..."
+          />
+        </form>
+      </div>
+
       {/* المحتوى الرئيسي / Main Content */}
-      <main className="flex-grow w-full">{children}</main>
+      <main className="flex-grow w-full pb-20 md:pb-0">{children}</main>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <TrustStrip />
+        <BannerRenderer placement="footer" />
+      </div>
 
       {/* الفوتر / Footer */}
       <Footer storeInfo={storeInfo} />
+
+      {/* شريط التنقل السفلي للجوال / Mobile Bottom Nav */}
+      <MobileBottomNav />
+
+      {/* نافذة منبثقة / Popup Banner */}
+      <BannerRenderer placement="popup" />
     </div>
   );
 });

@@ -10,8 +10,30 @@ class CategoryController {
    */
   async getCategories(req, res) {
     try {
-      const categories = await prisma.category.findMany();
-      res.json(categories);
+      const pageNumber = parseInt(req.query.pageNumber);
+      const pageSize = parseInt(req.query.pageSize);
+      
+      let queryArgs = {
+        include: {
+          products: { select: { id: true } }
+        }
+      };
+
+      if (pageNumber && pageSize) {
+        queryArgs.skip = (pageNumber - 1) * pageSize;
+        queryArgs.take = pageSize;
+      }
+
+      const categories = await prisma.category.findMany(queryArgs);
+      
+      // Map to include productsCount for the admin dashboard
+      const mapped = categories.map(cat => ({
+        ...cat,
+        productsCount: cat.products?.length || 0,
+        products: undefined // Don't send the full array
+      }));
+
+      res.json(mapped);
     } catch (error) {
       throw error;
     }

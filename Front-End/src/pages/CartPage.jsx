@@ -62,7 +62,7 @@ const CartPage = () => {
         })),
       });
       */
-      
+
       let message = `مرحباً، أود طلب المنتجات التالية:\n\n`;
       items.forEach((item, index) => {
         message += `${index + 1}. ${item.title} (الكمية: ${item.quantity})\n`;
@@ -76,7 +76,7 @@ const CartPage = () => {
       const phoneE164 = phoneDigits ? (phoneDigits.startsWith("967") ? phoneDigits : `967${phoneDigits}`) : "";
 
       let baseWhatsappUrl = (storeInfo?.whatsappUrl || "").trim();
-      
+
       if (baseWhatsappUrl && !baseWhatsappUrl.startsWith('http')) {
         const linkDigits = baseWhatsappUrl.replace(/\D/g, "");
         if (linkDigits) {
@@ -107,7 +107,7 @@ const CartPage = () => {
       }
 
       window.open(whatsappTarget, '_blank');
-      
+
       setCheckoutDone(true);
       clearCart();
     } catch (err) {
@@ -138,6 +138,21 @@ const CartPage = () => {
             >
               متابعة طلباتي
             </Link>
+            {storeInfo && (
+              <a
+                href={(() => {
+                  const phone = (storeInfo.contactPhone || '').replace(/\D/g, '');
+                  const e164 = phone ? (phone.startsWith('967') ? phone : `967${phone}`) : '';
+                  const base = e164 ? `https://wa.me/${e164}` : '';
+                  return base ? `${base}?text=${encodeURIComponent('مرحباً! أود الاستفسار عن طلبي.')}` : '#';
+                })()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#1fb855] transition-colors flex items-center justify-center gap-2"
+              >
+                💬 تواصل معنا
+              </a>
+            )}
             <Link
               to="/"
               className="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
@@ -181,13 +196,6 @@ const CartPage = () => {
             <ShoppingBag className="w-8 h-8 text-gold-600 dark:text-gold-400" />
             سلة التسوق
           </h1>
-          <button
-            onClick={clearCart}
-            className="text-sm text-red-500 hover:text-red-600 font-semibold flex items-center gap-1.5 transition-colors"
-          >
-            <Trash2 className="w-4 h-4" />
-            إفراغ السلة
-          </button>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -229,7 +237,7 @@ const CartPage = () => {
                     <div className="flex items-center gap-2 mt-3">
                       <button
                         onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                        className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors"
+                        className="w-11 h-11 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors touch-target"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -237,11 +245,10 @@ const CartPage = () => {
                       <button
                         onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                         disabled={item.quantity >= (item.stockQuantity || 9999)}
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                          item.quantity >= (item.stockQuantity || 9999)
-                            ? 'bg-bone dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                            : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300'
-                        }`}
+                        className={`w-11 h-11 rounded-lg flex items-center justify-center transition-colors touch-target ${item.quantity >= (item.stockQuantity || 9999)
+                          ? 'bg-bone dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                          : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300'
+                          }`}
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -264,6 +271,18 @@ const CartPage = () => {
                 </motion.div>
               ))}
             </AnimatePresence>
+
+            {/* زر إفراغ السلة - أسفل القائمة */}
+            <button
+              onClick={() => {
+                if (window.confirm('هل تريد إفراغ السلة بالكامل؟'))
+                  clearCart();
+              }}
+              className="mt-3 text-sm text-slate-400 hover:text-red-500 font-medium flex items-center gap-1.5 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              إفراغ السلة
+            </button>
           </div>
 
           {/* Order Summary */}
@@ -274,7 +293,9 @@ const CartPage = () => {
               <div className="space-y-3 mb-5 text-sm">
                 <div className="flex justify-between text-slate-500">
                   <span>المنتجات ({items.length})</span>
-                  <span className="font-semibold text-slate-800 dark:text-white">{cartTotal.toLocaleString('en-US')}</span>
+                  <span className="font-semibold text-slate-800 dark:text-white">
+                    {cartTotal.toLocaleString('en-US')} {items[0] ? (api.CurrencySymbol[items[0].currency] || 'ريال') : ''}
+                  </span>
                 </div>
                 <div className="flex justify-between text-slate-500">
                   <span>التوصيل</span>
@@ -283,7 +304,9 @@ const CartPage = () => {
                 <hr className="border-slate-100 dark:border-slate-700" />
                 <div className="flex justify-between">
                   <span className="font-bold text-slate-900 dark:text-white text-base">الإجمالي</span>
-                  <span className="font-extrabold text-gold-600 dark:text-gold-400 text-lg">{cartTotal.toLocaleString('en-US')}</span>
+                  <span className="font-extrabold text-gold-600 dark:text-gold-400 text-lg">
+                    {cartTotal.toLocaleString('en-US')} {items[0] ? (api.CurrencySymbol[items[0].currency] || 'ريال') : ''}
+                  </span>
                 </div>
               </div>
 
@@ -307,7 +330,7 @@ const CartPage = () => {
                       <MapPin className="absolute right-3 top-3 w-4 h-4 text-slate-400" />
                       <textarea
                         value={checkoutForm.shippingAddress}
-                        onChange={(e) => { setCheckoutForm({...checkoutForm, shippingAddress: e.target.value}); setError(''); }}
+                        onChange={(e) => { setCheckoutForm({ ...checkoutForm, shippingAddress: e.target.value }); setError(''); }}
                         placeholder="المدينة، الحي، الشارع..."
                         rows={2}
                         className="w-full pr-10 pl-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 resize-none"
@@ -320,12 +343,11 @@ const CartPage = () => {
                     <label className="block text-xs font-bold text-slate-500 mb-1.5">طريقة الدفع</label>
                     <div className="grid grid-cols-1 gap-2">
                       <button
-                        onClick={() => setCheckoutForm({...checkoutForm, paymentMethod: 0})}
-                        className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border text-xs font-bold transition-all ${
-                          checkoutForm.paymentMethod === 0
-                            ? 'bg-gold-50 border-gold-300 text-gold-700'
-                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
-                        }`}
+                        onClick={() => setCheckoutForm({ ...checkoutForm, paymentMethod: 0 })}
+                        className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border text-xs font-bold transition-all ${checkoutForm.paymentMethod === 0
+                          ? 'bg-gold-50 border-gold-300 text-gold-700'
+                          : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
+                          }`}
                       >
                         <Banknote className="w-4 h-4" />
                         عند الاستلام
@@ -339,6 +361,16 @@ const CartPage = () => {
                       <span>{error}</span>
                     </div>
                   )}
+
+                  {/* كتلة الثقة فوق زر التأكيد */}
+                  <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-100 dark:border-slate-700 space-y-1.5">
+                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                      🔒 طلبك آمن — لا نشارك بياناتك
+                    </p>
+                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                      💬 سيتواصل معك فريقنا عبر واتساب خلال ساعات
+                    </p>
+                  </div>
 
                   <button
                     onClick={handleCheckout}

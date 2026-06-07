@@ -7,8 +7,44 @@ import {
   Trash2,
   Loader2,
 } from 'lucide-react';
+import useSWRInfinite from "swr/infinite";
+import * as api from '../../services/api';
+import InfiniteScrollTrigger from '../../components/InfiniteScrollTrigger';
 
-const AdminCategoriesTab = ({ categories, categoriesLoading, openCategoryForm, handleDeleteCategory }) => {
+const AdminCategoriesTab = ({ openCategoryForm }) => {
+  const getKeyCategories = (pageIndex, previousPageData) => {
+    if (previousPageData && !previousPageData.length) return null;
+    return ["adminCategories", pageIndex + 1];
+  };
+
+  const {
+    data: categoriesData,
+    size: categoriesSize,
+    setSize: setCategoriesSize,
+    isLoading: categoriesLoadingInitial,
+    isValidating: categoriesValidating,
+    mutate: mutateCategories,
+  } = useSWRInfinite(getKeyCategories, async ([_key, pageNumber]) => {
+    return api.getCategories({ pageNumber, pageSize: 15 });
+  });
+
+  const categories = categoriesData ? [].concat(...categoriesData.filter(Boolean)) : [];
+  const categoriesLoading = categoriesLoadingInitial && !categories.length;
+  const categoriesLoadingMore = categoriesValidating || (categoriesSize > 0 && categoriesData && typeof categoriesData[categoriesSize - 1] === "undefined");
+  const categoriesIsEmpty = categoriesData?.[0]?.length === 0;
+  const categoriesIsReachingEnd = categoriesIsEmpty || (categoriesData && categoriesData[categoriesData.length - 1]?.length < 15);
+
+  const handleDeleteCategory = async (id) => {
+    if (!confirm("هل أنت متأكد من حذف هذا التصنيف؟")) return;
+    try {
+      await api.deleteCategory(id);
+      mutateCategories();
+      alert("تم حذف التصنيف");
+    } catch (err) {
+      alert("فشل حذف التصنيف: " + (err.message || ""));
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
@@ -54,6 +90,37 @@ const AdminCategoriesTab = ({ categories, categoriesLoading, openCategoryForm, h
               </div>
             </motion.div>
           ))}
+
+          {/* Skeleton Loaders for Infinite Scroll */}
+          {categoriesLoadingMore && (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={`skeleton-cat-${i}`} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 animate-pulse">
+                <div className="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-800 flex-shrink-0"></div>
+                <div className="flex-1 min-w-0">
+                  <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-2/3 mb-2"></div>
+                  <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/3"></div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Infinite Scroll Trigger */}
+      {!categoriesLoading && !categoriesIsReachingEnd && (
+        <InfiniteScrollTrigger
+          onIntersect={() => setCategoriesSize(categoriesSize + 1)}
+          isLoadingMore={categoriesLoadingMore}
+          isReachingEnd={categoriesIsReachingEnd}
+        />
+      )}
+
+      {/* Completion State */}
+      {categoriesIsReachingEnd && categories.length > 0 && (
+        <div className="flex justify-center mt-8 pb-4">
+          <p className="text-sm font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800/50 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-800">
+            تم تحميل جميع التصنيفات ✨
+          </p>
         </div>
       )}
     </div>

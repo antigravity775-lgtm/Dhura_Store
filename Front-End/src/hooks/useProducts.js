@@ -197,7 +197,7 @@ export function useProductsInfinite({ city = '', condition = '', maxPriceUsd = '
   };
 
   const fetcher = async ([_key, pageNumber, p]) => {
-    const apiParams = { pageSize: 50, pageNumber };
+    const apiParams = { pageSize: 15, pageNumber };
     if (p.city) apiParams.city = p.city;
     if (p.condition) apiParams.condition = parseInt(p.condition);
     if (p.maxPriceUsd) apiParams.maxPriceUsd = parseFloat(p.maxPriceUsd);
@@ -226,7 +226,7 @@ export function useProductsInfinite({ city = '', condition = '', maxPriceUsd = '
     isLoading || (size > 0 && data && typeof data[size - 1] === 'undefined');
   const isEmpty = data?.[0]?.length === 0;
   const isReachingEnd =
-    isEmpty || (data && data[data.length - 1]?.length < 50);
+    isEmpty || (data && data[data.length - 1]?.length < 15);
 
   return {
     data: products,
