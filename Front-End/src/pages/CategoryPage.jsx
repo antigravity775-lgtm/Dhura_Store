@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
+import InfiniteScrollTrigger from '../components/InfiniteScrollTrigger';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -215,29 +216,31 @@ const CategoryPage = () => {
               >
                 <ProductGrid
                   products={mappedGridProducts}
+                  isLoadingMore={isLoadingMore}
                   onQuickAdd={handleQuickAdd}
                   onClick={(p) => navigate(`/product/${p.id}`)}
                   onFavorite={handleFavoriteToggle}
                 />
                 
-                {/* Load More Button */}
-                {!isReachingEnd && (
-                  <div className="flex justify-center mt-8 pb-4">
-                    <button
-                      onClick={() => setSize(size + 1)}
-                      disabled={isLoadingMore}
-                      className="px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 font-semibold shadow-sm hover:border-gold-300 dark:hover:border-gold-600 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                    >
-                      {isLoadingMore ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          جاري التحميل...
-                        </>
-                      ) : (
-                        'عرض المزيد'
-                      )}
-                    </button>
-                  </div>
+                {/* Infinite Scroll Trigger */}
+                <InfiniteScrollTrigger
+                  onIntersect={() => setSize(size + 1)}
+                  isLoadingMore={isLoadingMore}
+                  isReachingEnd={isReachingEnd}
+                />
+
+                {/* Completion State */}
+                {isReachingEnd && activeProducts.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="flex justify-center mt-12 pb-8"
+                  >
+                    <p className="text-sm sm:text-base font-semibold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-6 py-2.5 rounded-full border border-slate-100 dark:border-slate-800 shadow-sm">
+                      وصلت إلى نهاية المنتجات في هذا القسم ✨
+                    </p>
+                  </motion.div>
                 )}
               </motion.div>
             ) : (
