@@ -103,8 +103,9 @@ const ProductSkeleton = () => (
 
 /* ── Star Rating helper ── */
 function StarRating({ rating, reviewCount }) {
-  const full = Math.floor(rating);
-  const half = rating - full >= 0.5;
+  const numRating = Number(rating) || 0;
+  const full = Math.floor(numRating);
+  const half = numRating - full >= 0.5;
   return (
     <div className="flex items-center gap-1.5 mb-3">
       <div className="flex items-center gap-0.5">
@@ -120,8 +121,8 @@ function StarRating({ rating, reviewCount }) {
           />
         ))}
       </div>
-      <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{rating.toFixed(1)}</span>
-      <span className="text-xs text-slate-400 dark:text-slate-500">({reviewCount.toLocaleString()} تقييم)</span>
+      <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{numRating.toFixed(1)}</span>
+      <span className="text-xs text-slate-400 dark:text-slate-500">({Number(reviewCount).toLocaleString()} تقييم)</span>
     </div>
   );
 }
@@ -302,43 +303,12 @@ const ProductDetailsPage = () => {
     "https://images.unsplash.com/photo-1560472355-536de3962603?w=1000&q=80";
   const imageUrl = getOptimizedImageUrl(rawImageUrl, IMAGE_WIDTHS.DETAIL);
 
-  const productJsonLd = useMemo(() => {
-    if (!product) return null;
-    return {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": product.title,
-      "image": [imageUrl],
-      "description": product.description || `تسوق ${product.title} بأفضل الأسعار على متجر قصة.`,
-      "sku": String(product.id),
-      "brand": {
-        "@type": "Brand",
-        "name": storeInfo?.seoTitle || "Gisaah"
-      },
-      "offers": {
-        "@type": "Offer",
-        "url": window.location.href,
-        "priceCurrency": product.currency === 1 ? "YER" : product.currency === 2 ? "SAR" : "USD",
-        "price": product.discountPrice ? Number(product.discountPrice) : Number(product.price),
-        "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-        "availability": product.stockQuantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-        "itemCondition": product.condition === 1 ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": (product.rating ?? (3.5 + Math.abs(String(product.id).charCodeAt(0) % 15) / 10)).toFixed(1),
-        "reviewCount": product.reviewCount ?? Math.floor(Math.abs(String(product.id).charCodeAt(0) * 37) % 900 + 50)
-      }
-    };
-  }, [product, storeInfo, imageUrl]);
-
   return (
     <Layout>
       <SEO
         title={product.title}
         description={product.description?.substring(0, 160) || `تسوق ${product.title} بأفضل الأسعار على متجر قصة.`}
         image={imageUrl}
-        structuredData={productJsonLd}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 mb-12 w-full">
         {/* زر الرجوع */}
@@ -515,45 +485,46 @@ const ProductDetailsPage = () => {
 
             <div className="flex-grow"></div>
 
-            {/* أزرار الإجراء */}
-            <div className="mt-4 flex flex-col gap-3 sticky bottom-0 lg:static bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm rounded-t-2xl shadow-2xl shadow-black/10 pt-3 px-4 pb-4 lg:p-0 lg:bg-transparent lg:dark:bg-transparent lg:backdrop-blur-none lg:shadow-none -mx-4 lg:mx-0">
-              {/* زر إضافة للسلة */}
+            {/* أزرار الإجراء - Premium CTA Section */}
+            <div className="mt-6 flex items-center gap-3 sticky bottom-0 lg:static z-40 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t border-slate-200/60 dark:border-slate-800/60 lg:border-none p-3 pb-[max(env(safe-area-inset-bottom),12px)] lg:p-0 lg:bg-transparent lg:dark:bg-transparent -mx-4 px-4 lg:mx-0">
+              
+              {/* زر إضافة للسلة (Primary CTA) */}
               <motion.button
                 onClick={handleAddToCart}
                 disabled={addedToCart}
-                className={`w-full flex items-center justify-center gap-3 py-4 px-8 rounded-2xl font-bold text-lg shadow-lg transition-all ${addedToCart
-                  ? "bg-green-500 text-white shadow-green-500/25"
-                  : "bg-gold-600 text-white shadow-gold-600/25 hover:bg-gold-500"
-                  } focus:outline-none focus:ring-4 focus:ring-gold-400/50`}
-                whileHover={!addedToCart ? { scale: 1.02 } : {}}
+                className={`flex-1 flex items-center justify-center gap-2 h-[52px] sm:h-14 rounded-xl font-extrabold text-[15px] sm:text-base shadow-lg transition-all ${
+                  addedToCart
+                    ? "bg-emerald-500 text-white shadow-emerald-500/20"
+                    : "bg-gold-600 text-white shadow-gold-600/20 hover:bg-gold-500"
+                } focus:outline-none focus:ring-4 focus:ring-gold-500/30`}
+                whileHover={!addedToCart ? { scale: 1.01 } : {}}
                 whileTap={!addedToCart ? { scale: 0.98 } : {}}
               >
                 {addedToCart ? (
                   <>
-                    <Check className="w-6 h-6" />
-                    تمت الإضافة للسلة ✓
+                    <Check className="w-5 h-5" />
+                    تمت الإضافة للسلة
                   </>
                 ) : (
                   <>
-                    <ShoppingCart className="w-6 h-6" />
+                    <ShoppingCart className="w-5 h-5" />
                     أضف إلى السلة
                   </>
                 )}
               </motion.button>
 
-              {/* زر واتساب */}
+              {/* زر واتساب (Secondary CTA) */}
               <motion.a
                 href={productWhatsAppUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-3 bg-[#25D366] text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-lg shadow-green-500/25 hover:bg-[#1fb855] focus:outline-none focus:ring-4 focus:ring-green-400/50 transition-colors"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="w-[52px] h-[52px] sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0 bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/20 rounded-xl shadow-sm hover:bg-[#25D366] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#25D366]/40 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                aria-label="تواصل عبر واتساب"
               >
-                <MessageCircle className="w-6 h-6" />
-                تواصل عبر واتساب
+                <MessageCircle className="w-[22px] h-[22px] sm:w-6 sm:h-6" />
               </motion.a>
-
             </div>
           </div>
         </div>

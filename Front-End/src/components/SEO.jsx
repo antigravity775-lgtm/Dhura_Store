@@ -8,8 +8,7 @@ const SEO = ({
   title,
   description = "متجر قصة - أروع العطور الفاخرة التي تلبي كافة الأذواق وتضفي لمسة من الأناقة على إطلالتك.",
   image = "https://www.gisaah.com/Logo.png",
-  type = "website",
-  structuredData = null
+  type = "website"
 }) => {
   const location = useLocation();
   const currentUrl = `https://www.gisaah.com${location.pathname}`;
@@ -46,13 +45,6 @@ const SEO = ({
       <meta property="twitter:title" content={finalTitle} />
       <meta property="twitter:description" content={finalDescription} />
       <meta property="twitter:image" content={image} />
-
-      {/* JSON-LD Structured Data */}
-      {structuredData && (
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
-      )}
     </Helmet>
   );
 };

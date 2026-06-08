@@ -58,7 +58,6 @@ const AuthPage = () => {
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
-    phoneNumber: "",
     password: "",
     name: "",
     phoneNumber: "",
