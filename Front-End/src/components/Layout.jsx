@@ -137,7 +137,7 @@ const Layout = React.memo(({ children }) => {
                   AR: زر تبديل الوضع الداكن — متاح في سطح المكتب والجوال */}
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-xl text-gray-500 dark:text-slate-400 hover:text-gold-500 dark:hover:text-gold-400 hover:bg-gold-50 dark:hover:bg-gold-500/10 transition-all duration-200 focus:outline-none"
+                className="hidden p-2 rounded-xl text-gray-500 dark:text-slate-400 hover:text-gold-500 dark:hover:text-gold-400 hover:bg-gold-50 dark:hover:bg-gold-500/10 transition-all duration-200 focus:outline-none"
                 aria-label={
                   isDark ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن"
                 }

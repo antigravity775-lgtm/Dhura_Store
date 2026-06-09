@@ -17,7 +17,7 @@ const stats = [
 
 const TrustStrip = React.memo(() => (
   <motion.div
-    className="grid grid-cols-3 gap-3 sm:gap-4 my-6 sm:my-8"
+    className="grid grid-cols-3 gap-2 sm:gap-3 my-3 sm:my-4 max-w-3xl mx-auto"
     initial={{ opacity: 0, y: 14 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
@@ -27,13 +27,13 @@ const TrustStrip = React.memo(() => (
       return (
         <div
           key={stat.label}
-          className="flex flex-col items-center gap-2 bg-white dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 rounded-2xl py-4 px-2 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+          className="flex flex-col items-center gap-1.5 bg-white dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 rounded-xl py-2.5 px-1 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
         >
-          <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}>
-            <Icon className={`w-4.5 h-4.5 ${stat.color}`} />
+          <div className={`w-7 h-7 rounded-lg ${stat.bg} flex items-center justify-center`}>
+            <Icon className={`w-4 h-4 ${stat.color}`} />
           </div>
-          <span className={`text-xl sm:text-2xl font-black ${stat.color} leading-none`}>{stat.value}</span>
-          <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 text-center leading-tight">{stat.label}</span>
+          <span className={`text-base sm:text-lg font-black ${stat.color} leading-none`}>{stat.value}</span>
+          <span className="text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 text-center leading-tight">{stat.label}</span>
         </div>
       );
     })}

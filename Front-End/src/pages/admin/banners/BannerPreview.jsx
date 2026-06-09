@@ -74,27 +74,27 @@ export default function BannerPreview({ banner, compact = false }) {
       )}
 
       {/* Content */}
-      <div className={`relative z-10 p-4 sm:p-6 flex flex-col gap-1 ${alignClass}`}>
+      <div className={`relative z-10 p-2 sm:p-4 flex flex-col gap-0.5 ${alignClass}`}>
         {title && (
-          <h2 className="text-white font-extrabold text-sm sm:text-xl lg:text-2xl leading-tight drop-shadow-lg">
+          <h2 className="text-white font-extrabold text-[10px] sm:text-xs lg:text-sm leading-tight drop-shadow-lg">
             {title}
           </h2>
         )}
         {subtitle && (
-          <p className="text-white/80 font-semibold text-xs sm:text-sm leading-snug drop-shadow">
+          <p className="text-white/80 font-semibold text-[9px] sm:text-[10px] leading-snug drop-shadow">
             {subtitle}
           </p>
         )}
         {description && (
-          <p className="text-white/60 text-xs leading-relaxed mt-0.5 line-clamp-2">
+          <p className="text-white/60 text-[8px] leading-relaxed mt-0.5 line-clamp-2">
             {description}
           </p>
         )}
         {ctaText && (
-          <div className="mt-2">
-            <span className="inline-flex items-center gap-1.5 bg-gold-500 hover:bg-gold-400 text-white text-xs sm:text-sm font-bold px-4 py-1.5 rounded-xl shadow-lg transition-colors cursor-pointer">
+          <div className="mt-1">
+            <span className="inline-flex items-center gap-1 bg-gold-500 hover:bg-gold-400 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md shadow-lg transition-colors cursor-pointer">
               {ctaText}
-              {ctaUrl && <ExternalLink className="w-3 h-3" />}
+              {ctaUrl && <ExternalLink className="w-2 h-2" />}
             </span>
           </div>
         )}

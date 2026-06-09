@@ -2,7 +2,7 @@
  * WhatsAppFAB — زر واتساب العائم
  *
  * Persistent floating WhatsApp button (separate from AI chat widget).
- * Position: bottom-24 left-4 mobile | bottom-6 left-6 desktop.
+ * Position: bottom-24 right-4 mobile | bottom-6 right-6 desktop.
  * Uses storeInfo.whatsappUrl or storeInfo.contactPhone.
  * Hidden if storeInfo not loaded.
  */
@@ -60,7 +60,7 @@ const WhatsAppFAB = React.memo(() => {
           id="whatsapp-fab"
           aria-label="تحدث معنا مباشرة عبر واتساب"
           title="تحدث معنا مباشرة"
-          className="fixed bottom-24 left-4 md:bottom-6 md:left-6 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-xl shadow-green-900/40 hover:bg-[#1fb855] hover:scale-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2"
+          className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-xl shadow-green-900/40 hover:bg-[#1fb855] hover:scale-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2"
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}
