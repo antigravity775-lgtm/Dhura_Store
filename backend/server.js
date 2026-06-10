@@ -51,7 +51,13 @@ app.use(cors({
     if (process.env.NODE_ENV !== 'production' && localDevOriginPattern.test(normalizedOrigin)) {
       return callback(null, true);
     }
-    if (allowedOrigins.indexOf(normalizedOrigin) === -1) {
+    // Check if origin is in allowed list or is a Vercel preview deployment or the main domain
+    const isAllowed = allowedOrigins.indexOf(normalizedOrigin) !== -1 || 
+                      normalizedOrigin.endsWith('.vercel.app') ||
+                      normalizedOrigin === 'https://gisaah.com' ||
+                      normalizedOrigin === 'https://www.gisaah.com';
+
+    if (!isAllowed) {
       var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
