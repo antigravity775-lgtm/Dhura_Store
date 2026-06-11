@@ -1,4 +1,7 @@
 const prisma = require('../prismaClient');
+const zlib = require('zlib');
+const fs = require('fs');
+const path = require('path');
 const { ValidationError, BadRequestError } = require('../middleware/errorMiddleware');
 
 class AdminController {
@@ -290,6 +293,227 @@ class AdminController {
       res.status(200).json({ message: 'Products deleted successfully' });
     } catch (error) {
       throw error;
+    }
+  }
+
+  /**
+   * Download a full local backup of the database as a .json.gz file
+   * GET /api/admin/backup
+   */
+  async downloadBackup(req, res) {
+    try {
+      // 1. Fetch all critical tables sequentially to avoid connection pool exhaustion (limit=1)
+      const users = await prisma.user.findMany();
+      const categories = await prisma.category.findMany();
+      const products = await prisma.product.findMany();
+      const orders = await prisma.order.findMany();
+      const orderItems = await prisma.orderItem.findMany();
+      const systemSettings = await prisma.systemSetting.findMany();
+      const banners = await prisma.banner.findMany();
+      const cartItems = await prisma.cartItem.findMany();
+      const favorites = await prisma.favorite.findMany();
+
+      // 2. Build the backup object with metadata
+      const backupData = {
+        metadata: {
+          appName: 'Gisaah_Store',
+          version: '1.0',
+          generatedAt: new Date().toISOString(),
+          generatedBy: req.user?.id || 'Unknown Admin',
+          tablesExported: 9
+        },
+        data: {
+          users,
+          categories,
+          products,
+          orders,
+          orderItems,
+          systemSettings,
+          banners,
+          cartItems,
+          favorites
+        }
+      };
+
+      // 3. Log the audit event
+      if (req.user && req.user.id) {
+        await prisma.auditLog.create({
+          data: {
+            action: 'BACKUP_DOWNLOADED',
+            userId: req.user.id,
+            details: 'Admin downloaded full database backup',
+            ipAddress: req.ip || req.connection?.remoteAddress || null
+          }
+        });
+      }
+
+      // 4. Compress the output (.json.gz)
+      const jsonString = JSON.stringify(backupData);
+      
+      const dateStr = new Date().toISOString().split('T')[0];
+      res.setHeader('Content-Disposition', `attachment; filename="gisaah_backup_${dateStr}.json.gz"`);
+      res.setHeader('Content-Type', 'application/gzip');
+
+      const gzip = zlib.createGzip();
+      gzip.pipe(res);
+      gzip.write(jsonString);
+      gzip.end();
+      
+    } catch (error) {
+      console.error('Backup generation failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Restore database from a .json.gz backup file
+   * POST /api/admin/restore
+   */
+  async restoreBackup(req, res) {
+    if (!req.file) {
+      throw new BadRequestError('لم يتم رفع أي ملف');
+    }
+
+    try {
+      // 1. Decompress and parse
+      let jsonString;
+      try {
+        jsonString = zlib.gunzipSync(req.file.buffer).toString('utf-8');
+      } catch (err) {
+        // Fallback: maybe it's already uncompressed JSON
+        jsonString = req.file.buffer.toString('utf-8');
+      }
+
+      let backupPayload;
+      try {
+        backupPayload = JSON.parse(jsonString);
+      } catch (err) {
+        throw new BadRequestError('الملف لا يحتوي على بيانات JSON صالحة. يرجى التأكد من رفع ملف النسخة الاحتياطية الصحيح.');
+      }
+
+      // 2. Validation
+      const { metadata, data } = backupPayload;
+      if (!metadata || !data) {
+        throw new BadRequestError('هيكل ملف النسخ الاحتياطي غير صالح');
+      }
+      
+      // Allow if appName is exactly 'Gisaah_Store', or if it's missing but version is 1.0 (for backups generated right before the update)
+      if (metadata.appName && metadata.appName !== 'Gisaah_Store') {
+        throw new BadRequestError('هذا الملف لا يخص هذا التطبيق (تطبيق غير متطابق)');
+      }
+      
+      if (metadata.version !== '1.0') {
+        throw new BadRequestError('إصدار ملف النسخ الاحتياطي غير متوافق');
+      }
+
+      const requiredTables = ['users', 'categories', 'products', 'orders', 'orderItems', 'systemSettings', 'banners', 'cartItems', 'favorites'];
+      for (const table of requiredTables) {
+        if (!Array.isArray(data[table])) {
+          throw new BadRequestError(`الجدول المطلوب مفقود أو غير صالح: ${table}`);
+        }
+      }
+
+      // 3. Pre-Restore Backup
+      try {
+        const backupsDir = path.join(__dirname, '../../uploads/backups');
+        if (!fs.existsSync(backupsDir)) {
+          fs.mkdirSync(backupsDir, { recursive: true });
+        }
+        
+        // Fetch current DB state sequentially to avoid connection pool timeouts
+        const currentUsers = await prisma.user.findMany();
+        const currentCategories = await prisma.category.findMany();
+        const currentProducts = await prisma.product.findMany();
+        const currentOrders = await prisma.order.findMany();
+        const currentOrderItems = await prisma.orderItem.findMany();
+        const currentSystemSettings = await prisma.systemSetting.findMany();
+        const currentBanners = await prisma.banner.findMany();
+        const currentCartItems = await prisma.cartItem.findMany();
+        const currentFavorites = await prisma.favorite.findMany();
+
+        const preRestoreData = {
+          metadata: {
+            appName: 'Gisaah_Store',
+            version: '1.0',
+            generatedAt: new Date().toISOString(),
+            generatedBy: 'SYSTEM_PRE_RESTORE',
+            tablesExported: 9
+          },
+          data: {
+            users: currentUsers, categories: currentCategories, products: currentProducts,
+            orders: currentOrders, orderItems: currentOrderItems, systemSettings: currentSystemSettings,
+            banners: currentBanners, cartItems: currentCartItems, favorites: currentFavorites
+          }
+        };
+
+        const preRestoreJson = JSON.stringify(preRestoreData);
+        const preRestoreGzip = zlib.gzipSync(preRestoreJson);
+        const backupPath = path.join(backupsDir, `pre-restore-${Date.now()}.json.gz`);
+        fs.writeFileSync(backupPath, preRestoreGzip);
+      } catch (err) {
+        console.error('Pre-restore backup failed:', err);
+        throw new Error('فشل إنشاء نسخة احتياطية قبل الاستعادة. تم إيقاف العملية لحماية البيانات.');
+      }
+
+      // 4. Wipe & Restore inside a single transaction
+      await prisma.$transaction(async (tx) => {
+        // Fetch existing AuditLogs to preserve them
+        const existingAuditLogs = await tx.auditLog.findMany();
+
+        // --- WIPE ---
+        await tx.orderItem.deleteMany();
+        await tx.cartItem.deleteMany();
+        await tx.favorite.deleteMany();
+        await tx.order.deleteMany();
+        await tx.product.deleteMany();
+        await tx.auditLog.deleteMany(); 
+        await tx.user.deleteMany();
+        await tx.category.deleteMany();
+        await tx.banner.deleteMany();
+        await tx.systemSetting.deleteMany();
+
+        // --- RESTORE ---
+        if (data.users.length > 0) await tx.user.createMany({ data: data.users });
+        if (data.categories.length > 0) await tx.category.createMany({ data: data.categories });
+        if (data.banners.length > 0) await tx.banner.createMany({ data: data.banners });
+        if (data.systemSettings.length > 0) await tx.systemSetting.createMany({ data: data.systemSettings });
+        if (data.products.length > 0) await tx.product.createMany({ data: data.products });
+        if (data.orders.length > 0) await tx.order.createMany({ data: data.orders });
+        if (data.orderItems.length > 0) await tx.orderItem.createMany({ data: data.orderItems });
+        if (data.cartItems.length > 0) await tx.cartItem.createMany({ data: data.cartItems });
+        if (data.favorites.length > 0) await tx.favorite.createMany({ data: data.favorites });
+
+        // Restore preserved AuditLogs (adjust userId if the user doesn't exist in the restored backup)
+        if (existingAuditLogs.length > 0) {
+          const validUserIds = new Set(data.users.map(u => u.id));
+          const adjustedLogs = existingAuditLogs.map(log => ({
+            ...log,
+            userId: log.userId && validUserIds.has(log.userId) ? log.userId : null
+          }));
+          await tx.auditLog.createMany({ data: adjustedLogs });
+        }
+
+        // Add new AuditLog for this restore
+        await tx.auditLog.create({
+          data: {
+            action: 'DATABASE_RESTORED',
+            userId: req.user?.id || null,
+            details: 'Admin restored database from backup file',
+            ipAddress: req.ip || req.connection?.remoteAddress || null
+          }
+        });
+      }, {
+        timeout: 60000 // 60 seconds timeout for large DBs
+      });
+
+      res.status(200).json({ message: 'تم استعادة قاعدة البيانات بنجاح' });
+
+    } catch (error) {
+      console.error('Restore failed:', error);
+      if (error instanceof BadRequestError) {
+        throw error;
+      }
+      throw new Error(error.message || 'فشل أثناء استعادة قاعدة البيانات');
     }
   }
 }

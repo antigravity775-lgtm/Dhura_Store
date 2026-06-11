@@ -304,6 +304,36 @@ export async function deleteUser(id) {
   });
 }
 
+export async function downloadDatabaseBackup() {
+  const res = await fetch(`${BASE_URL}/admin/backup`, { credentials: 'include' });
+  if (!res.ok) throw new Error('فشل تحميل النسخة الاحتياطية');
+  return res.blob();
+}
+
+export async function restoreDatabaseBackup(file) {
+  const formData = new FormData();
+  formData.append('backupFile', file);
+
+  const res = await fetch(`${BASE_URL}/admin/restore`, {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    let message = 'فشل استعادة النسخة الاحتياطية';
+    try {
+      const data = await res.json();
+      message = data.message || data.error || message;
+    } catch (e) {
+      // Ignore JSON parse error if response is not JSON
+    }
+    throw new Error(message);
+  }
+
+  return res.json();
+}
+
 export async function getAdminProducts({ pageNumber, pageSize, search, status } = {}) {
   const params = new URLSearchParams();
   if (pageNumber) params.set('pageNumber', pageNumber);
