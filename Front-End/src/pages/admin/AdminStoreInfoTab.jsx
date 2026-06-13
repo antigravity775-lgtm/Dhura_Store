@@ -166,8 +166,21 @@ const AdminStoreInfoTab = ({ storeInfo, setStoreInfo, handleUpdateStoreInfo, sto
               <input
                 type="text"
                 dir="ltr"
-                value={storeInfo.instagramUrl}
+                value={storeInfo.instagramUrl || ''}
                 onChange={(e) => setStoreInfo({ ...storeInfo, instagramUrl: e.target.value })}
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-gold-500/50 text-slate-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                <LinkIcon className="w-4 h-4 text-slate-400" />
+                تيك توك
+              </label>
+              <input
+                type="text"
+                dir="ltr"
+                value={storeInfo.tiktokUrl || ''}
+                onChange={(e) => setStoreInfo({ ...storeInfo, tiktokUrl: e.target.value })}
                 className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-gold-500/50 text-slate-900 dark:text-white"
               />
             </div>

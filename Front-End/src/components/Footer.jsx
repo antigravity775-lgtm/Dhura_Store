@@ -6,6 +6,7 @@ import {
   Truck,
   Banknote,
   Instagram,
+  Facebook,
 } from "lucide-react";
 const logo = "/Logo_192.png";
 
@@ -15,6 +16,9 @@ const Footer = ({ storeInfo }) => {
   const phoneE164 = phoneDigits ? (phoneDigits.startsWith("967") ? phoneDigits : `967${phoneDigits}`) : "";
   const whatsappUrl = storeInfo?.whatsappUrl || (phoneE164 ? `https://wa.me/${phoneE164}` : "");
   const instagramUrl = storeInfo?.instagramUrl || "";
+  const facebookUrl = storeInfo?.facebookUrl || "";
+  const tiktokUrl = storeInfo?.tiktokUrl || "";
+
   return (
     <footer
       className="bg-[#120F09] text-slate-400 py-8 border-t border-[#2A1F0A] mt-auto"
@@ -100,12 +104,33 @@ const Footer = ({ storeInfo }) => {
           <div>
             <h4 className="text-white font-bold text-sm mb-3">تواصل معنا</h4>
             <ul className="space-y-2 text-xs">
-              {/* <li>
-                <a href={storeInfo?.facebookUrl || '#'} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
-                  <Facebook className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-500 transition-colors" />
-                  صفحة فيسبوك
-                </a>
-              </li> */}
+              {facebookUrl && (
+                <li>
+                  <a href={facebookUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                    <Facebook className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-500 transition-colors" />
+                    فيسبوك
+                  </a>
+                </li>
+              )}
+              {tiktokUrl && (
+                <li>
+                  <a href={tiktokUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-3.5 h-3.5 text-slate-600 group-hover:text-slate-300 transition-colors"
+                    >
+                      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                    </svg>
+                    تيك توك
+                  </a>
+                </li>
+              )}
               {whatsappUrl && (
                 <li>
                   <a

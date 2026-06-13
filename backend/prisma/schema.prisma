@@ -112,6 +112,7 @@ model SystemSetting {
   twitterUrl   String?
   whatsappUrl  String?
   instagramUrl String?
+  tiktokUrl    String?
   seoTitle     String?
   seoDescription String?
   updatedAt    DateTime @updatedAt
