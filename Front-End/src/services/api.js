@@ -4,9 +4,44 @@ import { getApiBaseUrl } from '../utils/apiBaseUrl';
 
 const BASE_URL = getApiBaseUrl();
 
-// ─── Token Management ───
-// Auth tokens are managed securely via HttpOnly cookies by the backend.
-// No client-side token handling needed.
+let refreshPromise = null;
+
+async function attemptTokenRefresh() {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      const primaryUrl = `${BASE_URL}/account/refresh`;
+      let res;
+
+      try {
+        res = await fetch(primaryUrl, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (err) {
+        if (import.meta.env.DEV && BASE_URL !== '/api') {
+          res = await fetch('/api/account/refresh', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+          });
+        } else {
+          throw err;
+        }
+      }
+
+      if (!res.ok) {
+        throw new Error('Refresh failed');
+      }
+
+      return res.json();
+    })().finally(() => {
+      refreshPromise = null;
+    });
+  }
+
+  return refreshPromise;
+}
 
 const jsonHeaders = () => ({
   'Content-Type': 'application/json',
@@ -65,6 +100,23 @@ async function request(url, options = {}) {
   }
 
   if (!res.ok) {
+    const shouldAttemptRefresh =
+      res.status === 401 &&
+      !options._retry &&
+      !url.startsWith('/account/refresh') &&
+      !url.startsWith('/account/login') &&
+      !url.startsWith('/account/register') &&
+      !url.startsWith('/account/logout');
+
+    if (shouldAttemptRefresh) {
+      try {
+        await attemptTokenRefresh();
+        return request(url, { ...options, _retry: true });
+      } catch {
+        // Fall through to normal error handling below.
+      }
+    }
+
     let message = `خطأ ${res.status}`;
     try {
       const text = await res.text();
@@ -106,6 +158,13 @@ export async function login(phoneNumber, password) {
 
 export async function logout() {
   return request('/account/logout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+export async function refreshToken() {
+  return request('/account/refresh', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   });

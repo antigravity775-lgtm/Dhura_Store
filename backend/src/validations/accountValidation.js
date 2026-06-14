@@ -11,9 +11,9 @@ const registerSchema = Joi.object({
     'any.required': 'رقم الهاتف مطلوب'
   }),
 
-  password: Joi.string().min(6).max(100).required().messages({
+  password: Joi.string().min(8).max(100).required().messages({
     'string.empty': 'كلمة المرور مطلوبة',
-    'string.min': 'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
+    'string.min': 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
     'any.required': 'كلمة المرور مطلوبة'
   }),
   city: Joi.string().allow('', null).optional()
@@ -34,7 +34,9 @@ const updateProfileSchema = Joi.object({
 
 const changePasswordSchema = Joi.object({
   currentPassword: Joi.string().required(),
-  newPassword: Joi.string().min(6).max(100).required()
+  newPassword: Joi.string().min(8).max(100).required().messages({
+    'string.min': 'كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل'
+  })
 });
 
 module.exports = { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema };

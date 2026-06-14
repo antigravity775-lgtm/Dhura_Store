@@ -2,6 +2,7 @@ const prisma = require('../prismaClient');
 const zlib = require('zlib');
 const fs = require('fs');
 const path = require('path');
+const AuthService = require('../services/authService');
 const { ValidationError, BadRequestError } = require('../middleware/errorMiddleware');
 
 class AdminController {
@@ -75,10 +76,16 @@ class AdminController {
         throw new Error('User not found');
       }
 
+      const newBlockedState = !user.isBlocked;
+
       await prisma.user.update({
         where: { id: req.params.id },
-        data: { isBlocked: !user.isBlocked }
+        data: { isBlocked: newBlockedState }
       });
+
+      if (newBlockedState) {
+        await new AuthService().revokeAllUserTokens(req.params.id);
+      }
 
       res.status(204).send();
     } catch (error) {
@@ -303,7 +310,20 @@ class AdminController {
   async downloadBackup(req, res) {
     try {
       // 1. Fetch all critical tables sequentially to avoid connection pool exhaustion (limit=1)
-      const users = await prisma.user.findMany();
+      const users = await prisma.user.findMany({
+        select: {
+          id: true,
+          fullName: true,
+          phoneNumber: true,
+          email: true,
+          role: true,
+          city: true,
+          isVerified: true,
+          isBlocked: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      });
       const categories = await prisma.category.findMany();
       const products = await prisma.product.findMany();
       const orders = await prisma.order.findMany();

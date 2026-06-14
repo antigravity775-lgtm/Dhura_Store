@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const bannerController = require('../controllers/bannerController');
 const asyncHandler = require('../middleware/asyncHandler');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const { validate } = require('../middleware/validateMiddleware');
+const { imageUpload } = require('../middleware/uploadMiddleware');
+const { uploadLimiter, bannerTrackLimiter } = require('../middleware/rateLimitMiddleware');
 const {
   createBannerSchema,
   updateBannerSchema,
@@ -13,12 +14,11 @@ const {
 } = require('../validations/bannerValidation');
 const { idParamSchema } = require('../validations/commonValidation');
 
-const upload = multer({ storage: multer.memoryStorage() });
-
 // ─── Public routes (no auth required — used by storefront) ─────────────────
 router.get('/', asyncHandler(bannerController.getPublicBanners.bind(bannerController)));
 router.post(
   '/:id/track',
+  bannerTrackLimiter,
   validate(idParamSchema, 'params'),
   validate(trackBannerSchema),
   asyncHandler(bannerController.trackEvent.bind(bannerController))
@@ -31,7 +31,8 @@ router.get('/admin', asyncHandler(bannerController.getAllBanners.bind(bannerCont
 
 router.post(
   '/admin/upload-image',
-  upload.single('file'),
+  uploadLimiter,
+  imageUpload.single('file'),
   asyncHandler(bannerController.uploadImage.bind(bannerController))
 );
 

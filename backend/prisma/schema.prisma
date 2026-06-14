@@ -24,8 +24,9 @@ model User {
   orders       Order[]   @relation("BuyerOrders")
   products     Product[] @relation("SellerProducts")
   cartItems    CartItem[]
-  favorites    Favorite[]
-  auditLogs    AuditLog[]
+  favorites     Favorite[]
+  auditLogs     AuditLog[]
+  refreshTokens RefreshToken[]
 
   @@index([phoneNumber])
   @@index([city])
@@ -230,6 +231,22 @@ model Favorite {
 
   @@unique([userId, productId])
   @@index([userId])
+}
+
+model RefreshToken {
+  id         String    @id @default(uuid()) @db.Uuid
+  tokenHash  String    @unique
+  userId     String    @db.Uuid
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  revokedAt  DateTime?
+  replacedBy String?   @db.Uuid
+  userAgent  String?
+  ipAddress  String?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model AuditLog {

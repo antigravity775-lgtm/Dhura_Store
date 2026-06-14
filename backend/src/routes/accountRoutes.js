@@ -10,6 +10,7 @@ const { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema }
 // Public routes
 router.post('/register', authLimiter, validate(registerSchema), asyncHandler(accountController.register.bind(accountController)));
 router.post('/login', authLimiter, validate(loginSchema), asyncHandler(accountController.login.bind(accountController)));
+router.post('/refresh', authLimiter, asyncHandler(accountController.refresh.bind(accountController)));
 router.post('/logout', asyncHandler(accountController.logout.bind(accountController)));
 
 // Protected routes (require authentication)

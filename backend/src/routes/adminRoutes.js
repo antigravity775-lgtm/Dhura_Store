@@ -1,8 +1,6 @@
 const express = require('express');
-const multer = require('multer');
 const router = express.Router();
-
-const upload = multer({ storage: multer.memoryStorage() });
+const { backupUpload } = require('../middleware/uploadMiddleware');
 const adminController = require('../controllers/adminController');
 const orderController = require('../controllers/orderController');
 const asyncHandler = require('../middleware/asyncHandler');
@@ -27,7 +25,7 @@ router.delete('/products/:id', validate(idParamSchema, 'params'), asyncHandler(a
 
 // Database Backup & Restore
 router.get('/backup', asyncHandler(adminController.downloadBackup.bind(adminController)));
-router.post('/restore', upload.single('backupFile'), asyncHandler(adminController.restoreBackup.bind(adminController)));
+router.post('/restore', backupUpload.single('backupFile'), asyncHandler(adminController.restoreBackup.bind(adminController)));
 
 // Order management
 router.get('/orders', asyncHandler(orderController.getAllOrders.bind(orderController)));
