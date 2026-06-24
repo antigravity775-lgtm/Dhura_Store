@@ -17,6 +17,7 @@ const chatRoutes = require('./src/routes/chatRoutes');
 const favoriteRoutes = require('./src/routes/favoriteRoutes');
 const cartRoutes = require('./src/routes/cartRoutes');
 const bannerRoutes = require('./src/routes/bannerRoutes');
+const seoRoutes = require('./src/routes/seoRoutes');
 const { errorHandler, notFound } = require('./src/middleware/errorMiddleware');
 const { globalLimiter } = require('./src/middleware/rateLimitMiddleware');
 
@@ -28,7 +29,22 @@ app.set('trust proxy', 1);
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
   crossOriginOpenerPolicy: { policy: 'unsafe-none' },
+  hsts: {
+    maxAge: 31536000,       // 1 year
+    includeSubDomains: true,
+    preload: true,
+  },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  contentSecurityPolicy: false, // Managed by Vercel headers for frontend
+  xContentTypeOptions: true,
+  xFrameOptions: { action: 'SAMEORIGIN' },
 }));
+
+// Additional security headers not covered by helmet defaults
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
 
 // CORS configuration
 const localDevOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
@@ -96,6 +112,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/banners', bannerRoutes);
+app.use('/api/seo', seoRoutes);
 
 // Error handling
 app.use(notFound);

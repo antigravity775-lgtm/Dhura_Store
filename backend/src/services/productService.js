@@ -1,6 +1,7 @@
 const prisma = require('../prismaClient');
 const { randomUUID } = require('crypto');
 const { uploadBuffer } = require('../utils/cloudinaryClient');
+const { generateUniqueSlug } = require('../utils/slugify');
 
 class ProductService {
   constructor() {}
@@ -17,7 +18,10 @@ class ProductService {
     productData.createdAt = new Date();
     // Set IsHidden to false by default
     productData.isHidden = false;
-    
+
+    // Auto-generate SEO-friendly slug from title
+    productData.slug = await generateUniqueSlug(productData.title, prisma);
+
     // Map integer condition to Prisma string
     const conditionMap = { 1: 'New', 2: 'Used', 3: 'Refurbished' };
     if (productData.condition) {
@@ -35,18 +39,18 @@ class ProductService {
       productData.discountPrice = null;
     }
     if (!productData.promotionLabel) productData.promotionLabel = null;
-    
-    return await prisma.product.create({ 
+
+    return await prisma.product.create({
       data: productData,
       include: {
         category: {
           select: { name: true }
         },
         seller: {
-          select: { 
-            fullName: true, 
-            city: true, 
-            isVerified: true 
+          select: {
+            fullName: true,
+            city: true,
+            isVerified: true
           }
         }
       }
@@ -161,15 +165,37 @@ class ProductService {
   }
 
   /**
+   * Get product by slug (SEO-friendly URL lookup)
+   * @param {string} slug - Product slug
+   * @returns {Promise<Object|null>} The product or null
+   */
+  async getProductBySlug(slug) {
+    const p = await prisma.product.findUnique({
+      where: { slug },
+      include: {
+        category: { select: { name: true } },
+        seller: { select: { fullName: true, city: true, isVerified: true } }
+      }
+    });
+    if (!p) return null;
+    return { ...p, categoryName: p.category?.name || null };
+  }
+
+  /**
    * Update product
    * @param {string} id - Product ID
    * @param {Object} updateData - Data to update
    * @returns {Promise<Object>} The updated product
    */
   async updateProduct(id, updateData) {
-    // Remove fields that shouldn't be updated
+    // Remove fields that shouldn't be updated directly
     const { id: _, createdAt: __, sellerId: ___, ...dataToUpdate } = updateData;
-    
+
+    // Regenerate slug if title changed
+    if (dataToUpdate.title) {
+      dataToUpdate.slug = await generateUniqueSlug(dataToUpdate.title, prisma, id);
+    }
+
     // Map integer condition to Prisma string
     const conditionMap = { 1: 'New', 2: 'Used', 3: 'Refurbished' };
     if (dataToUpdate.condition) {
@@ -192,7 +218,7 @@ class ProductService {
       }
     }
     if (dataToUpdate.promotionLabel === '') dataToUpdate.promotionLabel = null;
-    
+
     return await prisma.product.update({
       where: { id },
       data: dataToUpdate,
@@ -201,10 +227,10 @@ class ProductService {
           select: { name: true }
         },
         seller: {
-          select: { 
-            fullName: true, 
-            city: true, 
-            isVerified: true 
+          select: {
+            fullName: true,
+            city: true,
+            isVerified: true
           }
         }
       }

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
+import Breadcrumbs from '../components/Breadcrumbs';
 import InfiniteScrollTrigger from '../components/InfiniteScrollTrigger';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
@@ -34,6 +35,7 @@ function mapToProduct(p) {
   const rawImage = p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
   return {
     id: p.id,
+    slug: p.slug || p.id,
     title: p.title,
     image: getOptimizedImageUrl(rawImage, IMAGE_WIDTHS.GRID_CARD),
     price: p.price,
@@ -132,9 +134,16 @@ const CategoryPage = () => {
     <Layout>
       <SEO 
         title={`قسم ${decodedCategoryName}`} 
-        description={`تصفح أحدث وأفضل المنتجات في قسم ${decodedCategoryName} على متجر قصة.`}
+        description={`تصفح أحدث وأفضل العطور والمنتجات في قسم ${decodedCategoryName} على متجر قصة — عطور أصلية ١٠٠٪ بأفضل الأسعار.`}
       />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
+
+        {/* ── Breadcrumbs ── */}
+        <Breadcrumbs items={[
+          { name: 'الرئيسية', url: '/' },
+          { name: 'الأقسام', url: '/products' },
+          { name: decodedCategoryName },
+        ]} />
 
         {/* ── Page Header ── */}
         <div className="flex items-center gap-3 mb-6">
@@ -218,7 +227,7 @@ const CategoryPage = () => {
                   products={mappedGridProducts}
                   isLoadingMore={isLoadingMore}
                   onQuickAdd={handleQuickAdd}
-                  onClick={(p) => navigate(`/product/${p.id}`)}
+                  onClick={(p) => navigate(`/product/${p.slug || p.id}`)}
                   onFavorite={handleFavoriteToggle}
                 />
                 

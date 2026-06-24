@@ -218,6 +218,11 @@ export async function getProductById(id) {
   return normalizeProduct(data);
 }
 
+export async function getProductBySlug(slug) {
+  const data = await request(`/products/by-slug/${encodeURIComponent(slug)}`, { headers: jsonHeaders() });
+  return normalizeProduct(data);
+}
+
 export async function createProduct(data) {
   return request('/products', {
     method: 'POST',

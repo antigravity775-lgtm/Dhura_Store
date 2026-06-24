@@ -54,6 +54,7 @@ function mapToProduct(p) {
   const rawImage = p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
   return {
     id: p.id,
+    slug: p.slug || p.id,
     title: p.title,
     image: getOptimizedImageUrl(rawImage, IMAGE_WIDTHS.GRID_CARD),
     price: p.price,
@@ -294,7 +295,7 @@ const HomePage = () => {
                   <ProductGrid
                     products={mappedPreviewProducts}
                     onQuickAdd={handleQuickAdd}
-                    onClick={(p) => navigate(`/product/${p.id}`)}
+                    onClick={(p) => navigate(`/product/${p.slug || p.id}`)}
                     onFavorite={handleFavoriteToggle}
                   />
                 ) : (

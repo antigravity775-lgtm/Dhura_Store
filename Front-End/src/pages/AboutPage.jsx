@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
+import SEO from '../components/SEO';
 import * as api from '../services/api';
+import { buildOrganizationSchema } from '../utils/structuredData';
 
 const DEFAULT_ABOUT = `متجر قصة هو المتجر الالكتروني الاول في اليمن لبيع العطور الاصلية فقط باسعار اقل من الموقع الرسمي ويوفر خدمة التوصيل باقل من 24 ساعة ويوفر خدمة عينات العطور لتجربة عطرية مميزة لا شبيه لها ☺️✨
 
@@ -22,6 +24,11 @@ const AboutPage = () => {
 
   return (
     <Layout>
+      <SEO
+        title="من نحن — قصة للعطور الأصلية"
+        description="متجر قصة هو المتجر الإلكتروني الأول في اليمن لبيع العطور الأصلية بأسعار أقل من الموقع الرسمي مع توصيل سريع خلال ٢٤ ساعة."
+        jsonLd={[buildOrganizationSchema()]}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
           من نحن

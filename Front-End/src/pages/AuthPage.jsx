@@ -15,6 +15,7 @@ import {
   Mail,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import SEO from "../components/SEO";
 const logo = "/Logo_192.png";
 
 const cities = [
@@ -155,6 +156,7 @@ const AuthPage = () => {
       className="min-h-screen flex items-center justify-center relative overflow-hidden bg-slate-950 px-4 py-12"
       dir="rtl"
     >
+      <SEO title="تسجيل الدخول" noIndex />
       {/* ========== خلفية متحركة ========== */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-bl from-[#1A150C] via-[#0F0F0F] to-[#050505]"></div>

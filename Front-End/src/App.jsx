@@ -87,7 +87,8 @@ const App = () => {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/category/:categoryName" element={<CategoryPage />} />
           <Route path="/product-grid-demo" element={<ProductGridDemo />} />
-          <Route path="/product/:id" element={<ProductDetailsPage />} />
+          {/* Primary SEO-friendly slug route */}
+          <Route path="/product/:slug" element={<ProductDetailsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/contact" element={<ContactPage />} />

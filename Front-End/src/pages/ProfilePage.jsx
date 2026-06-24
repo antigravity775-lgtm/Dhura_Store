@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Mail, MapPin, DollarSign, Loader2, Check, AlertCircle, ArrowRight, Save, Lock, Key } from 'lucide-react';
 import Layout from '../components/Layout';
+import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 import * as api from '../services/api';
 
@@ -133,6 +134,7 @@ const ProfilePage = () => {
   if (authLoading || loading) {
     return (
       <Layout>
+        <SEO title="الملف الشخصي" noIndex />
         <div className="flex items-center justify-center py-32">
           <Loader2 className="w-10 h-10 text-gold-500 animate-spin" />
         </div>
@@ -142,6 +144,7 @@ const ProfilePage = () => {
 
   return (
     <Layout>
+      <SEO title="الملف الشخصي" noIndex />
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 md:py-12 mb-12">
 
         {/* العنوان */}

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShoppingCart, Loader2, Check, MapPin, CreditCard, Banknote, AlertCircle, AlertTriangle } from 'lucide-react';
 import Layout from '../components/Layout';
+import SEO from '../components/SEO';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import * as api from '../services/api';
@@ -120,6 +121,7 @@ const CartPage = () => {
   if (checkoutDone) {
     return (
       <Layout>
+        <SEO title="تم إنشاء الطلب" noIndex />
         <div className="max-w-2xl mx-auto px-4 py-24 text-center">
           <motion.div
             initial={{ scale: 0 }}
@@ -168,6 +170,7 @@ const CartPage = () => {
   if (items.length === 0) {
     return (
       <Layout>
+        <SEO title="سلة التسوق" noIndex />
         <div className="max-w-2xl mx-auto px-4 py-24 text-center">
           <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-800 mb-6">
             <ShoppingCart className="w-12 h-12 text-slate-300 dark:text-slate-600" />
@@ -188,6 +191,7 @@ const CartPage = () => {
 
   return (
     <Layout>
+      <SEO title="سلة التسوق" noIndex />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
 
         {/* Header */}
@@ -212,7 +216,7 @@ const CartPage = () => {
                   className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 flex gap-4 items-center shadow-sm hover:shadow-md transition-shadow"
                 >
                   {/* صورة المنتج */}
-                  <Link to={`/product/${item.productId}`} className="flex-shrink-0">
+                  <Link to={`/product/${item.slug || item.productId}`} className="flex-shrink-0">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600">
                       <img
                         src={item.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=200&q=60'}
@@ -224,7 +228,7 @@ const CartPage = () => {
 
                   {/* التفاصيل */}
                   <div className="flex-1 min-w-0">
-                    <Link to={`/product/${item.productId}`}>
+                    <Link to={`/product/${item.slug || item.productId}`}>
                       <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base truncate hover:text-gold-600 dark:hover:text-gold-400 transition-colors">
                         {item.title}
                       </h3>

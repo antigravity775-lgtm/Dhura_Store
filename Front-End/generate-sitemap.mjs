@@ -39,30 +39,37 @@ async function fetchCategories() {
 }
 
 function formatDate(date) {
-  return date.toISOString().split('T')[0];
+  return new Date(date || Date.now()).toISOString().split('T')[0];
+}
+
+function escapeXml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 async function generateSitemap() {
   console.log('Generating sitemap...');
-  
+
   const today = formatDate(new Date());
-  
-  // 1. Static Pages
+
+  // 1. Static Pages — exclude auth/cart/profile/my-orders (noIndex)
   const staticPages = [
     { url: '/', priority: 1.0, changefreq: 'daily' },
     { url: '/products', priority: 0.9, changefreq: 'daily' },
     { url: '/about', priority: 0.7, changefreq: 'monthly' },
     { url: '/contact', priority: 0.7, changefreq: 'monthly' },
     { url: '/privacy-policy', priority: 0.5, changefreq: 'yearly' },
-    { url: '/auth', priority: 0.5, changefreq: 'monthly' },
-    { url: '/cart', priority: 0.6, changefreq: 'weekly' },
   ];
 
   let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 `;
 
-  // Add static pages
+  // Static pages
   for (const page of staticPages) {
     sitemapXml += `  <url>
     <loc>${BASE_URL}${page.url}</loc>
@@ -81,23 +88,35 @@ async function generateSitemap() {
     sitemapXml += `  <url>
     <loc>${BASE_URL}/category/${encodeURIComponent(name)}</loc>
     <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 `;
   }
 
-  // 3. Dynamic Products
+  // 3. Dynamic Products — use slug URL (fall back to id for legacy products)
   const products = await fetchProducts();
   for (const product of products) {
-    const id = product.id || product._id || product.productId;
-    if (!id) continue;
+    const slug = product.slug || product.id;
+    if (!slug) continue;
     const updatedAt = product.updatedAt ? formatDate(new Date(product.updatedAt)) : today;
+    const productUrl = `${BASE_URL}/product/${encodeURIComponent(slug)}`;
+
     sitemapXml += `  <url>
-    <loc>${BASE_URL}/product/${id}</loc>
+    <loc>${productUrl}</loc>
     <lastmod>${updatedAt}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.8</priority>`;
+
+    if (product.mainImageUrl) {
+      sitemapXml += `
+    <image:image>
+      <image:loc>${escapeXml(product.mainImageUrl)}</image:loc>
+      <image:title>${escapeXml(product.title)}</image:title>
+    </image:image>`;
+    }
+
+    sitemapXml += `
   </url>
 `;
   }
@@ -110,20 +129,51 @@ async function generateSitemap() {
   }
 
   fs.writeFileSync(path.join(PUBLIC_DIR, 'sitemap.xml'), sitemapXml);
-  console.log(`Generated sitemap with ${staticPages.length + categories.length + products.length} URLs.`);
+  console.log(`✅ Sitemap generated: ${staticPages.length} static + ${categories.length} categories + ${products.length} products = ${staticPages.length + categories.length + products.length} URLs`);
 
   // Generate robots.txt
   const robotsTxt = `User-agent: *
+Allow: /
+
+# Disallow user-specific & auth pages
+Disallow: /admin
+Disallow: /seller
+Disallow: /profile
+Disallow: /my-orders
+Disallow: /cart
+Disallow: /auth
+Disallow: /api/
+
+# Bingbot
+User-agent: Bingbot
 Allow: /
 Disallow: /admin
 Disallow: /seller
 Disallow: /profile
 Disallow: /my-orders
+Disallow: /cart
+Disallow: /auth
 
+# Yandex
+User-agent: YandexBot
+Allow: /
+Disallow: /admin
+Disallow: /seller
+Disallow: /profile
+Disallow: /my-orders
+Disallow: /cart
+Disallow: /auth
+
+# Sitemaps
 Sitemap: ${BASE_URL}/sitemap.xml
+Sitemap: ${BASE_URL}/api/seo/sitemap-index.xml
+
+# Host directive (Yandex)
+Host: ${BASE_URL}
 `;
+
   fs.writeFileSync(path.join(PUBLIC_DIR, 'robots.txt'), robotsTxt);
-  console.log('Generated robots.txt.');
+  console.log('✅ robots.txt generated.');
 }
 
 generateSitemap().catch(console.error);

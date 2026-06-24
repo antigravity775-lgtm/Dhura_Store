@@ -62,6 +62,34 @@ class ProductController {
   }
 
   /**
+   * Get product by slug (SEO-friendly URL)
+   * GET /api/products/by-slug/:slug
+   */
+  async getProductBySlug(req, res) {
+    try {
+      const product = await this.productService.getProductBySlug(req.params.slug);
+      if (!product) {
+        res.status(404);
+        throw new Error('Product not found');
+      }
+
+      if (product.isHidden) {
+        const userId = req.user?.id;
+        const isOwner = userId && product.sellerId === userId;
+        const isAdmin = req.user?.role === 'Admin';
+        if (!isOwner && !isAdmin) {
+          res.status(404);
+          throw new Error('Product not found');
+        }
+      }
+
+      res.json(product);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Create a new product
    * POST /api/products
    */

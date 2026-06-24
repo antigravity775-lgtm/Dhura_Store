@@ -1,519 +1,942 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.gisaah.com/</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.gisaah.com/products</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.gisaah.com/about</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.gisaah.com/contact</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.gisaah.com/privacy-policy</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.gisaah.com/auth</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.gisaah.com/cart</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/category/%D8%AF%D8%AE%D9%88%D9%86%D9%8A%20</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.gisaah.com/category/%D8%AF%D8%AE%D9%88%D9%86%20%D8%A7%D9%84%D8%A7%D9%85%D8%A7%D8%B1%D8%A7%D8%AA%D9%8A%D8%A9</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.gisaah.com/category/%D8%A7%D8%A8%D8%B1%D8%A7%D9%82%20</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.gisaah.com/category/%D9%84%D8%A7%D9%81%D9%8A%D8%B1%D9%86</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.gisaah.com/category/%D8%A7%D9%84%D8%B9%D8%B2%20%D9%84%D9%84%D8%B9%D9%88%D8%AF</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://www.gisaah.com/category/%D8%A7%D8%A8%D8%B1%D8%A7%D9%82</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.gisaah.com/category/%D8%B9%D8%B3%D8%A7%D9%81</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.gisaah.com/category/%D8%A7%D9%84%D9%85%D8%A7%D8%AC%D8%AF%20%D9%84%D9%84%D8%B9%D9%88%D8%AF</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/category/%D8%A7%D9%84%D8%B9%D8%B2%20%D9%84%D9%84%D8%B9%D9%88%D8%AF</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/category/%D9%84%D8%A7%D9%81%D8%B1%D9%8A%D9%86%20</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/category/%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA%20%D8%A7%D9%8A%D8%B3%D9%86%D8%B3</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/category/%D8%A7%D9%84%D8%B4%D8%B1%D9%82%D9%8A%D8%A9%20%D9%84%D9%84%D8%B9%D8%B7%D9%88%D8%B1%20</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/95e6e8c5-2c93-4025-9d26-4f3e507bc147</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781388778/products/zobhwijvityt080oq6qg.webp</image:loc>
+      <image:title>سديم</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/41d8450e-05d5-4696-98a1-9ad0ead28df5</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781228533/products/lwtuukvtzzlznhfocagk.jpg</image:loc>
+      <image:title>هيرش لهب</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/a5301835-180b-4133-9103-14b7b0e52f11</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781203464/products/uoqahmv9yhuqimkkktbe.png</image:loc>
+      <image:title>اورقيت بينك 200 مل</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/00729c3a-9e07-4029-8879-ec36885bdaea</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781202726/products/cvb41jqmf8p9xhhdcpbh.jpg</image:loc>
+      <image:title>مجموعة اورقيت بينك </image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/7b539571-d3c9-4a0b-8b37-37e0566c6a86</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781202520/products/wnmz8qr851pnmnam0uhu.png</image:loc>
+      <image:title>مجموعة بخور عساف 340 مل</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/1bb15890-e38b-4b84-99d7-785bbd91dfb7</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781202058/products/hag3hddpso52dabgyblu.jpg</image:loc>
+      <image:title>توباكو اربيان 100 مل</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/09e484b3-f115-45d8-a607-0dcef7037c23</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781200994/products/uu0e1epzkus0wisaj2mi.jpg</image:loc>
+      <image:title>التوباكو الفرنسي 100 ملي</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/41c7999d-2e2f-4b3f-bc2b-fc55d187d715</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781200863/products/pah5wkyrxlvzip2bx3ul.jpg</image:loc>
+      <image:title>مجموعة التوباكو 180 مل</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/8eca49b9-91cb-4674-a21b-8a6b16b60bce</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781197885/products/okqnwffosb24d5oncbhm.jpg</image:loc>
+      <image:title>التوباكو الدومانيكان 100 مل</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/28be2bc4-8346-44d2-9825-2ebfeaea8051</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781191206/products/ah9emxsubij8m5debn68.jpg</image:loc>
+      <image:title>نود كورال دايموند 150 مل</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/e0072a2f-f051-440a-ab44-0818dbe6ce71</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781190486/products/qbw6vggk8zgapnzmkdpl.jpg</image:loc>
+      <image:title>ديزرت</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/3c9a1408-0c88-44a9-9247-ef9d4aec8c2b</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781190347/products/csax6qqmjtvbju54crlt.png</image:loc>
+      <image:title>كحيلان </image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gisaah.com/product/081f04e7-c876-4ab1-9610-63ed110289b2</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781389562/products/smlfkxquo1lol1iieskg.webp</image:loc>
+      <image:title>مخلط تيجان</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/category/%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA%20%D8%A5%D9%8A%D8%B3%D9%86%D8%B3%20%D8%A7%D9%84%D8%A7%D8%B5%D9%84%D9%8A%D8%A9</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://www.gisaah.com/product/e31e1ee1-a4fd-4d96-9b1f-01c9e406cfa8</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781389478/products/srjsgtu6mn6yu6jo2loo.webp</image:loc>
+      <image:title>مشاعل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/category/%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA%20%D9%81%D9%84%D9%88%D9%85%D8%A7%D8%B1%20%D8%A7%D9%84%D8%A7%D8%B5%D9%84%D9%8A%D8%A9</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://www.gisaah.com/product/bc658dc9-3265-48a6-ae01-0bceb410f432</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781389415/products/hf3zmagkucwv2qxkrb1l.webp</image:loc>
+      <image:title>مخلط الشرقية</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/category/%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA%20%D9%86%D9%88%D8%AA%20%D8%A7%D9%84%D8%A7%D8%B5%D9%84%D9%8A%D8%A9</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://www.gisaah.com/product/2bcf9b33-7bdf-4e93-be56-8c55a2a4de06</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781389345/products/oiry4o0fkq88sodzai3v.webp</image:loc>
+      <image:title>اوتار </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/d5390f3b-cc06-4489-8f25-1e39b810d28f</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/592841e1-c196-4d52-a40e-bbb69ea31633</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781389279/products/rmhgbarsdte1ynwfeid6.webp</image:loc>
+      <image:title>الجليلة</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/a8242cd7-706a-450a-af90-d820dbd334ff</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/e6a73c8a-6780-4522-920f-804cfd2be249</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781389187/products/jttidastgvqqh0vg7cow.webp</image:loc>
+      <image:title>احساس </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/8e986ace-2d3c-49bb-80cc-353d1ca40cf3</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/9e8d98fe-cb06-4650-a3ac-6d2a82674e25</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781385741/products/mf2msbhewbilpvkmcwx5.jpg</image:loc>
+      <image:title>ماسكارا اكستريم ايسنس</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/657df3b1-4b12-437b-833c-d2808548ab6b</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/4f0085c8-3738-489d-b323-b4643b48959c</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781385863/products/yw5tt1fejvugzh4lodny.webp</image:loc>
+      <image:title>ماسكارا ايسنس البنفسجية</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/4847acbd-11e4-482d-802a-137007232f52</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/0ccd46c6-00c4-4326-b88f-cd2899a52620</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781384875/products/nrvtfar2dtll5b3mkl5r.jpg</image:loc>
+      <image:title>ماسكارا ايسنس البرتقالي </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/a08910bd-1a7d-45c7-b1e1-7311254dd816</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/375b3366-cd3a-4a0f-a6f4-91b877556724</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781384500/products/anytf6mlrfkxmdxlxryb.jpg</image:loc>
+      <image:title>ماسكارا ايسنس الخضرإ</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/de8f36e7-185e-4406-bbf8-c16f340ccb7e</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/c24de68f-2962-4250-8fb7-74216c2fdea7</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781231955/products/kuipuxavxj3b7ohrmdwj.jpg</image:loc>
+      <image:title>سجنتشر بلاك </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/459b98e2-340f-4ad7-beab-c7971edec8dd</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/756f53f1-c87f-46e2-b7f7-39954cd18dc6</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781230552/products/cljh4o3rxc2xookd0fct.jpg</image:loc>
+      <image:title>أي سي  75 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/1dd275e7-4a08-4b69-bb7b-429b06b34d58</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/dce77f1f-fa35-48d0-9982-35b915a74360</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781230363/products/o4ppo7yagfgenwijehga.jpg</image:loc>
+      <image:title>برستيج روبي</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/284df051-964d-43a8-96d5-acecc89b4cc0</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/31bc20c7-14b7-478d-bdf2-69e63541969c</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781230221/products/bzbt3lnxcsmkenqiumf1.jpg</image:loc>
+      <image:title>روز دي ماي </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/a87fbb23-1082-4fbe-b8b6-45d674bc93b9</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/cdbd1ee9-9237-4659-bf35-f0bcfab32b2d</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781230116/products/elohsdj12faqhgzoprp9.jpg</image:loc>
+      <image:title>ميسترال 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/c852ac42-7aab-43a1-ab50-50c810de61d8</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/358b154a-10b2-44e8-a88f-3e87c2179e92</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781230066/products/ahhajbv0i7lyirkxe4g6.jpg</image:loc>
+      <image:title>بوازيه 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/897a47af-e9ae-4a96-8bc3-326d5cc2757f</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/d5d34e1d-46a4-4471-8872-99f7efad8927</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781229976/products/phi7upahsrkfsucqh9gq.jpg</image:loc>
+      <image:title>كوير 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/63b77349-ec9f-4421-b9f4-8529b97590ac</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/383ae928-e6da-461f-8f08-2ce0d4652a5e</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781229770/products/q8aja5s5cyn874qsgkxg.jpg</image:loc>
+      <image:title>ميس ساكورا 200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/1e0c7b33-2f95-48bd-9aa9-8728f654614e</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/6584388c-c3df-4bc1-9846-c4a3f98950d4</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781229555/products/dyyvc0nft9d21wuvtvmk.jpg</image:loc>
+      <image:title>اتاكس </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/8b2f2d15-d734-4286-9e4b-08257211b973</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/7537406d-4fb9-4eb9-86ad-7cfad337e4b3</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781229269/products/x2jlfo5dbeubqlrrhb1g.jpg</image:loc>
+      <image:title>فينتج توباكو 110 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/be3c9e6b-4896-4872-9798-c928116eab35</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/aa0c8bc0-4eed-40ae-b95e-65a40f2c459b</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781228956/products/jg51byyms728faafadqz.png</image:loc>
+      <image:title>هيرش محور </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/fcf9e905-70b9-4c11-8cbb-43a092bfac76</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/7339d6d6-5701-44d4-a4cc-33a24aab68cf</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781228435/products/o11rhua6zymhfoq00fvi.jpg</image:loc>
+      <image:title>هيرش 2</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/7102eca4-f97c-4626-9dfb-0cc57d8f8434</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/cc516307-181c-47f2-86a7-ea42d29a25d4</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781223978/products/jrijkwwemiwdg0ziedop.jpg</image:loc>
+      <image:title>اورا بيقاسوس</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/6b6e7cd9-5dd8-41e0-967e-51c2020f4633</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/79c09091-c7ab-46c4-90d2-20aef81538ab</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781223764/products/p2f88gwgibp0jx4wbtdb.jpg</image:loc>
+      <image:title>فرانكل سيلفر  200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/454f0180-561b-4dab-bf63-d29d0ed3487d</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/f5d06663-ea51-486b-b155-b576de6560f0</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781223385/products/mrcclpnbutwhmmttdaoa.jpg</image:loc>
+      <image:title>الهلال 9</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/d5630008-06bd-4b28-8cc1-b29b5f7954b1</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/81413941-88a9-452f-999e-bc7b0a3136de</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781222890/products/ttinq9r2urqm5hy1qu8g.jpg</image:loc>
+      <image:title>دخون روز</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/07b96512-e4c2-4025-8a9f-5edae11d9513</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/28ce3a6b-df22-4c7c-942a-d19b203657e2</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781222575/products/s30liajerghmwnqi237d.jpg</image:loc>
+      <image:title>سجنتشر سيلفر</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/6e626600-c6a0-4ef8-a71a-b7bded0dc6a2</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/58e7ad79-0cb6-41b3-89c2-132f9bdbe0b7</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781222222/products/n9zff3qbslok0r8bhboz.png</image:loc>
+      <image:title>سجنتشر وايت </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/a0564c9a-9f5e-42cd-8bd2-fabc119027a6</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/052379ce-20c8-4920-abc0-bb294d873b3e</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781221936/products/n6j5ae8q23vt1xlttncs.jpg</image:loc>
+      <image:title>سجنتشر روز جولد </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/334691f3-5749-4428-b939-884f66d6d7d7</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/4f949b80-2761-4ad3-bd7f-69271402b5fa</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781221343/products/ublg2shlzecjuftxxdhg.jpg</image:loc>
+      <image:title>سافاير</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/e1566d14-6fba-4a37-af65-60f1e0125859</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/0b6e71d3-5f08-44b9-9cd4-2c431d9e0287</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781221031/products/uypyk257u6qemktg0edx.jpg</image:loc>
+      <image:title>شيرلوك 200مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/93e9e042-9940-4d2b-ac9c-7c9f7923bca3</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/2a8e7699-1b02-4d33-9bac-799b80353ec1</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781220885/products/ijdrb55vkjl0kixc6oby.jpg</image:loc>
+      <image:title>سو سويتي</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/41a275ba-c511-4c2b-aaed-070587f05880</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/e078bb5b-c585-483f-a945-afd4b06d69d6</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781219192/products/fpvkimskdpz7nhqkgi8o.jpg</image:loc>
+      <image:title>دخون عنبر </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/f0a4a37a-c13d-4fd6-b0e2-d230ec2566a7</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/0d17863b-2346-4715-a280-4a157a1adead</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781218869/products/fdf2skseobkr1zdxcn3x.jpg</image:loc>
+      <image:title>حنيت</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/eb532232-0405-422e-81d7-1063b114e4a2</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/f429119e-ffd6-405e-a59c-ad98e172f170</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781218730/products/zmxqfvaj74iocb7bzlk8.jpg</image:loc>
+      <image:title>كوين</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/49e5445b-5b10-40ff-baf5-83294ecaea05</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/020a00c5-e1e5-4e34-a156-84e70e2204f4</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781218436/products/hko1lm9xyut3jdtu9x8t.jpg</image:loc>
+      <image:title>برايفت ديسمبر </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/3e5a33c2-fc29-4ff8-bc87-21b19e057a32</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/d96fb949-5e9c-4b4d-8589-3c02f76b1434</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781218282/products/m0fkrevvtmv6ila39pqe.jpg</image:loc>
+      <image:title>خليفة</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/aec9a7cf-8dbe-469e-856e-620a4cec3726</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/7a82d40e-1b8b-4467-b30f-f3d938aa1faf</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781218154/products/qrfe2f46vmrrcudxg60w.jpg</image:loc>
+      <image:title>بلقيس</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/9de1a00b-343c-47d9-8111-8e1041d99c16</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/43f158a8-72f4-4a80-b9e8-7d4bad581009</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781214292/products/lauyknlyhdfub084ejrw.jpg</image:loc>
+      <image:title>خيال</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/018e5750-b62d-40e8-8576-a78de0ba9c74</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/ff217bbe-218c-477e-bac8-c3d39f3337b7</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781213955/products/i9mrk93gcl0rrvje4sql.jpg</image:loc>
+      <image:title>كوتور </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/d9ef49e0-0a38-4f04-9b91-0ffdf09a7e10</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/237e2f79-bf89-48e9-86d7-9acec77c8d8a</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781213636/products/fjrztbxhooslsvdaf35r.jpg</image:loc>
+      <image:title>سجنشتر روز </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/4ef181cc-f5d7-47d9-b9fd-dfa46501dbb7</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/3702bde5-889a-4db2-a2ba-90c660740b45</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781213099/products/o15zjibld43w8u2ipd1v.jpg</image:loc>
+      <image:title>دموع الذهب</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/4a1f11f3-3a67-4403-92f2-a725d14c69c4</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/5997bb11-1e24-40e3-9d73-2ef7234c356f</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781212708/products/eccgv71bbgy2np5fzai1.jpg</image:loc>
+      <image:title>دخون ليذر </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/658993c5-3374-4f83-93a0-1a5b9890cb36</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/8b886983-2a8c-436e-9f01-5f571a2eaf0f</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781211879/products/lay3ybjutn5g25se6nhc.jpg</image:loc>
+      <image:title>رييبل انيبل 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/d60625b7-5432-4a08-8416-ef1e822e5c6d</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/be85a739-9d7b-407f-9580-56305e952022</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781211805/products/peyedvyg48zp6mlsukt5.jpg</image:loc>
+      <image:title>اورقيت بخور 200مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/12786d9a-e890-45f6-ac01-82d7a9a55ecc</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/eb9d7173-cbb2-49a7-ae54-faf31a57aea7</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781211542/products/vsyhmpq6ygfasemwc49f.jpg</image:loc>
+      <image:title>وايلد كولت بخور  150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/972788d8-fd2a-4c91-8bb4-af210b027c13</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/c977c08b-755a-46f0-a9f1-024089752ffb</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781211347/products/neznxzi7pl0fbyjyghbg.jpg</image:loc>
+      <image:title>جليتش 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/d3884203-9961-4e8f-945c-9093b8425835</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/9c220ace-a832-4767-9ee8-21039ff6a218</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781210874/products/ebcyq5hisl0t4wd2qx3s.png</image:loc>
+      <image:title>اورا 35 </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/9f7114ca-4660-48c8-8688-be8c3721d621</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/d1f3ccbd-9c3a-403b-9a99-f16acd71b073</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781210499/products/inzttb0jbf1iklylwaoy.jpg</image:loc>
+      <image:title>ريسك 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/1d486cf8-253d-400b-9c7c-24e00740ace7</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/b1fe6f1f-8ba5-4cbb-af59-2bf32f04ddf4</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781210135/products/nabr22qjcfjirs0nwutv.jpg</image:loc>
+      <image:title>وايلد كولت 200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/50bc39ec-34ae-45da-ae19-f1bd7173e1b6</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/a022e97f-7547-4aae-b4ad-6106a73155f1</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781210135/products/nabr22qjcfjirs0nwutv.jpg</image:loc>
+      <image:title>وايلد كولت 200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/a3dc49ca-a265-4cc3-bf30-96007004d471</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/66f53922-4665-4b2b-839e-cb04cb2dde84</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781209881/products/ypd3xtrs2m634vdssqea.jpg</image:loc>
+      <image:title>نوبل 200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/ce94a2e5-e67d-43b9-9bfb-97c805ed0c8b</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/d64be514-b7ca-4c70-8fba-89733d540b46</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781209786/products/bmdawbt3k3ursfa4nall.png</image:loc>
+      <image:title>بينك كوين 200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/a493fdcb-b8f0-4ce7-80a7-0214fb33292f</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/907c31de-b830-4fd3-8246-761c2dc7fb53</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781209626/products/yfsqeyrd1ikjsqtllhvr.jpg</image:loc>
+      <image:title>قريس ايرك 200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/0b8ac4a9-d850-4246-855d-22bf7abd3a20</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/3957598a-88fe-4025-9ce3-18c993d7f42a</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781208296/products/n1kzjnscongbbhmidz5u.jpg</image:loc>
+      <image:title>وايلد كولت توباكو 200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/81345253-27d6-45f3-8fc0-01991eb16c2e</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/ddea202b-2193-48af-8913-9f262a52002c</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781207852/products/pea3ikfx66y4ifrioaed.jpg</image:loc>
+      <image:title>توباكو جام 50 </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/6d8b65bd-bf61-4cac-b2e8-1e5bee0b193d</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/96e180d8-bb0f-4117-8022-d901eb0ad068</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781207638/products/zjcahczs8q4skomy5fri.jpg</image:loc>
+      <image:title>فرانكل بلاك الكسير 200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/b49709c5-145b-4dde-9bb4-32421e5ed2d0</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/cad7ea5e-b0d1-4e83-8fb5-6288314d2fd7</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781203710/products/mzhdrpa9a6xot3gnzedy.jpg</image:loc>
+      <image:title>اورقيت كوميت 200 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/c73b5c17-8831-4ec9-b476-1f6a72421e4b</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/7bdef24b-ee27-42c0-9d2f-88ed8de85355</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781202301/products/qqhlqntp3jkpgewsryk0.jpg</image:loc>
+      <image:title>وايت ريجينت دايموند 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/b68ac675-fd16-4dd5-b00b-c3fc77fba7fc</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/e20d64a0-bbf3-4dd6-96cc-47ecb25e5b78</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781198711/products/yzy2r2dpufpimjspyagp.jpg</image:loc>
+      <image:title>التوباكو البرازيلي</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/cae3a9a3-0346-454e-a401-d2159713e0c3</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/b2987daf-fb7c-4a72-ae40-9b5f870056f6</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781198593/products/c6upelp5pjadlp1ewyo4.jpg</image:loc>
+      <image:title>التوباكو الجمايكي 100 مل </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/f0e79baa-a820-47ed-a81a-b422ca1152fb</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/8322e9c8-3bda-4830-9807-c4a33c4d45e6</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781198412/products/ybylvantzccoh66oewwz.jpg</image:loc>
+      <image:title>التوباكو الاسباني 100 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/b30bcd2b-d44f-470a-aa24-07b479e92d4e</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/65f33985-07e6-44e0-8333-1feea407736e</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781197607/products/xiiwgxpge4jzxvh1obmw.jpg</image:loc>
+      <image:title>التوباكو البرازيلي 100 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/0510bf93-e137-4ab9-9e43-b4f4cb19700f</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/4f4e7d8f-971e-429d-a582-ea52c367e8f6</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781197659/products/vgxthsntfak8634x4dq6.jpg</image:loc>
+      <image:title>بلو دايموند أكوا  150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/833fff8a-6b7c-4e3e-942b-0a7c1ef12185</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/dc508a26-d1ae-452a-bf8b-5d5fb4dac36c</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781197298/products/vi4vqqpdrwwm7yerjggc.jpg</image:loc>
+      <image:title>بلاس روز 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/38115f9b-668c-4351-94e8-a59c88144659</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/99c79712-fe94-46ee-9bd8-f1d114e8ca52</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781197228/products/re8vrdo4qrmlwvp6i2ar.jpg</image:loc>
+      <image:title>سفاير ليذر 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/dafed2b1-a582-4c31-9514-6e53ef727573</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/1296a940-6e5f-4648-a4c9-832d0726ebc8</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781197084/products/c73rx1vgy4ybnfn8noye.jpg</image:loc>
+      <image:title>كولينان دايموند ايرس 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/85370e25-16ac-4180-8f68-72e36167af8c</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/ee2278d6-ae8e-4e75-9eaa-01bc446a1e6e</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781196890/products/whbt4rredzgvc1cprpzy.jpg</image:loc>
+      <image:title>بلاك دايموند انسس 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/b5417b16-7bda-4a60-a5eb-68991ca69e01</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/11834782-f170-4401-998f-6041954816e0</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781196757/products/t6yagsas3ryvmhiaqla5.jpg</image:loc>
+      <image:title>بيربل هارت دايموند 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/615e6c64-da83-47ab-9547-d9fab3b407a3</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/9ae61ee2-c9ba-4283-b374-5566b2a2e968</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781196673/products/gsz7xxirqmjdvry0pgzl.jpg</image:loc>
+      <image:title>بلاك كاربون دايموند 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/58065b18-e346-44d5-b398-6b54ac83d5d4</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/47cc6a15-c232-4375-8881-5251e557af4d</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781196587/products/vdhfgdhukfvcmifyz7bd.jpg</image:loc>
+      <image:title>جراي بيرل دايموند 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/f72ed53d-0a97-4914-8cd7-41a4972467c7</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/5c852867-7ff3-4a9c-9ac3-0f858deb19c7</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781196471/products/dziocw2jwjrszjahqd4s.jpg</image:loc>
+      <image:title>إيما ريلد سول دايموند 150 مل</image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/7d3e41ea-e739-46bd-81f1-0c71040c8ff4</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/9ff6e89d-661c-41d0-a050-098ce05069b0</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781196285/products/ebyaoi3gz0hn5udc0gt1.webp</image:loc>
+      <image:title>مجموعة مون </image:title>
+    </image:image>
   </url>
   <url>
-    <loc>https://www.gisaah.com/product/0dc858df-e59d-4a21-bcb3-7cc139aadd7d</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://www.gisaah.com/product/6e958c12-b6d8-4be4-bfa5-a863a711b386</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dlw6t61wl/image/upload/v1781196184/products/ou0vdzuytopwka7ly24l.jpg</image:loc>
+      <image:title>بينك دايموند ساكورا 150 مل</image:title>
+    </image:image>
   </url>
 </urlset>

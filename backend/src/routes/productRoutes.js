@@ -17,6 +17,9 @@ router.post('/', protect, authorize('Seller', 'Admin'), validate(createProductSc
 router.post('/upload-image', protect, authorize('Seller', 'Admin'), uploadLimiter, imageUpload.single('file'), asyncHandler(productController.uploadImage.bind(productController)));
 router.get('/my-products', protect, authorize('Seller', 'Admin'), asyncHandler(productController.getMyProducts.bind(productController)));
 
+// SEO slug route — MUST come before :id wildcard
+router.get('/by-slug/:slug', optionalProtect, asyncHandler(productController.getProductBySlug.bind(productController)));
+
 // :id wildcard MUST come AFTER literal routes like /my-products
 router.get('/:id', optionalProtect, validate(idParamSchema, 'params'), asyncHandler(productController.getProductById.bind(productController)));
 router.put('/:id', protect, authorize('Seller', 'Admin'), validate(idParamSchema, 'params'), validate(updateProductSchema), asyncHandler(productController.updateProduct.bind(productController)));

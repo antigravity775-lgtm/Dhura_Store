@@ -24,48 +24,17 @@ import {
 } from "lucide-react";
 import Layout from "../components/Layout";
 import SEO from "../components/SEO";
+import Breadcrumbs from "../components/Breadcrumbs";
 import RelatedProducts from "../components/RelatedProducts";
 import * as api from "../services/api";
 import { getOptimizedImageUrl, IMAGE_WIDTHS } from "../utils/cloudinaryUrl";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
+import { buildProductSchema, buildBreadcrumbSchema } from "../utils/structuredData";
+import { trackViewItem, trackAddToCart } from "../utils/analytics";
 
-// Fallback database for when API is down
-const fallbackDB = {
-  1: {
-    id: 1,
-    title: "انفرتر طاقة شمسية Growatt 5kW برو",
-    price: 950000,
-    currency: 1,
-    condition: 1,
-    categoryName: "الطاقة الشمسية",
-    description: "انفرتر طاقة شمسية عالي الكفاءة...",
-    mainImageUrl:
-      "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=1000&q=80",
-  },
-  2: {
-    id: 2,
-    title: "ماك بوك برو M2 شاشة 14 انش",
-    price: 1850,
-    currency: 3,
-    condition: 2,
-    categoryName: "لابتوبات",
-    description: "ماك بوك برو 14 انش بمعالج M2...",
-    mainImageUrl:
-      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1000&q=80",
-  },
-  3: {
-    id: 3,
-    title: "آيفون 15 برو ماكس 256 جيجا",
-    price: 1100,
-    currency: 3,
-    condition: 1,
-    categoryName: "هواتف",
-    description: "آيفون 15 برو ماكس الجديد كلياً...",
-    mainImageUrl:
-      "https://images.unsplash.com/photo-1695048132961-0eab789a421b?w=1000&q=80",
-  },
-};
+// UUID regex for backward-compat detection
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function formatPrice(price, currency) {
   const formatted =
@@ -128,7 +97,7 @@ function StarRating({ rating, reviewCount }) {
 }
 
 const ProductDetailsPage = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -137,8 +106,7 @@ const ProductDetailsPage = () => {
   const [addedToCart, setAddedToCart] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [storeInfo, setStoreInfo] = useState(null);
-
-  const [errorType, setErrorType] = useState(null); // 'not_found' or 'server_error'
+  const [errorType, setErrorType] = useState(null); // 'not_found' | 'server_error'
 
   useEffect(() => {
     let mounted = true;
@@ -149,21 +117,30 @@ const ProductDetailsPage = () => {
 
     async function load() {
       try {
-        const data = await api.getProductById(id);
+        let data;
+
+        if (UUID_REGEX.test(slug)) {
+          // Backward compat: old UUID-based links — look up by ID then redirect to slug URL
+          data = await api.getProductById(slug);
+          if (data?.slug && mounted) {
+            // Silently redirect to slug URL (replace so back button works)
+            navigate(`/product/${data.slug}`, { replace: true });
+            return;
+          }
+        } else {
+          // Normal slug lookup
+          data = await api.getProductBySlug(slug);
+        }
+
         if (mounted) {
           setProduct(data);
           setLoading(false);
+          // GA4 e-commerce tracking
+          trackViewItem(data);
         }
       } catch (err) {
-        // Check if the error is a 404
-        const is404 = err.message?.includes('404');
-
-        // Try fallback
-        const fb = fallbackDB[id];
-        if (fb && mounted) {
-          setProduct(fb);
-          setLoading(false);
-        } else if (mounted) {
+        const is404 = err.message?.includes('404') || err.status === 404;
+        if (mounted) {
           setNotFound(true);
           setErrorType(is404 ? 'not_found' : 'server_error');
           setLoading(false);
@@ -175,11 +152,10 @@ const ProductDetailsPage = () => {
     return () => {
       mounted = false;
     };
-  }, [id]);
+  }, [slug, navigate]);
 
   useEffect(() => {
     let mounted = true;
-
     api
       .getStoreInfo()
       .then((info) => {
@@ -188,7 +164,6 @@ const ProductDetailsPage = () => {
       .catch(() => {
         if (mounted) setStoreInfo(null);
       });
-
     return () => {
       mounted = false;
     };
@@ -197,13 +172,14 @@ const ProductDetailsPage = () => {
   const handleAddToCart = () => {
     if (!product) return;
     addToCart(product, 1);
+    trackAddToCart(product, 1);
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2500);
   };
 
   const handleShare = async () => {
     const shareData = {
-      title: product?.title || "متجر طِيب",
+      title: product?.title || "متجر قصة",
       text: `شاهد هذا المنتج: ${product?.title}\n`,
       url: window.location.href,
     };
@@ -303,22 +279,30 @@ const ProductDetailsPage = () => {
     "https://images.unsplash.com/photo-1560472355-536de3962603?w=1000&q=80";
   const imageUrl = getOptimizedImageUrl(rawImageUrl, IMAGE_WIDTHS.DETAIL);
 
+  // ── Structured data ──
+  const productSchema = buildProductSchema(product);
+  const breadcrumbItems = [
+    { name: 'الرئيسية', url: '/' },
+    ...(product.categoryName ? [{ name: product.categoryName, url: `/category/${encodeURIComponent(product.categoryName)}` }] : []),
+    { name: product.title },
+  ];
+
+  const productSlug = product.slug || product.id;
+
   return (
     <Layout>
       <SEO
         title={product.title}
         description={product.description?.substring(0, 160) || `تسوق ${product.title} بأفضل الأسعار على متجر قصة.`}
-        image={imageUrl}
+        image={rawImageUrl}
+        type="product"
+        canonicalPath={`/product/${productSlug}`}
+        jsonLd={[productSchema]}
       />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 mb-12 w-full">
-        {/* زر الرجوع */}
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-gold-600 transition-colors mb-8 group font-medium text-sm focus:outline-none"
-        >
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          العودة للمنتجات
-        </Link>
+        {/* Breadcrumbs */}
+        <Breadcrumbs items={breadcrumbItems} />
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14">
           {/* ========== العمود الأيمن: الصورة ========== */}
@@ -326,7 +310,7 @@ const ProductDetailsPage = () => {
             <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm">
               <img
                 src={imageUrl}
-                alt={product.title}
+                alt={`${product.title} - ${product.categoryName || 'عطر'}`}
                 width="800"
                 height="600"
                 fetchpriority="high"
@@ -531,7 +515,7 @@ const ProductDetailsPage = () => {
 
         {/* ═══════ المنتجات ذات الصلة / Related Products ═══════ */}
         {product.categoryName && (
-          <RelatedProducts categoryName={product.categoryName} currentId={id} />
+          <RelatedProducts categoryName={product.categoryName} currentId={product.id} />
         )}
       </div>
     </Layout>
