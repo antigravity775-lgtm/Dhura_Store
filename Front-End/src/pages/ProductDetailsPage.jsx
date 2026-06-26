@@ -29,7 +29,7 @@ import * as api from "../services/api";
 import { getOptimizedImageUrl, IMAGE_WIDTHS } from "../utils/cloudinaryUrl";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
-import SEO from "../components/SEO";
+
 
 // Fallback database for when API is down
 const fallbackDB = {
@@ -494,8 +494,8 @@ const ProductDetailsPage = () => {
                 onClick={handleAddToCart}
                 disabled={addedToCart}
                 className={`flex-1 flex items-center justify-center gap-2 h-[52px] sm:h-14 rounded-xl font-extrabold text-[15px] sm:text-base shadow-lg transition-all ${addedToCart
-                    ? "bg-emerald-500 text-white shadow-emerald-500/20"
-                    : "bg-agate-600 text-white shadow-agate-600/20 hover:bg-agate-500"
+                  ? "bg-emerald-500 text-white shadow-emerald-500/20"
+                  : "bg-agate-600 text-white shadow-agate-600/20 hover:bg-agate-500"
                   } focus:outline-none focus:ring-4 focus:ring-agate-500/30`}
                 whileHover={!addedToCart ? { scale: 1.01 } : {}}
                 whileTap={!addedToCart ? { scale: 0.98 } : {}}
