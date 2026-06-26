@@ -200,7 +200,7 @@ const CartPage = () => {
                     <div className="flex items-center gap-2 mt-3">
                       <button
                         onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                        className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors"
+                        className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -208,7 +208,7 @@ const CartPage = () => {
                       <button
                         onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                         disabled={item.quantity >= (item.stockQuantity || 9999)}
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                        className={`w-11 h-11 rounded-xl flex items-center justify-center transition-colors ${
                           item.quantity >= (item.stockQuantity || 9999)
                             ? 'bg-bone dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
                             : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300'
@@ -245,7 +245,7 @@ const CartPage = () => {
               <div className="space-y-3 mb-5 text-sm">
                 <div className="flex justify-between text-slate-500">
                   <span>المنتجات ({items.length})</span>
-                  <span className="font-semibold text-slate-800 dark:text-white">{cartTotal.toLocaleString('en-US')}</span>
+                  <span className="font-semibold text-slate-800 dark:text-white">{cartTotal.toLocaleString('en-US')} {items[0] ? (api.CurrencySymbol[items[0].currency] || 'ريال') : 'ريال'}</span>
                 </div>
                 <div className="flex justify-between text-slate-500">
                   <span>التوصيل</span>
@@ -254,7 +254,7 @@ const CartPage = () => {
                 <hr className="border-slate-100 dark:border-slate-700" />
                 <div className="flex justify-between">
                   <span className="font-bold text-slate-900 dark:text-white text-base">الإجمالي</span>
-                  <span className="font-extrabold text-agate-600 dark:text-agate-400 text-lg">{cartTotal.toLocaleString('en-US')}</span>
+                  <span className="font-extrabold text-agate-600 dark:text-agate-400 text-lg">{cartTotal.toLocaleString('en-US')} {items[0] ? (api.CurrencySymbol[items[0].currency] || 'ريال') : 'ريال'}</span>
                 </div>
               </div>
 
@@ -310,6 +310,16 @@ const CartPage = () => {
                       <span>{error}</span>
                     </div>
                   )}
+
+                  {/* Trust block */}
+                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 px-4 py-3 space-y-1.5">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                      <span className="text-green-500">🔒</span> طلبك آمن — لا نشارك بياناتك
+                    </p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                      <span>💬</span> سيتواصل معك فريقنا عبر واتساب خلال ساعات
+                    </p>
+                  </div>
 
                   <button
                     onClick={handleCheckout}

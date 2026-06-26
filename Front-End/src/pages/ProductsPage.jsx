@@ -60,6 +60,7 @@ const ProductsPage = () => {
   const [activeCategory, setActiveCategory] = useState('الكل');
   const [searchText, setSearchText] = useState(searchFromUrl);
   const [debouncedSearch, setDebouncedSearch] = useState(searchFromUrl);
+  const [sortOrder, setSortOrder] = useState('default');
 
   React.useEffect(() => {
     setSearchText(searchFromUrl);
@@ -103,19 +104,24 @@ const ProductsPage = () => {
   }, [categories, activeProducts]);
 
   const filteredProducts = useMemo(() => {
-    // The backend now handles search, category, and specialOffers filtering.
-    // However, if there's any residual local logic needed, we can do it here.
     let result = [...activeProducts];
-
-    // Backend already sorts by isPromoted desc, but just in case we need to maintain local sorting stability
-    result.sort((a, b) => {
-      if (a.isPromoted && !b.isPromoted) return -1;
-      if (!a.isPromoted && b.isPromoted) return 1;
-      return 0;
-    });
-
+    // Apply sort
+    if (sortOrder === 'price-asc') {
+      result.sort((a, b) => (a.discountPrice ?? a.price) - (b.discountPrice ?? b.price));
+    } else if (sortOrder === 'price-desc') {
+      result.sort((a, b) => (b.discountPrice ?? b.price) - (a.discountPrice ?? a.price));
+    } else if (sortOrder === 'rating') {
+      result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+    } else {
+      // Default: promoted first
+      result.sort((a, b) => {
+        if (a.isPromoted && !b.isPromoted) return -1;
+        if (!a.isPromoted && b.isPromoted) return 1;
+        return 0;
+      });
+    }
     return result;
-  }, [activeProducts]);
+  }, [activeProducts, sortOrder]);
 
   const mappedGridProducts = useMemo(() => {
     return filteredProducts.map(p => {
@@ -250,12 +256,26 @@ const ProductsPage = () => {
               </button>
             )}
           </div>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
-            {productsValidating && !showSkeleton && (
-              <Loader2 className="w-3 h-3 animate-spin text-agate-400" />
-            )}
-            <LayoutGrid className="w-3.5 h-3.5" />
-            {filteredProducts.length} منتج
+          <div className="flex items-center gap-2">
+            {/* Sort dropdown */}
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-agate-500/40 cursor-pointer"
+              aria-label="ترتيب المنتجات"
+            >
+              <option value="default">الافتراضي</option>
+              <option value="price-asc">سعر: الأقل أولاً</option>
+              <option value="price-desc">سعر: الأعلى أولاً</option>
+              <option value="rating">التقييم الأعلى</option>
+            </select>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
+              {productsValidating && !showSkeleton && (
+                <Loader2 className="w-3 h-3 animate-spin text-agate-400" />
+              )}
+              <LayoutGrid className="w-3.5 h-3.5" />
+              {filteredProducts.length} منتج
+            </div>
           </div>
         </div>
 

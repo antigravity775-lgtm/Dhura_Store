@@ -23,6 +23,7 @@ import { useFavorites } from "../context/FavoritesContext";
 import { useTheme } from "../context/ThemeContext";
 import * as api from "../services/api";
 import Footer from "./Footer";
+import MobileBottomNav from "./MobileBottomNav";
 const logo = "/Logo_192.png";
 const Layout = React.memo(({ children }) => {
   const { user, isAuthenticated, isSeller, isAdmin, logout } = useAuth();
@@ -248,6 +249,24 @@ const Layout = React.memo(({ children }) => {
             </div>
           </div>
 
+          {/* شريط البحث الدائم للجوال / Persistent Mobile Search Bar */}
+          <div className="md:hidden pb-3 px-1">
+            <form onSubmit={handleSearch} className="relative w-full">
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400 dark:text-slate-500" />
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                inputMode="search"
+                enterKeyHint="search"
+                className="block w-full pr-10 pl-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-full bg-gray-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 text-right text-sm shadow-sm"
+                placeholder="ابحث عن عطر أو منتج..."
+              />
+            </form>
+          </div>
+
           {/* قائمة الجوال / Mobile Menu */}
           {isMobileMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-100 dark:border-slate-800 space-y-3">
@@ -354,10 +373,12 @@ const Layout = React.memo(({ children }) => {
       </header>
 
       {/* المحتوى الرئيسي / Main Content */}
-      <main className="flex-grow w-full">{children}</main>
+      <main className="flex-grow w-full pb-20 md:pb-0">{children}</main>
 
       {/* الفوتر / Footer */}
       <Footer storeInfo={storeInfo} />
+      {/* شريط التنقل السفلي للجوال */}
+      <MobileBottomNav />
     </div>
   );
 });

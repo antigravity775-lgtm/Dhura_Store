@@ -134,6 +134,19 @@
     @apply ring-offset-[#2f0b12];
   }
 
+  /* EN: Minimum 44x44px touch target (Apple HIG / Google Material)
+     AR: حد أدنى 44x44 بكسل لأهداف اللمس */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* EN: Safe-area bottom padding for notched phones
+     AR: حشوة سفلية للهواتف ذات الشق */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
   .img-placeholder {
     @apply animate-pulse bg-slate-100;
   }

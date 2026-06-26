@@ -22,8 +22,9 @@ import {
 } from 'lucide-react';
 import Layout from '../components/Layout';
 import CategoryGrid from '../components/CategoryGrid';
-import HomepageSections from '../components/HomepageSections';
 import { ProductGrid } from '../components/HighConversionGrid';
+import HeroSection from '../components/HeroSection';
+import TrustStrip from '../components/TrustStrip';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import * as api from '../services/api';
@@ -214,22 +215,28 @@ const HomePage = () => {
 
   return (
     <Layout>
+      {/* ═══════ قسم البطل / Hero ═══════ */}
+      {/* EN: Hero appears above the offer belt — first thing users see */}
+
       {/* ═══════ حزام العروض / Offer Belt ═══════ */}
       <OfferBelt shippingOfferText={shippingOfferText} />
 
       {/* ═══════ المحتوى الرئيسي / Main Content ═══════ */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 lg:pb-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
 
-        {/* ═══════ 1. الأقسام / Category Grid ═══════ */}
+        {/* 1. Hero */}
+        <HeroSection />
+
+        {/* 2. Trust Strip */}
+        <TrustStrip />
+
+        {/* 3. الأقسام / Category Grid */}
         <CategoryGrid
           categories={categories}
           isLoading={categoriesLoading}
         />
 
-        {/* ═══════ 2. ابدأ التسوق / Start Shopping CTAs ═══════ */}
-        <HomepageSections />
-
-        {/* ═══════ 3. معاينة المنتجات / Product Preview ═══════ */}
+        {/* 4. معاينة المنتجات / Product Preview */}
         <section>
           {productsError && (
             <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">
