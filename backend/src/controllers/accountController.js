@@ -6,15 +6,69 @@ class AccountController {
     this.authService = new AuthService();
   }
 
-  getAuthCookieOptions() {
+  getBaseCookieOptions() {
     const isProd = process.env.NODE_ENV === 'production';
     return {
       httpOnly: true,
       secure: isProd,
-      // Required for frontend/backend on different domains in production.
-      sameSite: isProd ? 'none' : 'lax',
-      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      sameSite: 'lax'
     };
+  }
+
+  wantsTokensInBody(req) {
+    return req.headers['x-client-type'] === 'mobile';
+  }
+
+  toClientAuthResponse(req, result) {
+    if (this.wantsTokensInBody(req)) {
+      return {
+        userId: result.userId,
+        fullName: result.fullName,
+        email: result.email,
+        role: result.role,
+        city: result.city,
+        expiresIn: result.expiresIn,
+        token: result.accessToken,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken
+      };
+    }
+
+    return {
+      userId: result.userId,
+      fullName: result.fullName,
+      email: result.email,
+      role: result.role,
+      city: result.city,
+      expiresIn: result.expiresIn
+    };
+  }
+
+  getAccessCookieOptions() {
+    return {
+      ...this.getBaseCookieOptions(),
+      maxAge: this.authService.getAccessCookieMaxAge()
+    };
+  }
+
+  getRefreshCookieOptions() {
+    return {
+      ...this.getBaseCookieOptions(),
+      path: '/api/account',
+      maxAge: this.authService.getRefreshCookieMaxAge()
+    };
+  }
+
+  getRequestMetadata(req) {
+    return {
+      userAgent: req.headers['user-agent'],
+      ipAddress: req.ip
+    };
+  }
+
+  setAuthCookies(res, result) {
+    res.cookie('auth_token', result.accessToken, this.getAccessCookieOptions());
+    res.cookie('refresh_token', result.refreshToken, this.getRefreshCookieOptions());
   }
 
   /**
@@ -23,21 +77,20 @@ class AccountController {
    */
   async register(req, res) {
     try {
-      // Validate required fields
-      const requiredFields = ['fullName', 'email', 'password'];
+      const requiredFields = [
+        { key: 'fullName', label: 'الاسم الكامل' },
+        { key: 'phoneNumber', label: 'رقم الهاتف' },
+        { key: 'password', label: 'كلمة المرور' }
+      ];
       for (const field of requiredFields) {
-        if (!req.body[field]) {
-          throw new ValidationError(`${field} is required`);
+        if (!req.body[field.key]) {
+          throw new ValidationError(`${field.label} مطلوب`);
         }
       }
 
-      const result = await this.authService.register(req.body);
-      
-      // Set HttpOnly cookie for Web
-      res.cookie('auth_token', result.token, this.getAuthCookieOptions());
-
-      // Send full result (including token) to support mobile explicitly storing the JWT
-      res.status(200).json(result);
+      const result = await this.authService.register(req.body, this.getRequestMetadata(req));
+      this.setAuthCookies(res, result);
+      res.status(200).json(this.toClientAuthResponse(req, result));
     } catch (error) {
       throw error;
     }
@@ -49,18 +102,31 @@ class AccountController {
    */
   async login(req, res) {
     try {
-      // Validate required fields
-      if (!req.body.email || !req.body.password) {
-        throw new ValidationError('Email and password are required');
+      if (!req.body.phoneNumber || !req.body.password) {
+        throw new ValidationError('رقم الهاتف وكلمة المرور مطلوبة');
       }
 
-      const result = await this.authService.login(req.body);
-      
-      // Set HttpOnly cookie for Web
-      res.cookie('auth_token', result.token, this.getAuthCookieOptions());
+      const result = await this.authService.login(req.body, this.getRequestMetadata(req));
+      this.setAuthCookies(res, result);
+      res.status(200).json(this.toClientAuthResponse(req, result));
+    } catch (error) {
+      throw error;
+    }
+  }
 
-      // Send full result (including token) to support mobile explicitly storing the JWT
-      res.status(200).json(result);
+  /**
+   * Refresh access token
+   * POST /api/account/refresh
+   */
+  async refresh(req, res) {
+    try {
+      const refreshToken = req.cookies?.refresh_token || req.body?.refreshToken;
+      const result = await this.authService.refreshAccessToken(
+        refreshToken,
+        this.getRequestMetadata(req)
+      );
+      this.setAuthCookies(res, result);
+      res.status(200).json(this.toClientAuthResponse(req, result));
     } catch (error) {
       throw error;
     }
@@ -71,8 +137,14 @@ class AccountController {
    * POST /api/account/logout
    */
   async logout(req, res) {
-    const { maxAge, ...clearOptions } = this.getAuthCookieOptions();
-    res.clearCookie('auth_token', clearOptions);
+    const refreshToken = req.cookies?.refresh_token || req.body?.refreshToken;
+    await this.authService.revokeRefreshToken(refreshToken);
+
+    const { maxAge: _accessMaxAge, ...accessClearOptions } = this.getAccessCookieOptions();
+    const { maxAge: _refreshMaxAge, ...refreshClearOptions } = this.getRefreshCookieOptions();
+
+    res.clearCookie('auth_token', accessClearOptions);
+    res.clearCookie('refresh_token', refreshClearOptions);
     res.status(200).json({ message: 'Logged out successfully' });
   }
 
@@ -82,9 +154,8 @@ class AccountController {
    */
   async getProfile(req, res) {
     try {
-      // In a real app, we'd get the userId from the authenticated user via middleware
       const userId = req.user?.id;
-      
+
       if (!userId) {
         res.status(401);
         throw new Error('Unauthorized');
@@ -103,26 +174,22 @@ class AccountController {
    */
   async updateProfile(req, res) {
     try {
-      // In a real app, we'd get the userId from the authenticated user via middleware
       const userId = req.user?.id;
-      
+
       if (!userId) {
         res.status(401);
         throw new Error('Unauthorized');
       }
 
-      // Prevent users from changing their own role or ID
       const updateData = { ...req.body };
       delete updateData.role;
       delete updateData._id;
 
-      // Check if user is trying to update another user's profile
       if (updateData.userId && updateData.userId !== userId && updateData.userId !== '') {
         res.status(403);
         throw new Error('Forbidden');
       }
 
-      // If userId is empty, set it to the current user's ID
       if (!updateData.userId || updateData.userId === '') {
         updateData.userId = userId;
       }
@@ -140,7 +207,7 @@ class AccountController {
   async changePassword(req, res) {
     try {
       const userId = req.user?.id;
-      
+
       if (!userId) {
         res.status(401);
         throw new Error('Unauthorized');
@@ -153,6 +220,12 @@ class AccountController {
       }
 
       await this.authService.changePassword(userId, currentPassword, newPassword);
+
+      const { maxAge: _accessMaxAge, ...accessClearOptions } = this.getAccessCookieOptions();
+      const { maxAge: _refreshMaxAge, ...refreshClearOptions } = this.getRefreshCookieOptions();
+      res.clearCookie('auth_token', accessClearOptions);
+      res.clearCookie('refresh_token', refreshClearOptions);
+
       res.status(200).json({ message: 'تم تغيير كلمة المرور بنجاح' });
     } catch (error) {
       throw error;

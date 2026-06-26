@@ -149,13 +149,27 @@ class ProductService {
    * @returns {Promise<Object>} The product
    */
   async getProductById(id) {
-    const p = await prisma.product.findUnique({
-      where: { id },
-      include: {
-        category: { select: { name: true } },
-        seller: { select: { fullName: true, city: true, isVerified: true } }
-      }
-    });
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+    let p;
+
+    if (isUuid) {
+      p = await prisma.product.findUnique({
+        where: { id },
+        include: {
+          category: { select: { name: true } },
+          seller: { select: { fullName: true, city: true, isVerified: true } }
+        }
+      });
+    } else {
+      p = await prisma.product.findUnique({
+        where: { slug: id },
+        include: {
+          category: { select: { name: true } },
+          seller: { select: { fullName: true, city: true, isVerified: true } }
+        }
+      });
+    }
+
     if (!p) return null;
     return { ...p, categoryName: p.category?.name || null };
   }

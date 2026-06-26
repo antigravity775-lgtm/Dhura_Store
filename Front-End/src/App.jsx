@@ -1,6 +1,8 @@
 import React, { Suspense } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
+import { preload } from "swr";
+import * as api from "./services/api";
 import HomePage from "./pages/HomePage";
 import ScrollToTop from "./components/ScrollToTop";
 import SEO from "./components/SEO";
@@ -28,14 +30,14 @@ const ProductGridDemo = React.lazy(
 const AboutPage = React.lazy(() => import("./pages/AboutPage"));
 const PrivacyPolicyPage = React.lazy(() => import("./pages/PrivacyPolicyPage"));
 const ContactPage = React.lazy(() => import("./pages/ContactPage"));
-const CreditsPage = React.lazy(() => import("./pages/CreditsPage"));
 
 // EN: ChatWidget is lazy-loaded because it imports react-markdown + remark-gfm (~45KB gzip).
 //     The FAB button still appears immediately via a lightweight wrapper.
 // AR: ChatWidget يُحمّل كسولاً لأنه يستورد react-markdown + remark-gfm (~45KB gzip).
 //     زر FAB يظهر فوراً عبر غلاف خفيف.
-const ChatWidget = React.lazy(() => import("./components/chat/ChatWidget"));
+// const ChatWidget = React.lazy(() => import("./components/chat/ChatWidget"));
 const WhatsAppFAB = React.lazy(() => import("./components/WhatsAppFAB"));
+const BackToTop = React.lazy(() => import("./components/BackToTop"));
 
 /**
  * EN: Minimal loading fallback — a subtle centered spinner.
@@ -61,6 +63,22 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 };
 
 const App = () => {
+  // Storefront Warm-Up (Predictive Prefetching)
+  React.useEffect(() => {
+    // We can prefetch the first page of products and categories instantly 
+    // to ensure 0ms navigation for the customer.
+    // Categories are fetched via getCategories without args
+    preload('categories', () => api.getCategories() || []);
+    
+    // Store info
+    preload('storeInfo', api.getStoreInfo);
+    
+    // First page of unfiltered products (used in HomePage and ProductsPage)
+    // We recreate the SWR key used by useProducts for empty params
+    const defaultProductsKey = 'products';
+    preload(defaultProductsKey, () => api.getProducts({ pageSize: 50 }));
+  }, []);
+
   return (
     <>
       <SEO />
@@ -75,7 +93,6 @@ const App = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/credits" element={<CreditsPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
@@ -114,13 +131,19 @@ const App = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
-      {/* Chat FAB */}
+      {/* Chat FAB — Disabled per user request */}
+      {/* 
       <Suspense fallback={null}>
         <ChatWidget />
-      </Suspense>
-      {/* WhatsApp FAB */}
+      </Suspense> 
+      */}
+      {/* WhatsApp FAB — global persistent contact button */}
       <Suspense fallback={null}>
         <WhatsAppFAB />
+      </Suspense>
+      {/* Back to Top — appears after 400px scroll */}
+      <Suspense fallback={null}>
+        <BackToTop />
       </Suspense>
     </>
   );

@@ -4,6 +4,7 @@ import { ProductCard, Product } from './ProductCard';
 interface ProductGridProps {
   products: Product[];
   isLoading?: boolean;
+  isLoadingMore?: boolean;
   loadingCount?: number;
   onQuickAdd?: (product: Product) => void;
   onClick?: (product: Product) => void;
@@ -12,10 +13,11 @@ interface ProductGridProps {
   className?: string;
 }
 
-export const ProductGrid: React.FC<ProductGridProps> = ({ 
-  products, 
+export const ProductGrid: React.FC<ProductGridProps> = ({
+  products,
   isLoading = false,
-  loadingCount = 8,
+  isLoadingMore = false,
+  loadingCount = 15,
   onQuickAdd,
   onClick,
   onFavorite,
@@ -29,7 +31,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
           {title}
         </h2>
       )}
-      
+
       {/* 
         Responsive Grid Details:
         - 1 column below 380px (very small devices)
@@ -38,19 +40,27 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         - 4 columns md/lg, 5 columns xl+
       */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
-        {isLoading
-          ? Array.from({ length: loadingCount }).map((_, index) => (
-              <ProductCard key={`skeleton-${index}`} isLoading={true} />
-            ))
-          : products.map((product) => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
+        {isLoading ? (
+          Array.from({ length: loadingCount }).map((_, index) => (
+            <ProductCard key={`skeleton-initial-${index}`} isLoading={true} />
+          ))
+        ) : (
+          <>
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
                 onQuickAdd={onQuickAdd}
                 onClick={onClick}
                 onFavorite={onFavorite}
               />
             ))}
+            {isLoadingMore &&
+              Array.from({ length: 5 }).map((_, index) => (
+                <ProductCard key={`skeleton-more-${index}`} isLoading={true} />
+              ))}
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -58,9 +58,9 @@ const AuthPage = () => {
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
-    email: "",
     password: "",
     name: "",
+    phoneNumber: "",
     city: "",
     role: 3, // 2=Seller, 3=Buyer
   });
@@ -123,11 +123,11 @@ const AuthPage = () => {
 
     try {
       if (isLogin) {
-        await login(form.email.trim(), form.password);
+        await login(form.phoneNumber.trim(), form.password);
       } else {
         await register({
           fullName: form.name,
-          email: form.email.trim(),
+          phoneNumber: form.phoneNumber.trim(),
           password: form.password,
           city: form.city,
           role: parseInt(form.role),
@@ -157,7 +157,7 @@ const AuthPage = () => {
     >
       {/* ========== خلفية متحركة ========== */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-bl from-[#210609] via-[#310810] to-[#0A0204]"></div>
+        <div className="absolute inset-0 bg-gradient-to-bl from-[#1A150C] via-[#0F0F0F] to-[#050505]"></div>
 
         <motion.div
           animate={{
@@ -221,7 +221,7 @@ const AuthPage = () => {
             <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-1 ring-agate-200/60">
               <img
                 src={logo}
-                alt="شعار TEEB طِيب"
+                alt="شعار TEEB طيب"
                 className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
               />
               <div className="absolute top-0 right-0 w-3 h-3 bg-agate-400 rounded-full border-2 border-white animate-pulse"></div>
@@ -329,23 +329,24 @@ const AuthPage = () => {
                   </div>
                 )}
 
-                {/* البريد الإلكتروني - كلا النموذجين */}
+                {/* رقم الهاتف - كلا النموذجين */}
                 <div>
                   <label className="block text-xs font-bold text-white/60 mb-2 uppercase tracking-wider">
-                    البريد الإلكتروني
+                    رقم الهاتف
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                      <Mail className="w-5 h-5 text-white/30" />
+                      <Phone className="w-5 h-5 text-white/30" />
                     </div>
                     <input
-                      type="email"
-                      name="email"
-                      value={form.email}
+                      type="tel"
+                      name="phoneNumber"
+                      value={form.phoneNumber}
                       onChange={handleChange}
                       required
-                      placeholder="example@domain.com"
-                      className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/60 focus:border-agate-500/40 focus:bg-white/[0.08] transition-all"
+                      dir="ltr"
+                      placeholder="77xxxxxxx"
+                      className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-agate-500/60 focus:border-agate-500/40 focus:bg-white/[0.08] transition-all text-right"
                     />
                   </div>
                 </div>

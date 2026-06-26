@@ -1,4 +1,4 @@
-/**
+﻿/**
  * HomepageSections — أقسام الصفحة الرئيسية
  *
  * EN: "Start Shopping" call-to-action section with two paths:
@@ -41,55 +41,53 @@ const HomepageSections = React.memo(() => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {/* Browse All Products */}
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/products')}
-          className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-agate-500 via-agate-600 to-agate-700 text-white shadow-lg shadow-agate-500/20 hover:shadow-xl hover:shadow-agate-500/30 transition-shadow duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-agate-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-agate-950 text-right"
+          className="group relative w-full overflow-hidden rounded-2xl px-5 py-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:border-agate-200 dark:hover:border-agate-800/60 transition-all duration-200 active:scale-[0.98] focus:outline-none"
         >
-          {/* Animated background pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 group-hover:scale-150 transition-transform duration-700" />
-            <div className="absolute bottom-0 right-0 w-32 h-32 bg-white rounded-full translate-x-1/3 translate-y-1/3 group-hover:scale-150 transition-transform duration-700" />
-          </div>
+          {/* Subtle gradient hover effect */}
+          <div className="absolute inset-0 bg-gradient-to-l from-agate-50/60 to-transparent dark:from-agate-900/10 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2 mb-1.5">
-                <ShoppingBag className="w-5 h-5 opacity-80" />
-                <span className="text-base sm:text-lg font-bold">تصفح جميع المنتجات</span>
+          <div className="relative z-10 flex items-center justify-between w-full">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-agate-50 dark:bg-agate-900/20 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <ShoppingBag className="w-5 h-5 text-agate-600 dark:text-agate-400" />
               </div>
-              <span className="text-xs sm:text-sm text-agate-200/80 font-medium">
-                استعرض جميع المنتجات المتاحة
-              </span>
+              <div className="flex flex-col items-start text-right">
+                <span className="text-[15px] sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-agate-700 dark:group-hover:text-agate-400 transition-colors tracking-tight">
+                  تصفح جميع المنتجات
+                </span>
+                <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5 opacity-90">
+                  استعرض كافة العطور المتاحة
+                </span>
+              </div>
             </div>
-            <ArrowLeft className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:-translate-x-1 transition-all duration-300 flex-shrink-0" />
+            <ArrowLeft className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-agate-600 dark:group-hover:text-agate-400 group-hover:-translate-x-1.5 transition-all duration-300 flex-shrink-0" />
           </div>
         </motion.button>
 
         {/* Exclusive Offers */}
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/products?offers=true')}
-          className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-rose-700 via-rose-800 to-rose-900 text-white shadow-lg shadow-rose-900/20 hover:shadow-xl hover:shadow-rose-900/30 transition-shadow duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#1A1510] text-right"
+          className="group relative w-full overflow-hidden rounded-2xl px-5 py-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:border-rose-200 dark:hover:border-rose-800/60 transition-all duration-200 active:scale-[0.98] focus:outline-none"
         >
-          {/* Animated background pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full translate-x-1/2 -translate-y-1/2 group-hover:scale-150 transition-transform duration-700" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full -translate-x-1/3 translate-y-1/3 group-hover:scale-150 transition-transform duration-700" />
-          </div>
+          {/* Subtle gradient hover effect */}
+          <div className="absolute inset-0 bg-gradient-to-l from-rose-50/60 to-transparent dark:from-rose-900/10 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2 mb-1.5">
-                <BadgePercent className="w-5 h-5 text-rose-200 group-hover:scale-110 transition-transform" />
-                <span className="text-base sm:text-lg font-bold">العروض الحصرية</span>
+          <div className="relative z-10 flex items-center justify-between w-full">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <BadgePercent className="w-5 h-5 text-rose-600 dark:text-rose-400" />
               </div>
-              <span className="text-xs sm:text-sm text-rose-200/80 font-medium">
-                أقوى الخصومات والأسعار المميزة
-              </span>
+              <div className="flex flex-col items-start text-right">
+                <span className="text-[15px] sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-rose-700 dark:group-hover:text-rose-400 transition-colors tracking-tight">
+                  العروض الحصرية
+                </span>
+                <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5 opacity-90">
+                  أقوى الخصومات والأسعار المميزة
+                </span>
+              </div>
             </div>
-            <ArrowLeft className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:-translate-x-1 transition-all duration-300 flex-shrink-0" />
+            <ArrowLeft className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-rose-600 dark:group-hover:text-rose-400 group-hover:-translate-x-1.5 transition-all duration-300 flex-shrink-0" />
           </div>
         </motion.button>
       </div>

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * CategoryCard — بطاقة القسم (مُعاد تصميمها)
  *
  * EN: Full-bleed image card. The category image fills the entire card.
@@ -87,7 +87,7 @@ const CategoryCard = React.memo(({ category, isLoading = false }) => {
   return (
     <button
       onClick={() => navigate(`/category/${encodeURIComponent(name)}`)}
-      className="category-card group relative flex flex-col justify-end rounded-2xl overflow-hidden h-36 sm:h-44 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-agate-500/60 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 shadow-sm hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-black/40 transition-all duration-300 hover:-translate-y-1 active:scale-[0.97] w-full text-right"
+        className="category-card group relative flex flex-col justify-end rounded-2xl overflow-hidden h-36 sm:h-44 cursor-pointer appearance-none bg-transparent border-2 border-dashed border-gray-300 dark:border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-agate-500/60 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 shadow-sm hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-black/40 transition-all duration-300 hover:-translate-y-1 active:scale-[0.97] w-full text-right"
       aria-label={`تصفح قسم ${name}`}
     >
       {/* ── Background: Image or Gradient ── */}

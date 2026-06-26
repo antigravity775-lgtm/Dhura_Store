@@ -31,23 +31,11 @@ const ThemeContext = createContext(undefined);
  *     هذا يعكس المنطق في سكريبت مضاد الوميض في <head>.
  */
 function getInitialTheme() {
-  // EN: Priority 1 — Check explicit user preference in localStorage
-  // AR: الأولوية 1 — تحقق من التفضيل الصريح للمستخدم في localStorage
+  // EN: Always default to light mode
+  // AR: الافتراضي دائماً فاتح
   if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('theme');
-    if (stored === 'dark' || stored === 'light') {
-      return stored;
-    }
-
-    // EN: Priority 2 — Fall back to OS system preference
-    // AR: الأولوية 2 — ارجع لتفضيل نظام التشغيل
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
+    localStorage.setItem('theme', 'light');
   }
-
-  // EN: Priority 3 — Default to light
-  // AR: الأولوية 3 — الافتراضي فاتح
   return 'light';
 }
 
@@ -75,26 +63,8 @@ export const ThemeProvider = ({ children }) => {
     applyThemeToDOM(theme);
   }, [theme]);
 
-  // EN: Listen for OS preference changes (e.g., user toggles OS dark mode)
-  //     Only applies if no manual preference is stored in localStorage.
-  // AR: استمع لتغييرات تفضيل نظام التشغيل (مثلاً المستخدم يبدل الوضع الداكن في النظام)
-  //     يُطبَّق فقط إذا لم يكن هناك تفضيل يدوي محفوظ في localStorage.
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const handleChange = (e) => {
-      // EN: Only follow OS preference if user hasn't set manual preference
-      // AR: اتبع تفضيل النظام فقط إذا لم يحدد المستخدم تفضيلاً يدوياً
-      const stored = localStorage.getItem('theme');
-      if (!stored) {
-        const newTheme = e.matches ? 'dark' : 'light';
-        setTheme(newTheme);
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  // EN: OS preference listener removed to enforce light mode
+  // AR: تمت إزالة مستمع تفضيلات نظام التشغيل لفرض الوضع الفاتح
 
   /**
    * toggleTheme — تبديل الثيم

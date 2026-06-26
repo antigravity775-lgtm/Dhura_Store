@@ -4,4 +4,8 @@ const idParamSchema = Joi.object({
   id: Joi.string().guid().required()
 });
 
-module.exports = { idParamSchema };
+const idOrSlugParamSchema = Joi.object({
+  id: Joi.string().required()
+});
+
+module.exports = { idParamSchema, idOrSlugParamSchema };
