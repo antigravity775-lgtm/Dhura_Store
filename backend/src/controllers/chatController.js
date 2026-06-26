@@ -157,7 +157,10 @@ const processChat = async (req, res) => {
 
     } catch (error) {
         console.error('Gemini API Error:', error);
-        res.status(500).json({ success: false, message: error.message + ' ' + (error.stack || '') });
+        const message = process.env.NODE_ENV === 'development'
+          ? error.message
+          : 'Chat service is temporarily unavailable';
+        res.status(500).json({ success: false, message });
     }
 };
 

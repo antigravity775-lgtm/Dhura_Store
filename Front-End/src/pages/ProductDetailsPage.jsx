@@ -4,9 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   MessageCircle,
+  MapPin,
+  User,
   ShieldCheck,
   Heart,
   Share2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
   Tag,
   Package,
   ShoppingCart,
@@ -14,17 +19,17 @@ import {
   Loader2,
   AlertCircle,
   Star,
-  Truck,
-  RotateCcw,
   Zap,
+  Truck,
 } from "lucide-react";
 import Layout from "../components/Layout";
+import SEO from "../components/SEO";
+import RelatedProducts from "../components/RelatedProducts";
 import * as api from "../services/api";
 import { getOptimizedImageUrl, IMAGE_WIDTHS } from "../utils/cloudinaryUrl";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import SEO from "../components/SEO";
-import RelatedProducts from "../components/RelatedProducts";
 
 // Fallback database for when API is down
 const fallbackDB = {
@@ -70,32 +75,6 @@ function formatPrice(price, currency) {
   return `${formatted} ${symbol}`;
 }
 
-// ─── StarRating ───
-const StarRating = ({ rating, reviewCount }) => {
-  if (!rating) return null;
-  return (
-    <div className="flex items-center gap-2 mb-4">
-      <div className="flex items-center gap-0.5">
-        {[1, 2, 3, 4, 5].map((star) => {
-          const fill = Math.min(1, Math.max(0, rating - (star - 1)));
-          return (
-            <div key={star} className="relative w-4 h-4 flex-shrink-0">
-              <Star className="w-4 h-4 text-slate-200 dark:text-slate-700 absolute inset-0" fill="currentColor" />
-              <div className="overflow-hidden absolute inset-0" style={{ width: `${fill * 100}%` }}>
-                <Star className="w-4 h-4 text-amber-400" fill="currentColor" />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <span className="text-sm font-bold text-amber-500">{rating.toFixed(1)}</span>
-      {reviewCount > 0 && (
-        <span className="text-xs text-slate-400 dark:text-slate-500">({reviewCount.toLocaleString('en-US')} تقييم)</span>
-      )}
-    </div>
-  );
-};
-
 const ProductSkeleton = () => (
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 animate-pulse w-full">
     <div className="w-36 h-5 bg-slate-200 dark:bg-slate-700 rounded-lg mb-8"></div>
@@ -122,6 +101,32 @@ const ProductSkeleton = () => (
     </div>
   </div>
 );
+
+/* ── Star Rating helper ── */
+function StarRating({ rating, reviewCount }) {
+  const numRating = Number(rating) || 0;
+  const full = Math.floor(numRating);
+  const half = numRating - full >= 0.5;
+  return (
+    <div className="flex items-center gap-1.5 mb-3">
+      <div className="flex items-center gap-0.5">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <Star
+            key={i}
+            className={`w-4 h-4 ${i <= full
+              ? 'text-agate-400 fill-agate-400'
+              : i === full + 1 && half
+                ? 'text-agate-400 fill-agate-200'
+                : 'text-slate-300 dark:text-slate-600 fill-current'
+              }`}
+          />
+        ))}
+      </div>
+      <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{numRating.toFixed(1)}</span>
+      <span className="text-xs text-slate-400 dark:text-slate-500">({Number(reviewCount).toLocaleString()} تقييم)</span>
+    </div>
+  );
+}
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -217,18 +222,17 @@ const ProductDetailsPage = () => {
 
   const whatsappMessage = `مرحباً! أنا مهتم بالمنتج: ${product?.title || ""}
 الرابط: ${window.location.href}`;
-  const defaultWhatsAppPhone = "967775181863";
   const formattedContactPhone = useMemo(() => {
     const rawPhone = storeInfo?.contactPhone || "";
     const digits = rawPhone.replace(/\D/g, "");
-    if (!digits) return defaultWhatsAppPhone;
+    if (!digits) return "";
     return digits.startsWith("967") ? digits : `967${digits}`;
   }, [storeInfo?.contactPhone]);
 
   const whatsappBaseUrl = useMemo(() => {
     const link = (storeInfo?.whatsappUrl || "").trim();
     if (!link || link.includes("chat.whatsapp.com")) {
-      return `https://wa.me/${formattedContactPhone || defaultWhatsAppPhone}`;
+      return formattedContactPhone ? `https://wa.me/${formattedContactPhone}` : "";
     }
     const normalized = link.startsWith("http") ? link : `https://${link}`;
     try {
@@ -236,17 +240,18 @@ const ProductDetailsPage = () => {
       if (url.hostname.includes("whatsapp.com")) {
         return normalized;
       }
-      return `https://wa.me/${formattedContactPhone || defaultWhatsAppPhone}`;
+      return formattedContactPhone ? `https://wa.me/${formattedContactPhone}` : "";
     } catch {
       const digits = link.replace(/\D/g, "");
       if (digits) {
         return `https://wa.me/${digits.startsWith("967") ? digits : `967${digits}`}`;
       }
-      return `https://wa.me/${formattedContactPhone || defaultWhatsAppPhone}`;
+      return formattedContactPhone ? `https://wa.me/${formattedContactPhone}` : "";
     }
   }, [storeInfo?.whatsappUrl, formattedContactPhone]);
 
   const productWhatsAppUrl = useMemo(() => {
+    if (!whatsappBaseUrl) return "";
     try {
       const url = new URL(whatsappBaseUrl);
       if (url.searchParams.has("text")) {
@@ -303,7 +308,7 @@ const ProductDetailsPage = () => {
     <Layout>
       <SEO
         title={product.title}
-        description={product.description}
+        description={product.description?.substring(0, 160) || `تسوق ${product.title} بأفضل الأسعار على متجر طيب.`}
         image={imageUrl}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 mb-12 w-full">
@@ -350,15 +355,9 @@ const ProductDetailsPage = () => {
                   {product.categoryName}
                 </span>
               )}
-              {product.stockQuantity > 0 && product.stockQuantity > 5 && (
+              {product.stockQuantity > 0 && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-700">
-                  ✓ متوفر
-                </span>
-              )}
-              {product.stockQuantity > 0 && product.stockQuantity <= 5 && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-700 animate-pulse">
-                  <Zap className="w-3 h-3" />
-                  متبقي {product.stockQuantity} قطعة فقط!
+                  متوفر ({product.stockQuantity})
                 </span>
               )}
               {product.isPromoted && (
@@ -374,15 +373,29 @@ const ProductDetailsPage = () => {
             </div>
 
             {/* العنوان */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mb-3">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mb-2">
               {product.title}
             </h1>
 
-            {/* التقييم */}
-            <StarRating
-              rating={product.rating ?? (3.5 + Math.abs(String(product.id).charCodeAt(0) % 15) / 10)}
-              reviewCount={product.reviewCount ?? Math.floor(Math.abs(String(product.id).charCodeAt(0) * 37) % 900 + 50)}
-            />
+            {/* التقييم / Star Rating */}
+            {(() => {
+              const rating = product.rating ?? (3.5 + Math.abs(String(product.id).charCodeAt(0) % 15) / 10);
+              const reviewCount = product.reviewCount ?? Math.floor(Math.abs(String(product.id).charCodeAt(0) * 37) % 900 + 50);
+              return <StarRating rating={rating} reviewCount={reviewCount} />;
+            })()}
+
+            {/* شارة الشح / Scarcity Badge */}
+            {product.stockQuantity > 0 && product.stockQuantity <= 5 && (
+              <div className="inline-flex items-center gap-1.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-600 dark:text-red-400 rounded-xl px-3 py-1.5 text-xs font-bold mb-3 animate-pulse">
+                <Zap className="w-3.5 h-3.5" />
+                متبقي {product.stockQuantity} قطعة فقط!
+              </div>
+            )}
+            {product.stockQuantity === 0 && (
+              <div className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-xl px-3 py-1.5 text-xs font-bold mb-3">
+                نفد المخزون
+              </div>
+            )}
 
             {/* السعر وأزرار الإجراء */}
             <div className="flex items-center justify-between mb-6">
@@ -459,76 +472,68 @@ const ProductDetailsPage = () => {
               </div>
             )}
 
+            {/* كتلة الثقة / Trust Block */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 my-5">
+              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl px-3 py-2.5 border border-slate-100 dark:border-slate-700">
+                <ShieldCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-300 leading-tight">ضمان الجودة — استرجاع سهل</span>
+              </div>
+              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl px-3 py-2.5 border border-slate-100 dark:border-slate-700">
+                <MessageCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-300 leading-tight">دعم فوري عبر واتساب</span>
+              </div>
+            </div>
+
             <div className="flex-grow"></div>
 
-            {/* أزرار الإجراء */}
-            <div className="mt-4 flex flex-col gap-3 sticky bottom-0 lg:static bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm lg:bg-transparent lg:dark:bg-transparent rounded-t-2xl lg:rounded-none shadow-[0_-8px_24px_rgba(0,0,0,0.08)] lg:shadow-none pt-4 pb-2 lg:py-0 -mx-4 px-4 lg:mx-0 lg:px-0">
-              {/* زر إضافة للسلة */}
+            {/* أزرار الإجراء - Premium CTA Section */}
+            <div className="mt-6 flex items-center gap-3 sticky bottom-0 lg:static z-40 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t border-slate-200/60 dark:border-slate-800/60 lg:border-none p-3 pb-[max(env(safe-area-inset-bottom),12px)] lg:p-0 lg:bg-transparent lg:dark:bg-transparent -mx-4 px-4 lg:mx-0">
+
+              {/* زر إضافة للسلة (Primary CTA) */}
               <motion.button
                 onClick={handleAddToCart}
                 disabled={addedToCart}
-                className={`w-full flex items-center justify-center gap-3 py-4 px-8 rounded-2xl font-bold text-lg shadow-lg transition-all ${addedToCart
-                  ? "bg-green-500 text-white shadow-green-500/25"
-                  : "bg-agate-600 text-white shadow-agate-600/25 hover:bg-agate-500"
-                  } focus:outline-none focus:ring-4 focus:ring-agate-400/50`}
-                whileHover={!addedToCart ? { scale: 1.02 } : {}}
+                className={`flex-1 flex items-center justify-center gap-2 h-[52px] sm:h-14 rounded-xl font-extrabold text-[15px] sm:text-base shadow-lg transition-all ${addedToCart
+                    ? "bg-emerald-500 text-white shadow-emerald-500/20"
+                    : "bg-agate-600 text-white shadow-agate-600/20 hover:bg-agate-500"
+                  } focus:outline-none focus:ring-4 focus:ring-agate-500/30`}
+                whileHover={!addedToCart ? { scale: 1.01 } : {}}
                 whileTap={!addedToCart ? { scale: 0.98 } : {}}
               >
                 {addedToCart ? (
                   <>
-                    <Check className="w-6 h-6" />
-                    تمت الإضافة للسلة ✓
+                    <Check className="w-5 h-5" />
+                    تمت الإضافة للسلة
                   </>
                 ) : (
                   <>
-                    <ShoppingCart className="w-6 h-6" />
+                    <ShoppingCart className="w-5 h-5" />
                     أضف إلى السلة
                   </>
                 )}
               </motion.button>
 
-              {/* زر واتساب */}
+              {/* زر واتساب (Secondary CTA) */}
               <motion.a
                 href={productWhatsAppUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-3 bg-[#25D366] text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-lg shadow-green-500/25 hover:bg-[#1fb855] focus:outline-none focus:ring-4 focus:ring-green-400/50 transition-colors"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="w-[52px] h-[52px] sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0 bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/20 rounded-xl shadow-sm hover:bg-[#25D366] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#25D366]/40 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                aria-label="تواصل عبر واتساب"
               >
-                <MessageCircle className="w-6 h-6" />
-                تواصل عبر واتساب
+                <MessageCircle className="w-[22px] h-[22px] sm:w-6 sm:h-6" />
               </motion.a>
-
-              {/* Trust grid */}
-              <div className="grid grid-cols-3 gap-2 pt-1">
-                {[
-                  { icon: ShieldCheck, label: 'ضمان الجودة',   sub: 'استرجاع سهل' },
-                  { icon: Truck,       label: 'توصيل لكل اليمن', sub: 'سريع وموثوق' },
-                  { icon: MessageCircle, label: 'دعم واتساب',   sub: 'رد فوري' },
-                ].map(({ icon: Icon, label, sub }) => (
-                  <div key={label} className="flex flex-col items-center text-center p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700">
-                    <Icon className="w-4 h-4 text-agate-500 mb-1" />
-                    <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{label}</span>
-                    <span className="text-[9px] text-slate-400 leading-tight">{sub}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* منتجات ذات صلة */}
-      {product.categoryName && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <RelatedProducts
-            categoryName={product.categoryName}
-            currentId={id}
-            title="منتجات من نفس الفئة"
-          />
-        </div>
-      )}
+        {/* ═══════ المنتجات ذات الصلة / Related Products ═══════ */}
+        {product.categoryName && (
+          <RelatedProducts categoryName={product.categoryName} currentId={id} />
+        )}
+      </div>
     </Layout>
   );
 };

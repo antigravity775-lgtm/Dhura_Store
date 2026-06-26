@@ -19,6 +19,8 @@ import {
   Search, LayoutGrid, Loader2, X, ArrowRight, Tag
 } from 'lucide-react';
 import Layout from '../components/Layout';
+import SEO from '../components/SEO';
+import InfiniteScrollTrigger from '../components/InfiniteScrollTrigger';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -32,6 +34,7 @@ function mapToProduct(p) {
   const rawImage = p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
   return {
     id: p.id,
+    slug: p.slug,
     title: p.title,
     image: getOptimizedImageUrl(rawImage, IMAGE_WIDTHS.GRID_CARD),
     price: p.price,
@@ -128,6 +131,10 @@ const CategoryPage = () => {
 
   return (
     <Layout>
+      <SEO 
+        title={`قسم ${decodedCategoryName}`} 
+        description={`تصفح أحدث وأفضل المنتجات في قسم ${decodedCategoryName} على متجر طيب.`}
+      />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
 
         {/* ── Page Header ── */}
@@ -210,29 +217,31 @@ const CategoryPage = () => {
               >
                 <ProductGrid
                   products={mappedGridProducts}
+                  isLoadingMore={isLoadingMore}
                   onQuickAdd={handleQuickAdd}
-                  onClick={(p) => navigate(`/product/${p.id}`)}
+                  onClick={(p) => navigate(`/product/${p.slug || p.id}`)}
                   onFavorite={handleFavoriteToggle}
                 />
                 
-                {/* Load More Button */}
-                {!isReachingEnd && (
-                  <div className="flex justify-center mt-8 pb-4">
-                    <button
-                      onClick={() => setSize(size + 1)}
-                      disabled={isLoadingMore}
-                      className="px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 font-semibold shadow-sm hover:border-agate-300 dark:hover:border-agate-600 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                    >
-                      {isLoadingMore ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          جاري التحميل...
-                        </>
-                      ) : (
-                        'عرض المزيد'
-                      )}
-                    </button>
-                  </div>
+                {/* Infinite Scroll Trigger */}
+                <InfiniteScrollTrigger
+                  onIntersect={() => setSize(size + 1)}
+                  isLoadingMore={isLoadingMore}
+                  isReachingEnd={isReachingEnd}
+                />
+
+                {/* Completion State */}
+                {isReachingEnd && activeProducts.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="flex justify-center mt-12 pb-8"
+                  >
+                    <p className="text-sm sm:text-base font-semibold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-6 py-2.5 rounded-full border border-slate-100 dark:border-slate-800 shadow-sm">
+                      وصلت إلى نهاية المنتجات في هذا القسم ✨
+                    </p>
+                  </motion.div>
                 )}
               </motion.div>
             ) : (

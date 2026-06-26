@@ -27,6 +27,12 @@ class BadRequestError extends AppError {
   }
 }
 
+class ForbiddenError extends AppError {
+  constructor(message = 'Forbidden') {
+    super(message, 403);
+  }
+}
+
 // Error handling middleware
 const errorHandler = (err, req, res, next) => {
   console.error('Error:', err);
@@ -64,6 +70,16 @@ const errorHandler = (err, req, res, next) => {
     message = 'Token expired';
   }
 
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    statusCode = 400;
+    message = 'File too large';
+  }
+
+  if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+    statusCode = 400;
+    message = 'Unexpected file field';
+  }
+
   res.status(statusCode).json({
     success: false,
     message: message,
@@ -83,5 +99,6 @@ module.exports = {
   AppError,
   ValidationError,
   UnauthorizedError,
-  BadRequestError
+  BadRequestError,
+  ForbiddenError
 };

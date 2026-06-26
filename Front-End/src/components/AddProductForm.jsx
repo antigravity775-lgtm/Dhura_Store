@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, Loader2, ImagePlus, AlertCircle, Cloud, CheckCircle, Sparkles } from 'lucide-react';
 import * as api from '../services/api';

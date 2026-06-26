@@ -36,8 +36,8 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, [checkAuthStatus]);
 
-  const login = async (email, password) => {
-    const result = await api.login(email, password);
+  const login = async (phoneNumber, password) => {
+    const result = await api.login(phoneNumber, password);
     // Set user immediately from login result — don't depend on getProfile()
     // because the HttpOnly cookie may not be forwarded on the very next
     // cross-origin request in some browser/Vercel configurations.

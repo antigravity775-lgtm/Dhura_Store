@@ -21,10 +21,13 @@ import {
   Truck, BadgePercent, ShieldCheck, Sparkles, Eye
 } from 'lucide-react';
 import Layout from '../components/Layout';
+import SEO from '../components/SEO';
 import CategoryGrid from '../components/CategoryGrid';
-import { ProductGrid } from '../components/HighConversionGrid';
+import HomepageSections from '../components/HomepageSections';
 import HeroSection from '../components/HeroSection';
 import TrustStrip from '../components/TrustStrip';
+import BannerRenderer from '../components/BannerRenderer';
+import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import * as api from '../services/api';
@@ -39,11 +42,6 @@ const PREVIEW_COUNT = 8;
  * EN: Offer messages that auto-scroll in the slim promotional belt.
  * AR: رسائل العروض التي تتحرك تلقائياً في حزام الترويج النحيل.
  */
-const offerMessages = [
-  { icon: Truck, text: 'شحن مجاني للطلبات فوق 200 ريال', color: 'text-emerald-300' },
-  { icon: ShieldCheck, text: 'بائعون محليون موثوقون في 22 مدينة يمنية', color: 'text-sky-300' },
-  { icon: Sparkles, text: 'ضمان جودة المنتج — استرجع أموالك بسهولة', color: 'text-purple-300' },
-];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -56,6 +54,7 @@ function mapToProduct(p) {
   const rawImage = p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
   return {
     id: p.id,
+    slug: p.slug,
     title: p.title,
     image: getOptimizedImageUrl(rawImage, IMAGE_WIDTHS.GRID_CARD),
     price: p.price,
@@ -87,18 +86,20 @@ function shuffleArray(arr) {
 // OfferBelt — حزام العروض الترويجية
 // ────────────────────────────────────────────────────────────────────
 const OfferBelt = React.memo(({ shippingOfferText }) => {
-  const dynamicMessages = useMemo(() => {
-    const next = [...offerMessages];
-    next[0] = { ...next[0], text: shippingOfferText || next[0].text };
-    return next;
-  }, [shippingOfferText]);
-  const doubledMessages = [...dynamicMessages, ...dynamicMessages];
+  if (!shippingOfferText || !shippingOfferText.trim()) return null;
+
+  // Create an array of identical messages to ensure enough width for continuous scrolling
+  const messages = Array(8).fill({
+    icon: Sparkles,
+    text: shippingOfferText,
+    color: 'text-agate-300'
+  });
 
   return (
     <div className="relative w-full bg-gradient-to-r from-[#120F09] via-[#2A1F0A] to-[#120F09] overflow-hidden select-none">
       <div className="absolute inset-0 bg-gradient-to-r from-agate-500/10 via-agate-400/8 to-agate-500/10 animate-pulse" />
       <div className="offer-belt-track flex items-center gap-12 py-2.5 sm:py-3 whitespace-nowrap">
-        {doubledMessages.map((msg, i) => {
+        {messages.map((msg, i) => {
           const Icon = msg.icon;
           return (
             <span
@@ -126,7 +127,13 @@ const HomePage = () => {
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const [shuffleSeed, setShuffleSeed] = useState(0);
-  const [shippingOfferText, setShippingOfferText] = useState('');
+  const [shippingOfferText, setShippingOfferText] = useState(() => {
+    try {
+      const cached = localStorage.getItem('teeb_store_info');
+      if (cached) return JSON.parse(cached).shippingOfferText || '';
+    } catch { return ''; }
+    return '';
+  });
 
   // ─── Auto-scroll handling ───
   useEffect(() => {
@@ -147,6 +154,7 @@ const HomePage = () => {
     let mounted = true;
     api.getStoreInfo()
       .then((info) => {
+        try { localStorage.setItem('teeb_store_info', JSON.stringify(info)); } catch {}
         if (mounted) setShippingOfferText(info?.shippingOfferText || '');
       })
       .catch(() => {
@@ -215,28 +223,31 @@ const HomePage = () => {
 
   return (
     <Layout>
-      {/* ═══════ قسم البطل / Hero ═══════ */}
-      {/* EN: Hero appears above the offer belt — first thing users see */}
+      <SEO title="الصفحة الرئيسية" />
 
       {/* ═══════ حزام العروض / Offer Belt ═══════ */}
       <OfferBelt shippingOfferText={shippingOfferText} />
+      <BannerRenderer placement="announcement" />
+
+      {/* ═══════ 0. هيرو / Hero Section ═══════ */}
+      <HeroSection />
 
       {/* ═══════ المحتوى الرئيسي / Main Content ═══════ */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12 lg:pb-16">
 
-        {/* 1. Hero */}
-        <HeroSection />
-
-        {/* 2. Trust Strip */}
-        <TrustStrip />
-
-        {/* 3. الأقسام / Category Grid */}
+        {/* ═══════ 2. الأقسام / Category Grid ═══════ */}
         <CategoryGrid
           categories={categories}
           isLoading={categoriesLoading}
         />
 
-        {/* 4. معاينة المنتجات / Product Preview */}
+        {/* ═══════ بانر ترويجي / Promo Banner ═══════ */}
+        <BannerRenderer placement="promo_home" />
+
+        {/* ═══════ 3. ابدأ التسوق / Start Shopping CTAs ═══════ */}
+        <HomepageSections />
+
+        {/* ═══════ 4. معاينة المنتجات / Product Preview ═══════ */}
         <section>
           {productsError && (
             <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">
@@ -284,7 +295,7 @@ const HomePage = () => {
                   <ProductGrid
                     products={mappedPreviewProducts}
                     onQuickAdd={handleQuickAdd}
-                    onClick={(p) => navigate(`/product/${p.id}`)}
+                    onClick={(p) => navigate(`/product/${p.slug || p.id}`)}
                     onFavorite={handleFavoriteToggle}
                   />
                 ) : (

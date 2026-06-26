@@ -14,9 +14,12 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search, LayoutGrid, Loader2, X, ArrowRight, ShoppingBag
+  Search, LayoutGrid, Loader2, X, ArrowRight, ShoppingBag, ArrowUpDown
 } from 'lucide-react';
 import Layout from '../components/Layout';
+import SEO from '../components/SEO';
+import BannerRenderer from '../components/BannerRenderer';
+import InfiniteScrollTrigger from '../components/InfiniteScrollTrigger';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -30,6 +33,7 @@ function mapToProduct(p) {
   const rawImage = p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
   return {
     id: p.id,
+    slug: p.slug,
     title: p.title,
     image: getOptimizedImageUrl(rawImage, IMAGE_WIDTHS.GRID_CARD),
     price: p.price,
@@ -60,7 +64,7 @@ const ProductsPage = () => {
   const [activeCategory, setActiveCategory] = useState('الكل');
   const [searchText, setSearchText] = useState(searchFromUrl);
   const [debouncedSearch, setDebouncedSearch] = useState(searchFromUrl);
-  const [sortOrder, setSortOrder] = useState('default');
+  const [sortOrder, setSortOrder] = useState('default'); // 'default' | 'price-asc' | 'price-desc' | 'rating'
 
   React.useEffect(() => {
     setSearchText(searchFromUrl);
@@ -105,11 +109,12 @@ const ProductsPage = () => {
 
   const filteredProducts = useMemo(() => {
     let result = [...activeProducts];
+
     // Apply sort
     if (sortOrder === 'price-asc') {
-      result.sort((a, b) => (a.discountPrice ?? a.price) - (b.discountPrice ?? b.price));
+      result.sort((a, b) => (a.discountPrice || a.price) - (b.discountPrice || b.price));
     } else if (sortOrder === 'price-desc') {
-      result.sort((a, b) => (b.discountPrice ?? b.price) - (a.discountPrice ?? a.price));
+      result.sort((a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price));
     } else if (sortOrder === 'rating') {
       result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
     } else {
@@ -120,6 +125,7 @@ const ProductsPage = () => {
         return 0;
       });
     }
+
     return result;
   }, [activeProducts, sortOrder]);
 
@@ -156,6 +162,7 @@ const ProductsPage = () => {
 
   return (
     <Layout>
+      <SEO title="جميع المنتجات" description="تصفح جميع العطور الفاخرة المتاحة في متجر طيب." />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
 
         {/* ── Page Header ── */}
@@ -186,6 +193,8 @@ const ProductsPage = () => {
               </div>
               <input
                 type="text"
+                inputMode="search"
+                enterKeyHint="search"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 placeholder="ابحث عن منتج..."
@@ -200,13 +209,29 @@ const ProductsPage = () => {
                 </button>
               )}
             </div>
+            {/* Sort dropdown */}
+            <div className="relative flex-shrink-0">
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                id="sort-select"
+                className="appearance-none w-full sm:w-auto pr-10 pl-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-agate-500/40 focus:border-agate-400 shadow-sm cursor-pointer"
+                aria-label="ترتيب المنتجات"
+              >
+                <option value="default">الترتيب الافتراضي</option>
+                <option value="price-asc">السعر: الأقل أولاً</option>
+                <option value="price-desc">السعر: الأعلى أولاً</option>
+                <option value="rating">التقييم الأعلى</option>
+              </select>
+              <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            </div>
           </div>
         </section>
 
         {/* ── Category Pills ── */}
         <section className="mb-6">
           <div className="relative w-full overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-bone dark:from-slate-950 to-transparent pointer-events-none md:hidden z-10" />
+            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-bone dark:from-slate-950 to-transparent pointer-events-none z-10" />
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
               {categoryNames.map((name) => {
                 const isActive = activeCategory === name;
@@ -214,11 +239,10 @@ const ProductsPage = () => {
                   <button
                     key={name}
                     onClick={() => setActiveCategory(name)}
-                    className={`relative whitespace-nowrap inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 focus:outline-none border ${
-                      isActive
+                    className={`relative whitespace-nowrap inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 focus:outline-none border ${isActive
                         ? 'text-white bg-agate-600 border-agate-600 shadow-md shadow-agate-500/25'
                         : 'text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-agate-300 dark:hover:border-agate-600 hover:bg-agate-50/50 dark:hover:bg-agate-900/30'
-                    }`}
+                      }`}
                   >
                     {name}
                   </button>
@@ -227,6 +251,9 @@ const ProductsPage = () => {
             </div>
           </div>
         </section>
+
+        {/* ── Category Banner ── */}
+        <BannerRenderer placement="category" />
 
         {/* ── Section Header + Counter ── */}
         {productsError && (
@@ -244,7 +271,7 @@ const ProductsPage = () => {
                   : activeCategory === 'الكل' ? 'جميع المنتجات' : activeCategory}
             </h2>
             {offersOnly && (
-              <button 
+              <button
                 onClick={() => {
                   const newParams = new URLSearchParams(searchParams);
                   newParams.delete('offers');
@@ -256,26 +283,12 @@ const ProductsPage = () => {
               </button>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            {/* Sort dropdown */}
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-agate-500/40 cursor-pointer"
-              aria-label="ترتيب المنتجات"
-            >
-              <option value="default">الافتراضي</option>
-              <option value="price-asc">سعر: الأقل أولاً</option>
-              <option value="price-desc">سعر: الأعلى أولاً</option>
-              <option value="rating">التقييم الأعلى</option>
-            </select>
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
-              {productsValidating && !showSkeleton && (
-                <Loader2 className="w-3 h-3 animate-spin text-agate-400" />
-              )}
-              <LayoutGrid className="w-3.5 h-3.5" />
-              {filteredProducts.length} منتج
-            </div>
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
+            {productsValidating && !showSkeleton && (
+              <Loader2 className="w-3 h-3 animate-spin text-agate-400" />
+            )}
+            <LayoutGrid className="w-3.5 h-3.5" />
+            {filteredProducts.length} منتج
           </div>
         </div>
 
@@ -295,29 +308,31 @@ const ProductsPage = () => {
               >
                 <ProductGrid
                   products={mappedGridProducts}
+                  isLoadingMore={isLoadingMore}
                   onQuickAdd={handleQuickAdd}
-                  onClick={(p) => navigate(`/product/${p.id}`)}
+                  onClick={(p) => navigate(`/product/${p.slug || p.id}`)}
                   onFavorite={handleFavoriteToggle}
                 />
-                
-                {/* Load More Button */}
-                {!isReachingEnd && (
-                  <div className="flex justify-center mt-8 pb-4">
-                    <button
-                      onClick={() => setSize(size + 1)}
-                      disabled={isLoadingMore}
-                      className="px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 font-semibold shadow-sm hover:border-agate-300 dark:hover:border-agate-600 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                    >
-                      {isLoadingMore ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          جاري التحميل...
-                        </>
-                      ) : (
-                        'عرض المزيد'
-                      )}
-                    </button>
-                  </div>
+
+                {/* Infinite Scroll Trigger */}
+                <InfiniteScrollTrigger
+                  onIntersect={() => setSize(size + 1)}
+                  isLoadingMore={isLoadingMore}
+                  isReachingEnd={isReachingEnd}
+                />
+
+                {/* Completion State */}
+                {isReachingEnd && activeProducts.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="flex justify-center mt-12 pb-8"
+                  >
+                    <p className="text-sm sm:text-base font-semibold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-6 py-2.5 rounded-full border border-slate-100 dark:border-slate-800 shadow-sm">
+                      وصلت إلى نهاية مجموعتنا المختارة بعناية ✨
+                    </p>
+                  </motion.div>
                 )}
               </motion.div>
             ) : (

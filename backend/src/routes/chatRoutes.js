@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { processChat } = require('../controllers/chatController');
+const { chatLimiter } = require('../middleware/rateLimitMiddleware');
 
-// POST /api/chat
-router.post('/', processChat);
+router.post('/', chatLimiter, processChat);
 
 module.exports = router;

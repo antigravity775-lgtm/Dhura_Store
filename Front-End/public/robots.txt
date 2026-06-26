@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /seller
+Disallow: /profile
+Disallow: /my-orders
+
+Sitemap: https://6eeb.com/sitemap.xml

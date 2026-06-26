@@ -34,7 +34,7 @@ const ProductCard = ({ id, image, title, price, city, condition, product }) => {
   return (
     <motion.div variants={cardVariants}>
       <Link
-        to={`/product/${id}`}
+        to={`/product/${product?.slug || id}`}
         className={`group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col cursor-pointer border block h-full ${
           isPromoted
             ? 'border-agate-300 dark:border-agate-600 ring-2 ring-agate-400/30 dark:ring-agate-500/20 shadow-md shadow-agate-500/10'

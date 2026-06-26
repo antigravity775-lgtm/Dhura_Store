@@ -1,4 +1,4 @@
-/**
+﻿/**
  * CategoryGrid — شبكة الأقسام
  *
  * EN: Responsive grid displaying category cards.

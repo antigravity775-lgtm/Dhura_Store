@@ -44,6 +44,17 @@ class ProductController {
         res.status(404);
         throw new Error('Product not found');
       }
+
+      if (product.isHidden) {
+        const userId = req.user?.id;
+        const isOwner = userId && product.sellerId === userId;
+        const isAdmin = req.user?.role === 'Admin';
+        if (!isOwner && !isAdmin) {
+          res.status(404);
+          throw new Error('Product not found');
+        }
+      }
+
       res.json(product);
     } catch (error) {
       throw error;
@@ -154,13 +165,10 @@ class ProductController {
    */
   async getMyProducts(req, res) {
     try {
-      // In a real app, we'd get the sellerId from the authenticated user
-      // For now, we'll expect it as a query parameter or from auth middleware
-      const sellerId = req.query.sellerId || req.user?.id;
-      
-      if (!sellerId) {
-        res.status(401);
-        throw new Error('Seller ID required');
+      let sellerId = req.user.id;
+
+      if (req.user.role === 'Admin' && req.query.sellerId) {
+        sellerId = req.query.sellerId;
       }
 
       const products = await this.productService.getMyProducts(sellerId);

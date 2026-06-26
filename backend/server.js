@@ -16,8 +16,9 @@ const systemSettingsRoutes = require('./src/routes/systemSettingsRoutes');
 const chatRoutes = require('./src/routes/chatRoutes');
 const favoriteRoutes = require('./src/routes/favoriteRoutes');
 const cartRoutes = require('./src/routes/cartRoutes');
+const bannerRoutes = require('./src/routes/bannerRoutes');
 const { errorHandler, notFound } = require('./src/middleware/errorMiddleware');
-const { sanitizeMiddleware } = require('./src/utils/sanitize');
+const { globalLimiter } = require('./src/middleware/rateLimitMiddleware');
 
 const app = express();
 
@@ -39,31 +40,39 @@ const envAllowedOrigins = (process.env.ALLOWED_ORIGIN
 )
   .map(normalizeOrigin)
   .filter(Boolean);
-const allowedOrigins = Array.from(new Set([...localDevOrigins, ...envAllowedOrigins].map(normalizeOrigin)));
+const productionOrigins = [
+  'https://6eeb.com',
+  'https://www.6eeb.com'
+];
+const allowedOrigins = Array.from(new Set([
+  ...localDevOrigins,
+  ...envAllowedOrigins,
+  ...productionOrigins
+].map(normalizeOrigin)));
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     const normalizedOrigin = normalizeOrigin(origin);
-    // Local dev exception: allow localhost/127.0.0.1 on any port outside production.
     if (process.env.NODE_ENV !== 'production' && localDevOriginPattern.test(normalizedOrigin)) {
       return callback(null, true);
     }
-    if (allowedOrigins.indexOf(normalizedOrigin) === -1) {
+    const isAllowed = allowedOrigins.indexOf(normalizedOrigin) !== -1;
+
+    if (!isAllowed) {
       var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
     return callback(null, true);
   },
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-xsrf-token'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-client-type'],
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(cookieParser());
 
-app.use(sanitizeMiddleware);
+app.use(globalLimiter);
 
 // Images are now served from Cloudinary, no local /uploads serving needed
 
@@ -86,6 +95,7 @@ app.use('/api/SystemSettings', systemSettingsRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/banners', bannerRoutes);
 
 // Error handling
 app.use(notFound);

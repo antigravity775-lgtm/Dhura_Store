@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Suspense } from 'react';
+﻿import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { MessageCircle, X, Send, Bot, User, Loader2 } from 'lucide-react';
 import { chatService } from '../../services/chatService';
 
@@ -46,7 +46,7 @@ const LazyMarkdown = ({ content }) => (
 export const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'مرحباً بك 👋\nأنا مساعد طِيب. اكتب لي ما تبحث عنه وسأقترح لك من المنتجات المتوفرة في المتجر فقط.' }
+    { role: 'assistant', content: 'مرحباً بك 👋\nأنا مساعد طيب. اكتب لي ما تبحث عنه وسأقترح لك من المنتجات المتوفرة في المتجر فقط.' }
   ]);
   const [inputVal, setInputVal] = useState('');
   const [isLoading, setIsLoading] = useState(false);

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { backupUpload } = require('../middleware/uploadMiddleware');
 const adminController = require('../controllers/adminController');
 const orderController = require('../controllers/orderController');
 const asyncHandler = require('../middleware/asyncHandler');
@@ -17,7 +18,14 @@ router.patch('/users/:id/block', validate(idParamSchema, 'params'), asyncHandler
 router.patch('/users/:id/role', validate(idParamSchema, 'params'), validate(changeRoleSchema), asyncHandler(adminController.changeUserRole.bind(adminController)));
 router.delete('/users/:id', validate(idParamSchema, 'params'), asyncHandler(adminController.deleteUser.bind(adminController)));
 router.get('/products', asyncHandler(adminController.getAllProducts.bind(adminController)));
+router.patch('/products/bulk-status', asyncHandler(adminController.bulkUpdateProductStatus.bind(adminController)));
+router.patch('/products/bulk-category', asyncHandler(adminController.bulkUpdateProductCategory.bind(adminController)));
+router.delete('/products/bulk-delete', asyncHandler(adminController.bulkDeleteProducts.bind(adminController)));
 router.delete('/products/:id', validate(idParamSchema, 'params'), asyncHandler(adminController.deleteProduct.bind(adminController)));
+
+// Database Backup & Restore
+router.get('/backup', asyncHandler(adminController.downloadBackup.bind(adminController)));
+router.post('/restore', backupUpload.single('backupFile'), asyncHandler(adminController.restoreBackup.bind(adminController)));
 
 // Order management
 router.get('/orders', asyncHandler(orderController.getAllOrders.bind(orderController)));
