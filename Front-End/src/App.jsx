@@ -35,6 +35,7 @@ const CreditsPage = React.lazy(() => import("./pages/CreditsPage"));
 // AR: ChatWidget يُحمّل كسولاً لأنه يستورد react-markdown + remark-gfm (~45KB gzip).
 //     زر FAB يظهر فوراً عبر غلاف خفيف.
 const ChatWidget = React.lazy(() => import("./components/chat/ChatWidget"));
+const WhatsAppFAB = React.lazy(() => import("./components/WhatsAppFAB"));
 
 /**
  * EN: Minimal loading fallback — a subtle centered spinner.
@@ -113,9 +114,13 @@ const App = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
-      {/* Chat FAB — lazy loaded, Suspense fallback is null so FAB appears without blocking */}
+      {/* Chat FAB */}
       <Suspense fallback={null}>
         <ChatWidget />
+      </Suspense>
+      {/* WhatsApp FAB */}
+      <Suspense fallback={null}>
+        <WhatsAppFAB />
       </Suspense>
     </>
   );

@@ -7,7 +7,7 @@ const SEO = ({ title, description, image, url }) => {
   const currentUrl = url || `https://6eeb.com${location.pathname === '/' ? '' : location.pathname}`;
   
   const defaultTitle = 'TEEB | طِيب — متجر العطور الفاخرة';
-  const defaultDescription = 'في زمن الكوبي خليك مع طِيب , عطور اصلية ١٠٠٪ باقل من آلموقع الرسمي';
+  const defaultDescription = 'متجر طِيب للعطور يوفر عطوراً أصلية 100٪ للرجال والنساء من أشهر الماركات العالمية مع شحن سريع داخل اليمن.';
   const defaultImage = 'https://6eeb.com/og-share.png';
 
   const seoTitle = title ? `${title} | TEEB` : defaultTitle;
