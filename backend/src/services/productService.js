@@ -1,6 +1,8 @@
+
 const prisma = require('../prismaClient');
 const { randomUUID } = require('crypto');
 const { uploadBuffer } = require('../utils/cloudinaryClient');
+const { generateUniqueProductSlug } = require('../utils/slug');
 
 class ProductService {
   constructor() {}
@@ -35,6 +37,14 @@ class ProductService {
       productData.discountPrice = null;
     }
     if (!productData.promotionLabel) productData.promotionLabel = null;
+
+    if (!productData.slug) {
+      productData.slug = await generateUniqueProductSlug(
+        prisma,
+        productData.title,
+        productData.id
+      );
+    }
     
     return await prisma.product.create({ 
       data: productData,

@@ -12,6 +12,7 @@
 
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
+import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../../../utils/cloudinaryUrl';
 
 const PLACEMENT_RATIOS = {
   hero:         'aspect-[16/9] sm:aspect-[21/9] lg:aspect-[3/1] min-h-[300px]',
@@ -49,6 +50,8 @@ export default function BannerPreview({ banner, compact = false }) {
   const ratioClass = compact ? 'aspect-[16/5]' : (PLACEMENT_RATIOS[placement] || 'aspect-[4/1]');
   const alignClass = ALIGN_CLASSES[textAlign] || ALIGN_CLASSES.right;
   const overlayAlpha = Math.round((overlayOpacity / 100) * 255).toString(16).padStart(2, '0');
+  const imageWidth = placement === 'hero' ? IMAGE_WIDTHS.HERO : IMAGE_WIDTHS.BANNER;
+  const optimizedImageUrl = imageUrl ? getOptimizedImageUrl(imageUrl, imageWidth) : '';
 
   return (
     <div
@@ -56,10 +59,11 @@ export default function BannerPreview({ banner, compact = false }) {
       style={{ background: bgColor || '#1A0A0A' }}
     >
       {/* Background Image */}
-      {imageUrl && (
+      {optimizedImageUrl && (
         <img
-          src={imageUrl}
+          src={optimizedImageUrl}
           alt={title}
+          loading={placement === 'hero' ? 'eager' : 'lazy'}
           className="absolute inset-0 w-full h-full object-cover"
           draggable={false}
         />

@@ -72,6 +72,9 @@ const App = () => {
     
     // Store info
     preload('storeInfo', api.getStoreInfo);
+
+    // Hero banner — critical for LCP on the homepage
+    preload('banners-hero', () => api.getBanners('hero'));
     
     // First page of unfiltered products (used in HomePage and ProductsPage)
     // We recreate the SWR key used by useProducts for empty params

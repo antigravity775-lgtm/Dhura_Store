@@ -10,12 +10,14 @@
  *  - Framer Motion fade-in on mount
  */
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Truck, MessageCircle, Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
 import useSWR from 'swr';
 import * as api from '../services/api';
+import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../utils/cloudinaryUrl';
 
 
 const containerVariants = {
@@ -33,6 +35,23 @@ const itemVariants = {
 };
 
 const SESSION_KEY = 'teeb_hero_impression';
+const HERO_CACHE_KEY = 'teeb_hero_banner';
+
+function getCachedHeroBanner() {
+  try {
+    const raw = localStorage.getItem(HERO_CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function cacheHeroBanner(banner) {
+  try {
+    if (banner) localStorage.setItem(HERO_CACHE_KEY, JSON.stringify(banner));
+  } catch { /* ignore quota / private mode */ }
+}
+
 function getTrackedSet() {
   try { return new Set(JSON.parse(sessionStorage.getItem(SESSION_KEY) || '[]')); }
   catch { return new Set(); }
@@ -48,12 +67,20 @@ function markTracked(id) {
 const HeroSection = React.memo(() => {
   const navigate = useNavigate();
 
-  // Fetch the active hero banner
+  const cachedBanner = useMemo(() => getCachedHeroBanner(), []);
+
+  // Fetch the active hero banner (show cached banner instantly on repeat visits)
   const { data: banners, isLoading } = useSWR('banners-hero', () => api.getBanners('hero'), {
-    revalidateOnFocus: false, dedupingInterval: 60000
+    revalidateOnFocus: false,
+    dedupingInterval: 60000,
+    fallbackData: cachedBanner ? [cachedBanner] : undefined,
   });
 
   const banner = banners?.[0] ?? null;
+
+  useEffect(() => {
+    if (banner?.id) cacheHeroBanner(banner);
+  }, [banner]);
 
   // Track impression once per session per banner
   useEffect(() => {
@@ -82,7 +109,7 @@ const HeroSection = React.memo(() => {
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
   const isVisible = banner ? (isMobile ? banner.showOnMobile : banner.showOnDesktop) : true;
 
-  if (isLoading) {
+  if (isLoading && !banner) {
     return (
       <section className="relative w-full overflow-hidden min-h-[380px] sm:min-h-[440px] lg:min-h-[500px] bg-slate-200 dark:bg-slate-900 animate-pulse">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14 h-full flex items-center">
@@ -108,7 +135,10 @@ const HeroSection = React.memo(() => {
   const description = banner.description;
   const ctaText = banner.ctaText || 'تسوق الآن';
   
-  const bgImage = isMobile && banner.mobileImageUrl ? banner.mobileImageUrl : banner.imageUrl;
+  const rawBgImage = isMobile && banner.mobileImageUrl ? banner.mobileImageUrl : banner.imageUrl;
+  const bgImage = rawBgImage
+    ? getOptimizedImageUrl(rawBgImage, isMobile ? IMAGE_WIDTHS.HERO : IMAGE_WIDTHS.DETAIL)
+    : null;
   const bgColor = banner.bgColor || 'transparent';
   
   // Convert 0-100 to hex for alpha (e.g. 50 -> 80)
@@ -128,10 +158,24 @@ const HeroSection = React.memo(() => {
   return (
     <section className="relative w-full overflow-hidden min-h-[380px] sm:min-h-[440px] lg:min-h-[500px] flex flex-col justify-end" style={{ backgroundColor: bgColor !== 'transparent' ? bgColor : undefined }}>
       
+      {bgImage && (
+        <Helmet>
+          <link rel="preload" as="image" href={bgImage} />
+        </Helmet>
+      )}
+
       {/* ── Background Layer ── */}
       {bgImage && (
         <div className="absolute inset-0">
-          <img src={bgImage} alt={banner.title} className="w-full h-full object-cover" fetchPriority="high" />
+          <img
+            src={bgImage}
+            alt={banner.title || 'TEEB طيب'}
+            width={828}
+            height={380}
+            decoding="async"
+            className="w-full h-full object-cover"
+            fetchPriority="high"
+          />
           <div className="absolute inset-0" style={{ backgroundColor: overlayColor }} />
           {/* Subtle gradient to ensure text readability */}
           <div className={`absolute inset-0 bg-gradient-to-t ${banner.textAlign === 'center' ? 'from-black/80 via-black/30' : 'from-black/60'} to-transparent`} />

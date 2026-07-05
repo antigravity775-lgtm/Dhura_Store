@@ -2,85 +2,79 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://6eeb.com/</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://6eeb.com/products</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://6eeb.com/about</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://6eeb.com/contact</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://6eeb.com/privacy-policy</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://6eeb.com/auth</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://6eeb.com/cart</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://6eeb.com/category/%D8%B9%D8%B3%D8%A7%D9%81</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://6eeb.com/category/%D9%84%D8%A7%D9%81%D9%8A%D8%B1%D9%86</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://6eeb.com/category/%D8%A5%D8%A8%D8%B1%D8%A7%D9%82</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://6eeb.com/category/%D8%AF%D8%AE%D9%88%D9%86%20%D8%A7%D9%84%D8%A5%D9%85%D8%A7%D8%B1%D8%A7%D8%AA%D9%8A%D8%A9</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://6eeb.com/category/%D8%A7%D9%84%D8%B9%D8%B2%20%D9%84%D9%84%D8%B9%D9%88%D8%AF</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://6eeb.com/category/%D8%A7%D9%84%D9%85%D8%A7%D8%AC%D8%AF%20%D9%84%D9%84%D8%B9%D9%88%D8%AF</loc>
-    <lastmod>2026-07-03</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://6eeb.com/category/%D8%A8%D8%B1%D8%A7%D9%86%D8%AF%D8%A7%D8%AA%20%D8%B9%D8%A7%D9%84%D9%85%D9%8A%D8%A9</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -157,7 +151,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://6eeb.com/product/zayed</loc>
+
+<loc>https://6eeb.com/product/zayed</loc>
     <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -314,7 +309,8 @@
   </url>
   <url>
     <loc>https://6eeb.com/product/diamond-collection</loc>
-    <lastmod>2026-05-08</lastmod>
+
+<lastmod>2026-05-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -472,7 +468,8 @@
     <loc>https://6eeb.com/product/leather-incense</loc>
     <lastmod>2026-04-25</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+
+<priority>0.8</priority>
   </url>
   <url>
     <loc>https://6eeb.com/product/amber-incense</loc>
@@ -631,7 +628,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://6eeb.com/product/niche-in-business</loc>
+
+<loc>https://6eeb.com/product/niche-in-business</loc>
     <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
