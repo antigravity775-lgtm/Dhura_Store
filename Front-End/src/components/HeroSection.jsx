@@ -1,4 +1,4 @@
-﻿/**
+/**
  * HeroSection — قسم الهيرو للصفحة الرئيسية
  *
  * Full-width brand hero above the fold. Contains:
@@ -223,19 +223,6 @@ const HeroSection = React.memo(() => {
                 {description}
               </motion.p>
             )}
-
-            {/* CTA Button */}
-            <motion.button
-              variants={itemVariants}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={handleCtaClick}
-              id="hero-cta-btn"
-              className="inline-flex items-center gap-2.5 px-8 py-4 bg-gradient-to-l from-agate-500 to-agate-400 text-white font-bold rounded-2xl shadow-xl shadow-agate-900/40 hover:from-agate-400 hover:to-agate-300 transition-all duration-300 text-lg"
-            >
-              <span>{ctaText}</span>
-              {banner?.textAlign === 'left' ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
-            </motion.button>
 
 
           </motion.div>

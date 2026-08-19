@@ -53,7 +53,7 @@ const Layout = React.memo(({ children }) => {
     api
       .getStoreInfo()
       .then((data) => {
-        try { localStorage.setItem('teeb_store_info', JSON.stringify(data)); } catch {}
+        try { localStorage.setItem('teeb_store_info', JSON.stringify(data)); } catch { }
         setStoreInfo(data);
       })
       .catch((err) => console.error("Failed to load store info:", err));
@@ -88,8 +88,8 @@ const Layout = React.memo(({ children }) => {
       {/* شريط التنقل / Navigation Bar */}
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
-            ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-md border-b border-gray-100 dark:border-slate-800"
-            : "bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-gray-200 dark:border-slate-800 shadow-sm"
+          ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-md border-b border-gray-100 dark:border-slate-800"
+          : "bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-gray-200 dark:border-slate-800 shadow-sm"
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -110,9 +110,14 @@ const Layout = React.memo(({ children }) => {
                 />
                 <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-agate-400 rounded-full border-2 border-white animate-pulse hidden md:block"></div>
               </div>
-              <span className="font-extrabold text-xl md:text-2xl tracking-tight text-slate-900 dark:text-agate-100 drop-shadow-sm font-display">
-                TEEB
-              </span>
+              <div className="flex flex-col items-start leading-none justify-center">
+                <span className="font-extrabold text-xl md:text-2xl tracking-tight text-slate-900 dark:text-agate-100 drop-shadow-sm font-display leading-none">
+                  TEEB
+                </span>
+                <span className="text-[10px] md:text-xs font-medium text-agate-500 dark:text-agate-400 tracking-wide mt-1">
+                  طيب
+                </span>
+              </div>
             </Link>
 
             {/* شريط البحث - سطح المكتب / Desktop Search */}
