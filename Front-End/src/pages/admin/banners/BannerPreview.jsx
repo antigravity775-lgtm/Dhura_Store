@@ -11,7 +11,6 @@
  */
 
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
 
 const PLACEMENT_RATIOS = {
   hero:         'aspect-[16/9] sm:aspect-[21/9] lg:aspect-[3/1] min-h-[300px]',
@@ -37,8 +36,6 @@ export default function BannerPreview({ banner, compact = false }) {
     title = '',
     subtitle = '',
     description = '',
-    ctaText = '',
-    ctaUrl = '',
     imageUrl = '',
     bgColor = '#1A0A0A',
     textAlign = 'right',
@@ -90,14 +87,7 @@ export default function BannerPreview({ banner, compact = false }) {
             {description}
           </p>
         )}
-        {ctaText && (
-          <div className="mt-1">
-            <span className="inline-flex items-center gap-1 bg-gold-500 hover:bg-gold-400 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md shadow-lg transition-colors cursor-pointer">
-              {ctaText}
-              {ctaUrl && <ExternalLink className="w-2 h-2" />}
-            </span>
-          </div>
-        )}
+      
       </div>
     </div>
   );
