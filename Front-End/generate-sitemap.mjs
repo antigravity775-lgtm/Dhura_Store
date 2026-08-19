@@ -6,9 +6,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const BASE_URL = 'https://www.gisaah.com';
-// Use local backend in dev so we always have the latest Prisma client with slug field.
-// Override with SITEMAP_API_URL env var to target production.
-const API_URL = process.env.SITEMAP_API_URL || 'http://localhost:5001/api';
+// Use SITEMAP_API_URL if provided, otherwise fallback to the production API.
+// This prevents Vercel builds from failing to connect to localhost.
+const API_URL = process.env.SITEMAP_API_URL || 'https://gisaah-store.vercel.app/api';
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
 

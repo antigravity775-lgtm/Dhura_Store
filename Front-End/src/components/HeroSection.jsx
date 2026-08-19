@@ -42,7 +42,7 @@ function markTracked(id) {
     const set = getTrackedSet();
     set.add(id);
     sessionStorage.setItem(SESSION_KEY, JSON.stringify([...set]));
-  } catch {}
+  } catch { }
 }
 
 const HeroSection = React.memo(() => {
@@ -64,12 +64,12 @@ const HeroSection = React.memo(() => {
     const tracked = getTrackedSet();
     if (tracked.has(banner.id)) return;
     markTracked(banner.id);
-    api.trackBannerEvent(banner.id, 'impression').catch(() => {});
+    api.trackBannerEvent(banner.id, 'impression').catch(() => { });
   }, [banner]);
 
   const handleCtaClick = useCallback(() => {
     if (banner?.id) {
-      api.trackBannerEvent(banner.id, 'click').catch(() => {});
+      api.trackBannerEvent(banner.id, 'click').catch(() => { });
     }
     if (banner?.ctaUrl) {
       window.open(banner.ctaUrl, '_blank', 'noopener,noreferrer');
@@ -103,14 +103,14 @@ const HeroSection = React.memo(() => {
   const headlineParts = banner.title ? banner.title.split('\n') : [];
   const titleLine1 = headlineParts[0] || '';
   const titleLine2 = headlineParts.slice(1).join(' ');
-  
+
   const badgeText = banner.subtitle;
   const description = banner.description;
   const ctaText = banner.ctaText || 'تسوق الآن';
-  
+
   const bgImage = isMobile && banner.mobileImageUrl ? banner.mobileImageUrl : banner.imageUrl;
   const bgColor = banner.bgColor || 'transparent';
-  
+
   // Convert 0-100 to hex for alpha (e.g. 50 -> 80)
   const overlayAlpha = Math.round((banner.overlayOpacity / 100) * 255).toString(16).padStart(2, '0');
   const overlayColor = `#000000${overlayAlpha}`;
@@ -127,7 +127,7 @@ const HeroSection = React.memo(() => {
 
   return (
     <section className="relative w-full overflow-hidden min-h-[380px] sm:min-h-[440px] lg:min-h-[500px] flex flex-col justify-end" style={{ backgroundColor: bgColor !== 'transparent' ? bgColor : undefined }}>
-      
+
       {/* ── Background Layer ── */}
       {bgImage && (
         <div className="absolute inset-0">
