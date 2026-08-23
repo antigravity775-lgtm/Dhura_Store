@@ -77,7 +77,7 @@ const RelatedProducts = React.memo(({ categoryName, currentId }) => {
             <motion.div
               key={p.id}
               className="flex-shrink-0 w-40 sm:w-44 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md overflow-hidden cursor-pointer group transition-shadow"
-              onClick={() => navigate(`/product/${p.id}`)}
+              onClick={() => navigate(`/product/${p.slug || p.id}`)}
               whileHover={{ y: -2 }}
               transition={{ duration: 0.18 }}
             >

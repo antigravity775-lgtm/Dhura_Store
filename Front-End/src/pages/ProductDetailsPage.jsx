@@ -287,7 +287,7 @@ const ProductDetailsPage = () => {
     { name: product.title },
   ];
 
-  const productSlug = product.slug || product.id;
+  const productSlug = product.slug;
 
   return (
     <Layout>

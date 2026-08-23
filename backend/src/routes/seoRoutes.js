@@ -27,4 +27,7 @@ router.get('/robots.txt', asyncHandler(seoController.getRobots));
 // RSS 2.0 feed
 router.get('/rss.xml', asyncHandler(seoController.getRss));
 
+// 301 redirect: UUID-based product URL → slug-based canonical URL
+router.get('/redirect/product/:uuid', asyncHandler(seoController.redirectProductByUuid));
+
 module.exports = router;

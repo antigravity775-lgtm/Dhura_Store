@@ -321,6 +321,37 @@ async function getRss(req, res) {
   return res.send(xml);
 }
 
+// ── GET /api/seo/redirect/product/:uuid ──────────────────────────────────────
+// Server-side 301 redirect: UUID-based product URL → slug-based canonical URL.
+// This ensures Google (and other crawlers) receive a proper HTTP 301 instead of
+// a client-side navigate(), which Google cannot reliably follow.
+async function redirectProductByUuid(req, res) {
+  const { uuid } = req.params;
+
+  // Validate UUID format
+  const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_REGEX.test(uuid)) {
+    return res.status(400).json({ error: 'Invalid UUID format' });
+  }
+
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: uuid },
+      select: { slug: true },
+    });
+
+    if (!product || !product.slug) {
+      // Product not found or has no slug — redirect to homepage
+      return res.redirect(301, `${BASE_URL}/`);
+    }
+
+    return res.redirect(301, `${BASE_URL}/product/${encodeURIComponent(product.slug)}`);
+  } catch (err) {
+    console.error('UUID redirect error:', err);
+    return res.redirect(302, `${BASE_URL}/`);
+  }
+}
+
 module.exports = {
   getSitemap,
   getSitemapIndex,
@@ -329,4 +360,5 @@ module.exports = {
   getSitemapStatic,
   getRobots,
   getRss,
+  redirectProductByUuid,
 };
