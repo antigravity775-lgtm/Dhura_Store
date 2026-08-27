@@ -251,6 +251,25 @@ model RefreshToken {
   @@index([expiresAt])
 }
 
+model Branch {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  address      String
+  city         String
+  latitude     Float?
+  longitude    Float?
+  phone        String?
+  whatsapp     String?
+  workingHours String?
+  mapUrl       String?
+  isActive     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
 model AuditLog {
   id        String   @id @default(uuid()) @db.Uuid
   action    String

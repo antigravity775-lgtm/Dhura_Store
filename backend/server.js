@@ -18,6 +18,7 @@ const favoriteRoutes = require('./src/routes/favoriteRoutes');
 const cartRoutes = require('./src/routes/cartRoutes');
 const bannerRoutes = require('./src/routes/bannerRoutes');
 const seoRoutes = require('./src/routes/seoRoutes');
+const branchRoutes = require('./src/routes/branchRoutes');
 const { errorHandler, notFound } = require('./src/middleware/errorMiddleware');
 const { globalLimiter } = require('./src/middleware/rateLimitMiddleware');
 
@@ -113,6 +114,7 @@ app.use('/api/favorites', favoriteRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/seo', seoRoutes);
+app.use('/api/branches', branchRoutes);
 
 // Error handling
 app.use(notFound);

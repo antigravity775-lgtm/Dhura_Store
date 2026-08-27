@@ -6,6 +6,7 @@ import Layout from '../components/Layout';
 import ProductCard from '../components/ProductCard';
 import * as api from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
+import { useCart } from '../context/CartContext';
 
 function formatPrice(price, currency) {
   const formatted = price >= 1000 ? price.toLocaleString('en-US') : price.toString();
@@ -20,6 +21,7 @@ const containerVariants = {
 
 const FavoritesPage = () => {
   const { favorites, removeFavorite } = useFavorites();
+  const { addToCart } = useCart();
 
   return (
     <Layout>
@@ -51,22 +53,76 @@ const FavoritesPage = () => {
         {favorites.length > 0 ? (
           <AnimatePresence mode="popLayout">
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 xl:gap-7"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
             >
               {favorites.map((product) => (
-                <ProductCard
+                <motion.div
                   key={product.id}
-                  id={product.id}
-                  image={product.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80'}
-                  title={product.title}
-                  price={formatPrice(product.price, product.currency)}
-                  city=""
-                  condition={api.ConditionEn[product.condition] || 'New'}
-                  product={product}
-                />
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow relative group"
+                >
+                  {/* Image (RTL - Right Side) */}
+                  <Link
+                    to={`/product/${product.slug || product.id}`}
+                    className="w-28 sm:w-40 flex-shrink-0 bg-slate-50 dark:bg-slate-800 relative"
+                  >
+                    <img
+                      src={product.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80'}
+                      alt={product.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </Link>
+
+                  {/* Content (Left Side) */}
+                  <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
+                    <div>
+                      <div className="flex justify-between items-start gap-2">
+                        <Link
+                          to={`/product/${product.slug || product.id}`}
+                          className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 line-clamp-2 hover:text-gold-600 dark:hover:text-gold-400 transition-colors leading-snug"
+                        >
+                          {product.title}
+                        </Link>
+                        
+                        <button
+                          onClick={(e) => { e.preventDefault(); removeFavorite(product.id); }}
+                          className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors flex-shrink-0 focus:outline-none"
+                          title="إزالة من المفضلة"
+                        >
+                          <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </button>
+                      </div>
+                      
+                      {/* Optional Brand/Condition text */}
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        {api.ConditionEn[product.condition] || 'جديد'}
+                      </p>
+                    </div>
+
+                    <div className="mt-3 flex items-end justify-between">
+                      <div className="text-base sm:text-lg font-black text-gold-600 dark:text-gold-400 leading-none">
+                        {formatPrice(product.price, product.currency)}
+                      </div>
+                      
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          addToCart({ ...product }, 1);
+                        }}
+                        className="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs sm:text-sm font-bold rounded-xl hover:bg-gold-600 dark:hover:bg-gold-500 transition-colors flex items-center gap-1.5"
+                      >
+                        <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">أضف للسلة</span>
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
               ))}
             </motion.div>
           </AnimatePresence>

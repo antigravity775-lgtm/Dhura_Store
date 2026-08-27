@@ -622,4 +622,39 @@ export async function uploadBannerImage(file) {
   return data.url;
 }
 
+// ─── Branches ─────────────────────────────────────────────────────────────────
+
+/** Get all active branches (public storefront). Pass all=true to get all (admin). */
+export async function getBranches({ all = false } = {}) {
+  const qs = all ? '?all=true' : '';
+  return request(`/branches${qs}`, { headers: jsonHeaders() });
+}
+
+/** Admin: create a new branch. */
+export async function createBranch(data) {
+  return request('/branches', {
+    method: 'POST',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+/** Admin: update an existing branch. */
+export async function updateBranch(id, data) {
+  return request(`/branches/${id}`, {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+/** Admin: delete a branch. */
+export async function deleteBranch(id) {
+  return request(`/branches/${id}`, {
+    method: 'DELETE',
+    headers: jsonHeaders(),
+  });
+}
+
+
 

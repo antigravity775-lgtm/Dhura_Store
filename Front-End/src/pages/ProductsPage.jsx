@@ -59,16 +59,22 @@ const ProductsPage = () => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchFromUrl = searchParams.get('search') || '';
-  const offersOnly = searchParams.get('offers') === 'true';
+  const offersOnly = searchParams.get('offers') === 'true' || searchParams.get('promoted') === 'true';
+  const sortFromUrl = searchParams.get('sort') || 'default';
 
   const [activeCategory, setActiveCategory] = useState('الكل');
   const [searchText, setSearchText] = useState(searchFromUrl);
   const [debouncedSearch, setDebouncedSearch] = useState(searchFromUrl);
-  const [sortOrder, setSortOrder] = useState('default'); // 'default' | 'price-asc' | 'price-desc' | 'rating'
+  const [sortOrder, setSortOrder] = useState(sortFromUrl); // 'default' | 'newest' | 'price-asc' | 'price-desc' | 'rating'
 
   React.useEffect(() => {
     setSearchText(searchFromUrl);
   }, [searchFromUrl]);
+
+  React.useEffect(() => {
+    const sort = searchParams.get('sort');
+    if (sort) setSortOrder(sort);
+  }, [searchParams]);
 
   React.useEffect(() => {
     const handler = setTimeout(() => {
@@ -117,6 +123,12 @@ const ProductsPage = () => {
       result.sort((a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price));
     } else if (sortOrder === 'rating') {
       result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+    } else if (sortOrder === 'newest') {
+      result.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : (a.id || 0);
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : (b.id || 0);
+        return dateB - dateA;
+      });
     } else {
       // Default: promoted first
       result.sort((a, b) => {
@@ -219,6 +231,7 @@ const ProductsPage = () => {
                 aria-label="ترتيب المنتجات"
               >
                 <option value="default">الترتيب الافتراضي</option>
+                <option value="newest">الأحدث</option>
                 <option value="price-asc">السعر: الأقل أولاً</option>
                 <option value="price-desc">السعر: الأعلى أولاً</option>
                 <option value="rating">التقييم الأعلى</option>
@@ -275,6 +288,7 @@ const ProductsPage = () => {
                 onClick={() => {
                   const newParams = new URLSearchParams(searchParams);
                   newParams.delete('offers');
+                  newParams.delete('promoted');
                   setSearchParams(newParams);
                 }}
                 className="text-xs flex items-center gap-1 bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 px-2.5 py-1 rounded-full hover:bg-rose-200 dark:hover:bg-rose-900/50 transition-colors"

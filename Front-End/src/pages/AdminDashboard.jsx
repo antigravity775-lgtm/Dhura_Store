@@ -38,6 +38,7 @@ import {
   ClipboardList,
   Eye,
   Megaphone,
+  MapPin,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import useSWR, { preload } from "swr";
@@ -52,6 +53,7 @@ import AdminProductsTab from "./admin/AdminProductsTab";
 import AdminCategoriesTab from "./admin/AdminCategoriesTab";
 import AdminStoreInfoTab from "./admin/AdminStoreInfoTab";
 import AdminBannersTab from "./admin/AdminBannersTab";
+import AdminBranchesTab from "./admin/AdminBranchesTab";
 
 const logo = "/Logo_192.png";
 
@@ -291,6 +293,7 @@ const AdminDashboard = () => {
     { id: "products",  label: "المحتوى",        icon: Package },
     { id: "categories",label: "التصنيفات",    icon: Tag },
     { id: "banners",   label: "الإعلانات",    icon: Megaphone },
+    { id: "branches",  label: "الفروع",       icon: MapPin },
     { id: "storeInfo", label: "معلومات المتجر", icon: Info },
   ];
 
@@ -349,6 +352,7 @@ const AdminDashboard = () => {
         {activeTab === "products"   && <AdminProductsTab openEditProductModal={openEditProductModal} />}
         {activeTab === "categories" && <AdminCategoriesTab openCategoryForm={openCategoryForm} />}
         {activeTab === "banners"    && <AdminBannersTab showSuccess={showSuccessMsg} setError={setError} />}
+        {activeTab === "branches"   && <AdminBranchesTab />}
         {activeTab === "storeInfo"  && <AdminStoreInfoTab storeInfo={storeInfo} setStoreInfo={setStoreInfo} handleUpdateStoreInfo={handleUpdateStoreInfo} storeInfoSaving={storeInfoSaving} />}
 
       </div>

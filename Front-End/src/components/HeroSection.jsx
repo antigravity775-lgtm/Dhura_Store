@@ -152,7 +152,7 @@ const HeroSection = React.memo(() => {
             animate={{ scale: shouldAnimateHero ? 1 : 1.03 }}
             transition={{ duration: 1.4, ease: "easeOut" }}
           >
-            <img src={bgImage} alt={banner.title} className="w-full h-full object-cover" fetchPriority="high" />
+            <img src={bgImage} alt={banner.title} className="w-full h-full object-cover object-[center_10%] md:object-center" fetchPriority="high" />
           </motion.div>
           <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: overlayColor }} />
           {/* Subtle gradient to ensure text readability */}

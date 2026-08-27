@@ -9,16 +9,19 @@ const DEFAULT_ABOUT = `متجر قصة هو المتجر الالكتروني ا
 في عالم الكوبي - خليك مع قصة ✨`;
 
 const AboutPage = () => {
-  const [aboutText, setAboutText] = useState(DEFAULT_ABOUT);
+  // null = still loading  |  string = data received (from DB or fallback)
+  const [aboutText, setAboutText] = useState(null);
 
   useEffect(() => {
     let mounted = true;
     api.getStoreInfo()
       .then((info) => {
         const t = String(info?.aboutUsText || '').trim();
-        if (mounted && t) setAboutText(t);
+        if (mounted) setAboutText(t || DEFAULT_ABOUT);
       })
-      .catch(() => { /* ignore */ });
+      .catch(() => {
+        if (mounted) setAboutText(DEFAULT_ABOUT);
+      });
     return () => { mounted = false; };
   }, []);
 
@@ -33,10 +36,21 @@ const AboutPage = () => {
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
           من نحن
         </h1>
-        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm p-6 sm:p-8">
-          <p className="text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line text-base sm:text-lg">
-            {aboutText}
-          </p>
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm p-6 sm:p-8 min-h-[120px]">
+          {aboutText === null ? (
+            /* Skeleton — prevents flash of wrong text */
+            <div className="space-y-3 animate-pulse">
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-full" />
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-5/6" />
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-4/5" />
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-full" />
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-3/4" />
+            </div>
+          ) : (
+            <p className="text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line text-base sm:text-lg">
+              {aboutText}
+            </p>
+          )}
         </div>
       </div>
     </Layout>
@@ -44,4 +58,3 @@ const AboutPage = () => {
 };
 
 export default AboutPage;
-

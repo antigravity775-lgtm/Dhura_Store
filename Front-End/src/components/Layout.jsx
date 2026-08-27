@@ -17,6 +17,13 @@ import {
   Package,
   Store,
   Crown,
+  Home,
+  BadgePercent,
+  Sparkles,
+  Info,
+  Phone,
+  MapPin,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -324,7 +331,7 @@ const Layout = React.memo(({ children }) => {
               {/* المفضلة / Favorites */}
               <Link
                 to="/favorites"
-                className="hidden sm:flex p-2 text-gray-400 dark:text-gold-700 hover:text-rose-500 dark:hover:text-rose-400 transition-colors focus:outline-none rounded-xl hover:bg-rose-50 dark:hover:bg-rose-500/10 relative"
+                className="flex p-1.5 sm:p-2 text-gray-400 dark:text-gold-700 hover:text-rose-500 dark:hover:text-rose-400 transition-colors focus:outline-none rounded-xl hover:bg-rose-50 dark:hover:bg-rose-500/10 relative"
                 title="المفضلة"
               >
                 <Heart className="h-5 w-5" />
@@ -388,103 +395,98 @@ const Layout = React.memo(({ children }) => {
 
           {/* قائمة الجوال / Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-100 dark:border-slate-800 space-y-3">
-              <form onSubmit={handleSearch} className="relative w-full">
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400 dark:text-slate-500" />
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pr-12 pl-4 py-3 border border-gray-200 dark:border-slate-700 rounded-full bg-gray-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500 shadow-sm transition-shadow text-right text-sm"
-                  placeholder="ابحث عن منتجات، فئات، بائعين..."
-                  autoFocus
-                />
-              </form>
+            <div className="md:hidden py-4 border-t border-gray-100 dark:border-slate-800 space-y-3 max-h-[calc(100vh-4rem)] overflow-y-auto pb-24">
 
-              <div className="flex flex-col gap-2">
-                {isAuthenticated ? (
-                  <>
-                    <Link
-                      to="/profile"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 bg-gold-50 dark:bg-gold-900/40 rounded-xl"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center text-white text-sm font-bold">
-                        {user?.fullName?.charAt(0) || "?"}
-                      </div>
-                      <div>
-                        <div className="text-sm font-bold text-slate-800 dark:text-gold-100">
-                          {user?.fullName}
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-gold-600">
-                          {user?.role === "Admin"
-                            ? "مسؤول"
-                            : user?.role === "Seller"
-                              ? "بائع"
-                              : "مشتري"}
-                        </div>
-                      </div>
-                    </Link>
+              <div className="flex flex-col gap-1 px-2 pb-4">
+                
+                {/* 1. الرئيسية */}
+                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <Home className="w-5 h-5 text-gold-500" /> الرئيسية
+                </Link>
+                
+                {/* 2. جميع المنتجات */}
+                <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <ShoppingBag className="w-5 h-5 text-gold-500" /> جميع المنتجات
+                </Link>
+                
+                {/* 3. العروض والخصومات */}
+                <Link to="/products?promoted=true" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <BadgePercent className="w-5 h-5 text-rose-500" /> العروض والخصومات
+                </Link>
+                
+                {/* 4. المنتجات الجديدة */}
+                <Link to="/products?sort=newest" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <Sparkles className="w-5 h-5 text-amber-500" /> المنتجات الجديدة
+                </Link>
+                
+                <div className="h-px bg-gray-100 dark:bg-slate-800 my-1 mx-2"></div>
 
-                    {isAdmin && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2.5 text-sm font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl transition-colors"
-                      >
-                        <Crown className="w-4 h-4" /> لوحة المسؤول
-                      </Link>
-                    )}
-                    {isSeller && !isAdmin && (
-                      <Link
-                        to="/seller"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
-                      >
-                        <Store className="w-4 h-4" /> لوحة البائع
-                      </Link>
-                    )}
-                    {(!isSeller || isAdmin) && (
-                      <Link
-                        to="/my-orders"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
-                      >
-                        <Package className="w-4 h-4" /> طلباتي
-                      </Link>
-                    )}
+                {/* 5. طلباتي */}
+                <Link to={isAuthenticated ? "/my-orders" : "/auth"} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <Package className="w-5 h-5 text-slate-400" /> طلباتي
+                </Link>
+                
+                {/* 6. المفضلة */}
+                <Link to="/favorites" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <Heart className="w-5 h-5 text-slate-400" /> المفضلة
+                  {favoritesCount > 0 && (
+                    <span className="mr-auto text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded-full">
+                      {favoritesCount}
+                    </span>
+                  )}
+                </Link>
 
-                    <Link
-                      to="/favorites"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
-                    >
-                      <Heart className="w-4 h-4" /> المفضلة
-                      {favoritesCount > 0 && (
-                        <span className="mr-auto text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded-full">
-                          {favoritesCount}
-                        </span>
-                      )}
-                    </Link>
+                <div className="h-px bg-gray-100 dark:bg-slate-800 my-1 mx-2"></div>
 
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-2 px-3 py-2.5 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors w-full text-right"
-                    >
-                      <LogOut className="w-4 h-4" /> تسجيل الخروج
-                    </button>
-                  </>
-                ) : (
-                  <Link
-                    to="/auth"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 px-4 py-3 bg-gold-500 text-white font-bold rounded-xl text-sm hover:bg-gold-400 transition-all"
-                  >
-                    <LogIn className="w-4 h-4" /> تسجيل الدخول
+                {/* 7. من نحن */}
+                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <Info className="w-5 h-5 text-slate-400" /> من نحن
+                </Link>
+                
+                {/* 8. تواصل معنا */}
+                <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <Phone className="w-5 h-5 text-slate-400" /> تواصل معنا
+                </Link>
+                
+                {/* 9. فروعنا / موقعنا */}
+                <Link to="/branches" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <MapPin className="w-5 h-5 text-slate-400" /> فروعنا / موقعنا
+                </Link>
+                
+                <div className="h-px bg-gray-100 dark:bg-slate-800 my-1 mx-2"></div>
+
+                {/* 10. الإعدادات */}
+                <Link to={isAuthenticated ? "/profile" : "/auth"} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <Settings className="w-5 h-5 text-slate-400" /> الإعدادات
+                </Link>
+
+                {/* Admin/Seller Dashboards (Keep for specific users) */}
+                {(isAdmin || isSeller) && (
+                  <div className="h-px bg-gray-100 dark:bg-slate-800 my-1 mx-2"></div>
+                )}
+                {isAdmin && (
+                  <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl transition-colors">
+                    <Crown className="w-5 h-5" /> لوحة المسؤول
                   </Link>
                 )}
+                {isSeller && !isAdmin && (
+                  <Link to="/seller" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                    <Store className="w-5 h-5" /> لوحة البائع
+                  </Link>
+                )}
+
+                {/* Auth actions */}
+                <div className="mt-2">
+                  {isAuthenticated ? (
+                    <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors w-full text-right">
+                      <LogOut className="w-5 h-5" /> تسجيل الخروج
+                    </button>
+                  ) : (
+                    <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-center gap-2 px-4 py-3 bg-gold-500 text-white font-bold rounded-xl text-sm hover:bg-gold-400 transition-all mx-2">
+                      <LogIn className="w-4 h-4" /> تسجيل الدخول
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -503,7 +505,7 @@ const Layout = React.memo(({ children }) => {
             enterKeyHint="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full pr-10 pl-4 py-2 border border-gray-200 dark:border-slate-700 rounded-full bg-gray-50/80 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-sm text-right"
+            className="block w-full pr-10 pl-4 py-2 border border-gray-200 dark:border-slate-700 rounded-full bg-gray-50/80 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-base text-right"
             placeholder="ابحث عن عطور فاخرة..."
           />
         </form>
