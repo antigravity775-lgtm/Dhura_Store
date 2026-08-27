@@ -82,6 +82,21 @@ const HeroSection = React.memo(() => {
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
   const isVisible = banner ? (isMobile ? banner.showOnMobile : banner.showOnDesktop) : true;
 
+  // Intro Animation sync
+  const [shouldAnimateHero, setShouldAnimateHero] = React.useState(() => {
+    return sessionStorage.getItem('gisaah_intro_seen') ? true : false;
+  });
+
+  React.useEffect(() => {
+    if (!shouldAnimateHero) {
+      const handleMoving = () => {
+        setShouldAnimateHero(true);
+      };
+      window.addEventListener("gisaahLogoMoving", handleMoving);
+      return () => window.removeEventListener("gisaahLogoMoving", handleMoving);
+    }
+  }, [shouldAnimateHero]);
+
   if (isLoading) {
     return (
       <section className="relative w-full overflow-hidden min-h-[380px] sm:min-h-[440px] lg:min-h-[500px] bg-slate-200 dark:bg-slate-900 animate-pulse">
@@ -130,11 +145,18 @@ const HeroSection = React.memo(() => {
 
       {/* ── Background Layer ── */}
       {bgImage && (
-        <div className="absolute inset-0">
-          <img src={bgImage} alt={banner.title} className="w-full h-full object-cover" fetchPriority="high" />
-          <div className="absolute inset-0" style={{ backgroundColor: overlayColor }} />
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div
+            className="w-full h-full"
+            initial={{ scale: sessionStorage.getItem('gisaah_intro_seen') ? 1 : 1.03 }}
+            animate={{ scale: shouldAnimateHero ? 1 : 1.03 }}
+            transition={{ duration: 1.4, ease: "easeOut" }}
+          >
+            <img src={bgImage} alt={banner.title} className="w-full h-full object-cover" fetchPriority="high" />
+          </motion.div>
+          <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: overlayColor }} />
           {/* Subtle gradient to ensure text readability */}
-          <div className={`absolute inset-0 bg-gradient-to-t ${banner.textAlign === 'center' ? 'from-black/80 via-black/30' : 'from-black/60'} to-transparent`} />
+          <div className={`absolute inset-0 pointer-events-none bg-gradient-to-t ${banner.textAlign === 'center' ? 'from-black/80 via-black/30' : 'from-black/60'} to-transparent`} />
         </div>
       )}
 
@@ -147,7 +169,7 @@ const HeroSection = React.memo(() => {
             className={`flex-1 flex flex-col ${align.items} ${align.text} relative z-10 w-full`}
             variants={containerVariants}
             initial="hidden"
-            animate="visible"
+            animate={shouldAnimateHero ? "visible" : "hidden"}
           >
             {/* Badge */}
             {badgeText && (
