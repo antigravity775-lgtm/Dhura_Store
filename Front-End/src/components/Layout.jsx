@@ -138,7 +138,7 @@ const Layout = React.memo(({ children }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                <span className="font-serif leading-none text-4xl md:text-5xl tracking-widest text-slate-900 dark:text-white drop-shadow-sm font-medium">
+                <span className="whitespace-nowrap font-serif leading-none text-2xl sm:text-3xl md:text-5xl tracking-widest text-slate-900 dark:text-white drop-shadow-sm font-medium">
                   GISAAH
                 </span>
               </motion.div>
@@ -152,7 +152,7 @@ const Layout = React.memo(({ children }) => {
                   opacity: { duration: 0.15, delay: 0.1 },
                   scale: { type: "spring", damping: 14, stiffness: 110, delay: 0.15 }
                 }}
-                className="relative w-28 h-28 md:w-36 md:h-36 rounded-2xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-2 ring-yellow-400/50"
+                className="relative w-16 h-16 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-[0.8rem] md:rounded-2xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-2 ring-yellow-400/50"
               >
                 <img
                   src={logo}
@@ -168,7 +168,7 @@ const Layout = React.memo(({ children }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                <span className="font-serif leading-none text-[3.5rem] md:text-[4.5rem] text-slate-900 dark:text-white drop-shadow-sm font-bold relative -top-1 md:-top-2">
+                <span className="whitespace-nowrap font-serif leading-none text-[2rem] sm:text-[2.75rem] md:text-[4.5rem] text-slate-900 dark:text-white drop-shadow-sm font-bold relative -top-0.5 md:-top-2">
                   قــصـــــة
                 </span>
               </motion.div>
@@ -233,7 +233,7 @@ const Layout = React.memo(({ children }) => {
                     layoutId="gisaah-brand-text-en"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
                   >
-                    <span className="font-serif leading-none text-sm sm:text-base md:text-2xl tracking-wider md:tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm">
+                    <span className="whitespace-nowrap font-serif leading-none text-xs sm:text-sm md:text-2xl tracking-wider md:tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm">
                       GISAAH
                     </span>
                   </motion.div>
@@ -260,7 +260,7 @@ const Layout = React.memo(({ children }) => {
                     layoutId="gisaah-brand-text-ar"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
                   >
-                    <span className="font-serif leading-none text-lg sm:text-xl md:text-[2.25rem] text-slate-900 dark:text-white font-bold drop-shadow-sm relative -top-px md:-top-1">
+                    <span className="whitespace-nowrap font-serif leading-none text-base sm:text-lg md:text-[2.25rem] text-slate-900 dark:text-white font-bold drop-shadow-sm relative -top-px md:-top-1">
                       قــصـــــة
                     </span>
                   </motion.div>
