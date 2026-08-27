@@ -138,7 +138,7 @@ const Layout = React.memo(({ children }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                <span className="font-serif text-4xl md:text-5xl tracking-widest text-slate-900 dark:text-white drop-shadow-sm font-medium">
+                <span className="font-serif leading-none text-4xl md:text-5xl tracking-widest text-slate-900 dark:text-white drop-shadow-sm font-medium">
                   GISAAH
                 </span>
               </motion.div>
@@ -168,7 +168,7 @@ const Layout = React.memo(({ children }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                <span className="font-serif text-[3.5rem] md:text-[4.5rem] leading-none text-slate-900 dark:text-white drop-shadow-sm font-bold pt-2 md:pt-3 block">
+                <span className="font-serif leading-none text-[3.5rem] md:text-[4.5rem] text-slate-900 dark:text-white drop-shadow-sm font-bold relative -top-1 md:-top-2">
                   قــصـــــة
                 </span>
               </motion.div>
@@ -226,14 +226,14 @@ const Layout = React.memo(({ children }) => {
             >
               {/* The Actual Travelling Logo */}
               {introStage !== "center" && (
-                <div className="flex items-center gap-3 md:gap-4" dir="ltr">
+                <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4" dir="ltr">
 
                   {/* English Text (Left) */}
                   <motion.div
                     layoutId="gisaah-brand-text-en"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
                   >
-                    <span className="font-serif text-xl md:text-2xl tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm">
+                    <span className="font-serif leading-none text-sm sm:text-base md:text-2xl tracking-wider md:tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm">
                       GISAAH
                     </span>
                   </motion.div>
@@ -242,7 +242,7 @@ const Layout = React.memo(({ children }) => {
                   <motion.div
                     layoutId="gisaah-brand-icon"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
-                    className="relative w-10 h-10 md:w-14 md:h-14 rounded-lg md:rounded-xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-yellow-400/50"
+                    className="relative w-7 h-7 sm:w-8 sm:h-8 md:w-14 md:h-14 rounded-md md:rounded-xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-yellow-400/50"
                   >
                     <img
                       src={logo}
@@ -260,7 +260,7 @@ const Layout = React.memo(({ children }) => {
                     layoutId="gisaah-brand-text-ar"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
                   >
-                    <span className="font-serif text-[1.75rem] md:text-[2.25rem] leading-none text-slate-900 dark:text-white font-bold drop-shadow-sm pt-1 md:pt-1.5 block">
+                    <span className="font-serif leading-none text-lg sm:text-xl md:text-[2.25rem] text-slate-900 dark:text-white font-bold drop-shadow-sm relative -top-px md:-top-1">
                       قــصـــــة
                     </span>
                   </motion.div>
