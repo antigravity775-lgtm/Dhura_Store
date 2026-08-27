@@ -125,11 +125,25 @@ const Layout = React.memo(({ children }) => {
       </AnimatePresence>
 
       {/* Centered Logo for Intro */}
+      {/* Centered Logo for Intro */}
       <AnimatePresence>
         {introStage === "center" && (
           <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center pointer-events-none">
-            <div className="flex flex-col items-center gap-6 mt-[-10vh]">
-              {/* Icon */}
+            <div className="flex flex-row items-center gap-4 md:gap-6 mt-[-10vh]" dir="ltr">
+
+              {/* English Text (Left) */}
+              <motion.div
+                layoutId="gisaah-brand-text-en"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+              >
+                <span className="font-serif text-4xl md:text-5xl tracking-widest text-slate-900 dark:text-white drop-shadow-sm font-medium">
+                  GISAAH
+                </span>
+              </motion.div>
+
+              {/* Icon (Center) */}
               <motion.div
                 layoutId="gisaah-brand-icon"
                 initial={{ opacity: 0, scale: 0.78 }}
@@ -138,30 +152,27 @@ const Layout = React.memo(({ children }) => {
                   opacity: { duration: 0.15, delay: 0.1 },
                   scale: { type: "spring", damping: 14, stiffness: 110, delay: 0.15 }
                 }}
-                className="relative w-28 h-28 md:w-36 md:h-36 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-1 ring-gold-200/60"
+                className="relative w-28 h-28 md:w-36 md:h-36 rounded-2xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-2 ring-yellow-400/50"
               >
                 <img
                   src={logo}
-                  alt="شعار GISAAH قصة"
+                  alt="شعار GISAAH"
                   className="w-full h-full object-cover object-center scale-[1.16]"
                 />
               </motion.div>
 
-              {/* Text */}
+              {/* Arabic Text (Right) */}
               <motion.div
-                layoutId="gisaah-brand-text"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                layoutId="gisaah-brand-text-ar"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
-                className="flex flex-col items-center justify-center"
               >
-                <span className="font-extrabold text-4xl md:text-5xl tracking-wider text-slate-900 dark:text-gold-100 drop-shadow-sm font-display leading-tight">
-                  GISAAH
-                </span>
-                <span className="text-sm md:text-base font-bold text-gold-500/80 dark:text-gold-400/80 tracking-[0.3em] leading-none mt-2">
-                  قـصــة
+                <span className="font-serif text-[3.5rem] md:text-[4.5rem] leading-none text-slate-900 dark:text-white drop-shadow-sm font-bold pt-2 md:pt-3 block">
+                  قــصـــــة
                 </span>
               </motion.div>
+
             </div>
           </div>
         )}
@@ -169,88 +180,97 @@ const Layout = React.memo(({ children }) => {
 
       {/* شريط التنقل / Navigation Bar */}
       <header
-        className={`sticky top-0 transition-all duration-300 ${
-          isIntroActive ? "z-[10000]" : "z-50"
-        } ${
-          isIntroActive && introStage === "center"
+        className={`sticky top-0 transition-all duration-300 ${isIntroActive ? "z-[10000]" : "z-50"
+          } ${isIntroActive && introStage === "center"
             ? "bg-transparent border-transparent shadow-none"
             : scrolled
-            ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-md border-b border-gray-100 dark:border-slate-800"
-            : "bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-gray-200 dark:border-slate-800 shadow-sm"
-        }`}
+              ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-md border-b border-gray-100 dark:border-slate-800"
+              : "bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-gray-200 dark:border-slate-800 shadow-sm"
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 relative">
-            {/* الشعار / Logo */}
+          <div className="flex items-center justify-between h-16 sm:h-20 relative">
+
+            {/* 1. START / RIGHT SIDE (Search + Mobile Menu) */}
+            <div className={`flex items-center gap-2 sm:gap-4 flex-1 transition-opacity duration-700 ${introStage === 'center' ? 'opacity-0' : 'opacity-100'}`}>
+              {/* زر القائمة - الجوال / Mobile Menu Button */}
+              <button
+                className="md:hidden p-2 text-gray-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:bg-gray-100 dark:focus:bg-slate-800 rounded-xl transition-colors"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label="فتح القائمة"
+              >
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+
+              {/* شريط البحث - سطح المكتب / Desktop Search */}
+              <div className="hidden md:block w-full max-w-sm">
+                <form onSubmit={handleSearch} className="relative w-full group">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <Search className="h-5 w-5 text-gray-400 dark:text-slate-500 group-focus-within:text-gold-500 transition-colors" />
+                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="block w-full pr-11 pl-4 py-2.5 border border-gray-200 dark:border-gold-800 rounded-full bg-gray-50/80 dark:bg-gold-950/60 text-slate-900 dark:text-gold-50 placeholder-gray-400 dark:placeholder-gold-600 focus:outline-none focus:bg-white dark:focus:bg-gold-950/80 focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-sm text-right"
+                    placeholder="ابحث عن منتجات..."
+                  />
+                </form>
+              </div>
+            </div>
+
+            {/* 2. CENTER / LOGO (Absolutely positioned) */}
             <Link
               to="/"
-              className="flex-shrink-0 flex items-center gap-3 cursor-pointer group select-none relative"
+              className="flex-shrink-0 flex items-center gap-3 cursor-pointer group select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
             >
-              {/* Invisible Placeholder to maintain exact layout dimensions without shifting */}
-              <div className="flex items-center gap-3 opacity-0 pointer-events-none">
-                <div className="w-10 h-10 md:w-11 md:h-11" />
-                <div className="flex flex-col justify-center">
-                  <span className="font-extrabold text-lg md:text-xl tracking-wider font-display leading-tight">
-                    GISAAH
-                  </span>
-                  <span className="text-[10px] md:text-[11px] font-bold tracking-widest leading-none">
-                    قـصــة
-                  </span>
-                </div>
-              </div>
-
               {/* The Actual Travelling Logo */}
               {introStage !== "center" && (
-                <div className="absolute inset-0 flex items-center gap-3">
+                <div className="flex items-center gap-3 md:gap-4" dir="ltr">
+
+                  {/* English Text (Left) */}
+                  <motion.div
+                    layoutId="gisaah-brand-text-en"
+                    transition={{ type: "spring", damping: 24, stiffness: 140 }}
+                  >
+                    <span className="font-serif text-xl md:text-2xl tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm">
+                      GISAAH
+                    </span>
+                  </motion.div>
+
+                  {/* Icon (Center) */}
                   <motion.div
                     layoutId="gisaah-brand-icon"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
-                    className="relative w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-gold-200/60"
+                    className="relative w-10 h-10 md:w-14 md:h-14 rounded-lg md:rounded-xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-yellow-400/50"
                   >
                     <img
                       src={logo}
-                      alt="شعار GISAAH قصة"
-                      width="44"
-                      height="44"
+                      alt="شعار GISAAH"
+                      width="56"
+                      height="56"
                       fetchpriority="high"
                       className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
                     />
-                    <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-gold-400 rounded-full border-2 border-white animate-pulse hidden md:block"></div>
+                    <div className="absolute top-0 right-0 w-2 h-2 bg-yellow-400 rounded-full border border-white animate-pulse hidden md:block"></div>
                   </motion.div>
+
+                  {/* Arabic Text (Right) */}
                   <motion.div
-                    layoutId="gisaah-brand-text"
+                    layoutId="gisaah-brand-text-ar"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
-                    className="flex flex-col justify-center"
                   >
-                    <span className="font-extrabold text-lg md:text-xl tracking-wider text-slate-900 dark:text-gold-100 drop-shadow-sm font-display leading-tight">
-                      GISAAH
-                    </span>
-                    <span className="text-[10px] md:text-[11px] font-bold text-gold-500/80 dark:text-gold-400/80 tracking-widest leading-none">
-                      قـصــة
+                    <span className="font-serif text-[1.75rem] md:text-[2.25rem] leading-none text-slate-900 dark:text-white font-bold drop-shadow-sm pt-1 md:pt-1.5 block">
+                      قــصـــــة
                     </span>
                   </motion.div>
+
                 </div>
               )}
             </Link>
 
-            {/* شريط البحث - سطح المكتب / Desktop Search */}
-            <div className={`hidden md:flex flex-1 max-w-2xl mx-8 transition-opacity duration-700 ${introStage === 'center' ? 'opacity-0' : 'opacity-100'}`}>
-              <form onSubmit={handleSearch} className="relative w-full group">
-                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400 dark:text-slate-500 group-focus-within:text-gold-500 transition-colors" />
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pr-11 pl-4 py-2.5 border border-gray-200 dark:border-gold-800 rounded-full bg-gray-50/80 dark:bg-gold-950/60 text-slate-900 dark:text-gold-50 placeholder-gray-400 dark:placeholder-gold-600 focus:outline-none focus:bg-white dark:focus:bg-gold-950/80 focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-sm text-right"
-                  placeholder="ابحث عن منتجات، فئات، بائعين..."
-                />
-              </form>
-            </div>
-
-            {/* أزرار الجانب الأيسر / Left-side Actions */}
-            <div className={`flex items-center gap-2 sm:gap-3 transition-opacity duration-700 ${introStage === 'center' ? 'opacity-0' : 'opacity-100'}`}>
+            {/* 3. END / LEFT SIDE (Actions) */}
+            <div className={`flex items-center justify-end gap-2 sm:gap-3 flex-1 transition-opacity duration-700 ${introStage === 'center' ? 'opacity-0' : 'opacity-100'}`}>
               {/* EN: Dark Mode Toggle Button — accessible in both desktop and mobile
                   AR: زر تبديل الوضع الداكن — متاح في سطح المكتب والجوال */}
               <button
@@ -362,18 +382,7 @@ const Layout = React.memo(({ children }) => {
                 </Link>
               )}
 
-              {/* زر القائمة - الجوال / Mobile Menu Button */}
-              <button
-                className="md:hidden p-2 text-gray-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:bg-gray-100 dark:focus:bg-slate-800 rounded-xl transition-colors"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label="فتح القائمة"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="h-6 w-6" />
-                ) : (
-                  <Menu className="h-6 w-6" />
-                )}
-              </button>
+              {/* Mobile Menu Button is now on the START side (Right) */}
             </div>
           </div>
 
