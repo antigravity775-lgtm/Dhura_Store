@@ -14,7 +14,7 @@ class CartController {
         product: {
           include: {
             category: true,
-            images: { where: { isPrimary: true }, take: 1 },
+            images: { orderBy: { sortOrder: 'asc' }, take: 1 },
           },
         },
       },

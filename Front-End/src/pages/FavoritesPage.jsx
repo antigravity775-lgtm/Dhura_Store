@@ -1,9 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ArrowRight, Trash2, ShoppingBag } from 'lucide-react';
 import Layout from '../components/Layout';
-import ProductCard from '../components/ProductCard';
 import * as api from '../services/api';
 import { useFavorites } from '../context/FavoritesContext';
 import { useCart } from '../context/CartContext';
@@ -22,6 +21,7 @@ const containerVariants = {
 const FavoritesPage = () => {
   const { favorites, removeFavorite } = useFavorites();
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   return (
     <Layout>
@@ -58,72 +58,102 @@ const FavoritesPage = () => {
               initial="hidden"
               animate="visible"
             >
-              {favorites.map((product) => (
-                <motion.div
-                  key={product.id}
-                  layout
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="flex bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow relative group"
-                >
-                  {/* Image (RTL - Right Side) */}
-                  <Link
-                    to={`/product/${product.slug || product.id}`}
-                    className="w-28 sm:w-40 flex-shrink-0 bg-slate-50 dark:bg-slate-800 relative"
+              {favorites.map((product) => {
+                const productUrl = `/product/${product.slug || product.id}`;
+                return (
+                  <motion.div
+                    key={product.id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="group relative"
                   >
-                    <img
-                      src={product.imageUrl || product.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80'}
-                      alt={product.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </Link>
-
-                  {/* Content (Left Side) */}
-                  <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
-                    <div>
-                      <div className="flex justify-between items-start gap-2">
-                        <Link
-                          to={`/product/${product.slug || product.id}`}
-                          className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 line-clamp-2 hover:text-gold-600 dark:hover:text-gold-400 transition-colors leading-snug"
-                        >
-                          {product.title}
-                        </Link>
-                        
-                        <button
-                          onClick={(e) => { e.preventDefault(); removeFavorite(product.id); }}
-                          className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors flex-shrink-0 focus:outline-none"
-                          title="إزالة من المفضلة"
-                        >
-                          <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                        </button>
+                    {/* Entire card is clickable */}
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => navigate(productUrl)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') navigate(productUrl); }}
+                      className="flex bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:border-gold-200 dark:hover:border-gold-700 transition-all duration-200 cursor-pointer w-full text-right"
+                    >
+                      {/* Image */}
+                      <div className="w-28 sm:w-40 flex-shrink-0 bg-slate-50 dark:bg-slate-800 relative overflow-hidden">
+                        <img
+                          src={product.imageUrl || product.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80'}
+                          alt={product.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
                       </div>
-                      
-                      {/* Optional Brand/Condition text */}
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                        {api.ConditionEn[product.condition] || 'جديد'}
-                      </p>
-                    </div>
 
-                    <div className="mt-3 flex items-end justify-between">
-                      <div className="text-base sm:text-lg font-black text-gold-600 dark:text-gold-400 leading-none">
-                        {formatPrice(product.price, product.currency)}
+                      {/* Content */}
+                      <div className="flex-1 p-3 sm:p-4 flex flex-col justify-between min-w-0">
+                        <div>
+                          <div className="flex justify-between items-start gap-2 mb-1.5">
+                            <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 line-clamp-2 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors leading-snug">
+                              {product.title}
+                            </h3>
+
+                            {/* Remove button — stops propagation so it doesn't open detail page */}
+                            <button
+                              onClick={(e) => { e.stopPropagation(); removeFavorite(product.id); }}
+                              className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors flex-shrink-0 focus:outline-none"
+                              title="إزالة من المفضلة"
+                              aria-label="إزالة من المفضلة"
+                            >
+                              <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </button>
+                          </div>
+
+                          {/* Description */}
+                          {product.description && (
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-1">
+                              {product.description}
+                            </p>
+                          )}
+
+                          {/* Condition */}
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                            {api.ConditionEn?.[product.condition] || product.categoryName || ''}
+                          </p>
+                        </div>
+
+                        <div className="mt-3 flex items-end justify-between gap-2">
+                          {/* Price */}
+                          <div className="flex flex-col">
+                            {product.discountPrice ? (
+                              <>
+                                <span className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 leading-none">
+                                  {formatPrice(Number(product.discountPrice), product.currency)}
+                                </span>
+                                <span className="text-xs text-slate-400 line-through mt-0.5">
+                                  {formatPrice(Number(product.price), product.currency)}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-base sm:text-lg font-black text-gold-600 dark:text-gold-400 leading-none">
+                                {formatPrice(Number(product.price), product.currency)}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Add to Cart — stops propagation */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              addToCart({ ...product }, 1);
+                            }}
+                            className="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs sm:text-sm font-bold rounded-xl hover:bg-gold-600 dark:hover:bg-gold-500 transition-colors flex items-center gap-1.5 flex-shrink-0"
+                          >
+                            <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <span className="hidden sm:inline">أضف للسلة</span>
+                          </button>
+                        </div>
                       </div>
-                      
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          addToCart({ ...product }, 1);
-                        }}
-                        className="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs sm:text-sm font-bold rounded-xl hover:bg-gold-600 dark:hover:bg-gold-500 transition-colors flex items-center gap-1.5"
-                      >
-                        <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline">أضف للسلة</span>
-                      </button>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </motion.div>
           </AnimatePresence>
         ) : (

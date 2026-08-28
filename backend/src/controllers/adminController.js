@@ -189,7 +189,7 @@ class AdminController {
         include: {
           category: { select: { id: true, name: true } },
           seller: { select: { id: true, fullName: true } },
-          images: { where: { isPrimary: true }, take: 1 }
+          images: { orderBy: { sortOrder: 'asc' }, take: 1 }
         }
       };
 

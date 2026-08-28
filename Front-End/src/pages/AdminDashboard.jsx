@@ -226,13 +226,18 @@ const AdminDashboard = () => {
   };
 
   const openEditProductModal = async (product) => {
-    try {
-      // Fetch the full product (includes variants + attributes) before opening the form
-      const fullProduct = await api.getProductById(product.id);
-      setEditingProduct(fullProduct || product);
-    } catch {
-      // Fallback to the list-level product if the detail fetch fails
+    if (!product?.id) {
       setEditingProduct(product);
+      setShowProductForm(true);
+      return;
+    }
+    try {
+      const fullProduct = await api.getProductById(product.id);
+      if (!fullProduct) throw new Error('Product not found');
+      setEditingProduct(fullProduct);
+    } catch (err) {
+      alert('تعذر تحميل بيانات المنتج الكاملة. يرجى المحاولة مرة أخرى قبل التعديل حتى لا تُفقد صور المنتج.');
+      return;
     }
     setShowProductForm(true);
   };

@@ -29,8 +29,11 @@ export const FavoritesProvider = ({ children }) => {
       if (prev.some(p => p.id === product.id)) return prev;
       return [...prev, {
         id: product.id,
+        slug: product.slug || null,
         title: product.title,
+        description: product.description || null,
         price: product.price,
+        discountPrice: product.discountPrice ?? null,
         currency: product.currency,
         condition: product.condition,
         categoryName: product.categoryName,

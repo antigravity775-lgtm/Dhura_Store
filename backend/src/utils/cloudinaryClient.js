@@ -15,7 +15,7 @@ cloudinary.config({
 function uploadBuffer(buffer, folder = 'uploads') {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder, resource_type: 'image' },
+      { folder, resource_type: 'image', format: 'jpg', quality: 'auto' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);

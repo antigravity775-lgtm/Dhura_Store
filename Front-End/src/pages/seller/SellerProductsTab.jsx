@@ -80,12 +80,18 @@ const SellerProductsTab = () => {
   };
 
   const openEditModal = async (product) => {
-    try {
-      // Fetch the full product (includes variants + attributes) before opening the form
-      const fullProduct = await api.getProductById(product.id);
-      setEditingProduct(fullProduct || product);
-    } catch {
+    if (!product?.id) {
       setEditingProduct(product);
+      setShowAddForm(true);
+      return;
+    }
+    try {
+      const fullProduct = await api.getProductById(product.id);
+      if (!fullProduct) throw new Error('Product not found');
+      setEditingProduct(fullProduct);
+    } catch (err) {
+      setError('تعذر تحميل بيانات المنتج الكاملة. يرجى المحاولة مرة أخرى قبل التعديل حتى لا تُفقد صور المنتج.');
+      return;
     }
     setShowAddForm(true);
   };

@@ -334,8 +334,8 @@ class ProductService {
       include: {
         category: { select: { name: true } },
         seller: { select: { fullName: true, city: true, isVerified: true } },
-        // Only fetch primary image for listing performance
-        images: { where: { isPrimary: true }, take: 1 },
+        // Fetch first image by sortOrder — avoids blank cards when isPrimary is unset
+        images: { orderBy: { sortOrder: 'asc' }, take: 1 },
         brand: { select: { name: true, slug: true } },
       },
       orderBy: [{ isPromoted: 'desc' }, { createdAt: 'desc' }],
@@ -478,37 +478,38 @@ class ProductService {
     // Sync images if provided — supports both legacy imageUrls (string[]) and structured images ([{url,altText}])
     const hasNewImages = dataToUpdate.images !== undefined || dataToUpdate.imageUrls !== undefined;
     if (hasNewImages) {
+      const incomingImages = dataToUpdate.images;
+      const incomingImageUrls = dataToUpdate.imageUrls;
       const rawImgs = (() => {
-        if (Array.isArray(dataToUpdate.images) && dataToUpdate.images.length > 0) {
-          return dataToUpdate.images.map((img, idx) => ({
+        if (Array.isArray(incomingImages) && incomingImages.length > 0) {
+          return incomingImages.map((img, idx) => ({
             url: typeof img === 'string' ? img : img.url,
             altText: (typeof img === 'object' && img.altText) ? img.altText : null,
             isPrimary: idx === 0,
             sortOrder: idx,
           }));
         }
-        const urls = Array.isArray(dataToUpdate.imageUrls) ? dataToUpdate.imageUrls : [];
+        const urls = Array.isArray(incomingImageUrls) ? incomingImageUrls : [];
         return urls.map((url, idx) => ({ url, altText: null, isPrimary: idx === 0, sortOrder: idx }));
       })();
       delete dataToUpdate.images;
       delete dataToUpdate.imageUrls;
 
-      // Fetch existing image URLs for Cloudinary cleanup
-      const existingImages = await prisma.productImage.findMany({ where: { productId: id }, select: { url: true } });
+      const explicitClear =
+        (Array.isArray(incomingImages) && incomingImages.length === 0)
+        || (Array.isArray(incomingImageUrls) && incomingImageUrls.length === 0);
 
-      // Delete all existing DB records
-      await prisma.productImage.deleteMany({ where: { productId: id } });
-
-      // Async Cloudinary cleanup (non-blocking, non-fatal)
-      Promise.all(existingImages.map(img => deleteByUrl(img.url))).catch(err =>
-        console.error('[Cloudinary] Batch delete on product update failed:', err.message)
-      );
-
-      // Re-insert new images with altText
-      if (rawImgs.length > 0) {
-        await prisma.productImage.createMany({
-          data: rawImgs.map(img => ({ productId: id, ...img }))
-        });
+      if (rawImgs.length > 0 || explicitClear) {
+        const existingImages = await prisma.productImage.findMany({ where: { productId: id }, select: { url: true } });
+        await prisma.productImage.deleteMany({ where: { productId: id } });
+        Promise.all(existingImages.map(img => deleteByUrl(img.url))).catch(err =>
+          console.error('[Cloudinary] Batch delete on product update failed:', err.message)
+        );
+        if (rawImgs.length > 0) {
+          await prisma.productImage.createMany({
+            data: rawImgs.map(img => ({ productId: id, ...img }))
+          });
+        }
       }
     }
 
@@ -678,7 +679,8 @@ class ProductService {
       include: {
         category: { select: { name: true } },
         seller: { select: { fullName: true, city: true, isVerified: true } },
-        images: { where: { isPrimary: true }, take: 1 },
+        // Fetch first image by sortOrder — avoids blank cards when isPrimary is unset
+        images: { orderBy: { sortOrder: 'asc' }, take: 1 },
         brand: { select: { name: true } },
       },
       orderBy: { createdAt: 'desc' },
@@ -690,16 +692,24 @@ class ProductService {
     }));
   }
 
-  async addProductImage(productId, { url, altText, isPrimary = false, sortOrder = 0 }) {
-    // If setting this as primary, clear existing primary first
+  async addProductImage(productId, { url, altText, isPrimary = false, sortOrder }) {
     if (isPrimary) {
       await prisma.productImage.updateMany({
         where: { productId, isPrimary: true },
         data: { isPrimary: false },
       });
     }
+    let resolvedSortOrder = sortOrder;
+    if (resolvedSortOrder === undefined || resolvedSortOrder === null) {
+      const last = await prisma.productImage.findFirst({
+        where: { productId },
+        orderBy: { sortOrder: 'desc' },
+        select: { sortOrder: true },
+      });
+      resolvedSortOrder = (last?.sortOrder ?? -1) + 1;
+    }
     return prisma.productImage.create({
-      data: { productId, url, altText, isPrimary, sortOrder },
+      data: { productId, url, altText, isPrimary, sortOrder: resolvedSortOrder },
     });
   }
 

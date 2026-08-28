@@ -88,7 +88,7 @@ class BrandController {
         where: { brandId, status: 'Active' },
         include: {
           seller: { select: { id: true, fullName: true, city: true, isVerified: true } },
-          images: { where: { isPrimary: true }, take: 1 },
+          images: { orderBy: { sortOrder: 'asc' }, take: 1 },
           brand: { select: { name: true, slug: true, logoUrl: true } },
           category: { select: { name: true, slug: true } }
         },

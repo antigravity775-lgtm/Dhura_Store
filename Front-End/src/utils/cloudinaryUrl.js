@@ -39,38 +39,40 @@ const HAS_TRANSFORMS_REGEX = /^(https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/u
  * @param {number} width - Target width in CSS pixels / العرض المستهدف بالبكسل
  * @returns {string} Optimized URL / الرابط المُحسّن
  */
+/**
+ * Strip Cloudinary delivery transforms and return the stored asset URL.
+ * Used as a fallback when optimized delivery URLs 404 for certain uploads.
+ */
+export function getRawCloudinaryUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  const match = url.match(/^(https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(?:[^/]+\/)*(v\d+\/.+)$/);
+  return match ? `${match[1]}${match[2]}` : url;
+}
+
 export function getOptimizedImageUrl(url, width = 400) {
   if (!url || typeof url !== 'string') return url;
 
-  // EN: Build the transformation string
-  // AR: بناء سلسلة التحويلات
-  const transforms = `f_auto,q_auto,w_${width},c_limit`;
+  const rawUrl = getRawCloudinaryUrl(url);
 
-  // EN: Case 1 — Clean Cloudinary URL without existing transforms
-  // AR: الحالة 1 — رابط Cloudinary نظيف بدون تحويلات موجودة
-  const cleanMatch = url.match(CLOUDINARY_REGEX);
+  // Use only q_auto + w_ — avoids the 404 bug where f_auto+c_limit
+  // fails on pre-converted .webp / .png uploads in some Cloudinary accounts.
+  const transforms = `q_auto,w_${width}`;
+
+  const cleanMatch = rawUrl.match(CLOUDINARY_REGEX);
   if (cleanMatch) {
     return `${cleanMatch[1]}${transforms}/${cleanMatch[2]}`;
   }
 
-  // EN: Case 2 — Cloudinary URL that already has transforms — replace them
-  // AR: الحالة 2 — رابط Cloudinary يحتوي تحويلات بالفعل — استبدلها
-  const transformMatch = url.match(HAS_TRANSFORMS_REGEX);
+  const transformMatch = rawUrl.match(HAS_TRANSFORMS_REGEX);
   if (transformMatch) {
-    // EN: Find the version/path portion after existing transforms
-    // AR: إيجاد جزء الإصدار/المسار بعد التحويلات الموجودة
     const baseUrl = transformMatch[1];
-    const afterBase = url.substring(baseUrl.length);
-    // EN: Find the version marker (v followed by digits)
-    // AR: إيجاد علامة الإصدار (v متبوعة بأرقام)
+    const afterBase = rawUrl.substring(baseUrl.length);
     const versionMatch = afterBase.match(/(v\d+\/.+)$/);
     if (versionMatch) {
       return `${baseUrl}${transforms}/${versionMatch[1]}`;
     }
   }
 
-  // EN: Case 3 — Not a Cloudinary URL (e.g. Unsplash fallbacks) — return as-is
-  // AR: الحالة 3 — ليس رابط Cloudinary (مثل صور Unsplash الاحتياطية) — أرجعه كما هو
   return url;
 }
 

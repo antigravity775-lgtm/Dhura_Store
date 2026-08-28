@@ -44,12 +44,19 @@ export function buildProductSchema(product) {
     ? 'https://schema.org/InStock'
     : 'https://schema.org/OutOfStock';
 
+  const galleryImages = (product.images || [])
+    .map((img) => img?.url)
+    .filter(Boolean);
+  const schemaImages = galleryImages.length > 0
+    ? galleryImages
+    : [product.imageUrl || product.mainImageUrl || `${BASE_URL}/Logo.png`].filter(Boolean);
+
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.title,
     description: (product.description || '').substring(0, 500),
-    image: product.imageUrl || product.mainImageUrl || `${BASE_URL}/Logo.png`,
+    image: schemaImages.length === 1 ? schemaImages[0] : schemaImages,
     sku: product.id,
     brand: {
       '@type': 'Brand',

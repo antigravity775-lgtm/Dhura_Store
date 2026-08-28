@@ -23,7 +23,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import RelatedProducts from "../components/RelatedProducts";
 import BannerRenderer from "../components/BannerRenderer";
 import * as api from "../services/api";
-import { getOptimizedImageUrl, IMAGE_WIDTHS } from "../utils/cloudinaryUrl";
+import { getOptimizedImageUrl, getRawCloudinaryUrl, IMAGE_WIDTHS } from "../utils/cloudinaryUrl";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { buildProductSchema } from "../utils/structuredData";
@@ -120,6 +120,7 @@ const ProductDetailsPage = () => {
   const [notFound, setNotFound] = useState(false);
   const [storeInfo, setStoreInfo] = useState(null);
   const [errorType, setErrorType] = useState(null);
+  const [brokenGalleryUrls, setBrokenGalleryUrls] = useState(() => new Set());
 
   useEffect(() => {
     let mounted = true;
@@ -128,6 +129,7 @@ const ProductDetailsPage = () => {
     setErrorType(null);
     setAddedToCart(false);
     setSelectedImageIndex(0);
+    setBrokenGalleryUrls(new Set());
     setQuantity(1);
 
     async function load() {
@@ -290,7 +292,25 @@ const ProductDetailsPage = () => {
     : (product.imageUrl ? [product.imageUrl] : ["https://images.unsplash.com/photo-1560472355-536de3962603?w=1000&q=80"]);
 
   const safeIndex = Math.min(selectedImageIndex, galleryImages.length - 1);
-  const activeImageUrl = getOptimizedImageUrl(galleryImages[safeIndex], IMAGE_WIDTHS.DETAIL);
+  const activeImageRawUrl = galleryImages[safeIndex];
+  const activeImageUrl = brokenGalleryUrls.has(activeImageRawUrl)
+    ? getRawCloudinaryUrl(activeImageRawUrl)
+    : getOptimizedImageUrl(activeImageRawUrl, IMAGE_WIDTHS.DETAIL);
+
+  const handleGalleryImageError = (url) => {
+    setBrokenGalleryUrls((prev) => {
+      if (prev.has(url)) return prev;
+      const next = new Set(prev);
+      next.add(url);
+      return next;
+    });
+  };
+
+  const getGalleryThumbUrl = (url) => (
+    brokenGalleryUrls.has(url)
+      ? getRawCloudinaryUrl(url)
+      : getOptimizedImageUrl(url, 120)
+  );
   const productSchema = buildProductSchema(product);
   const categorySlug = product.category?.slug || product.categoryName;
   const breadcrumbItems = [
@@ -525,6 +545,7 @@ const ProductDetailsPage = () => {
           alt={product.title}
           className="w-full h-full object-contain p-3 sm:p-4"
           fetchPriority="high"
+          onError={() => handleGalleryImageError(activeImageRawUrl)}
         />
         {galleryImages.length > 1 && (
           <>
@@ -569,7 +590,12 @@ const ProductDetailsPage = () => {
                 idx === safeIndex ? "border-gold-400" : "border-slate-200 dark:border-slate-700 opacity-70"
               }`}
             >
-              <img src={getOptimizedImageUrl(url, 120)} alt="" className="w-full h-full object-contain bg-bone-50 dark:bg-slate-800 p-1" />
+              <img
+                src={getGalleryThumbUrl(url)}
+                alt=""
+                className="w-full h-full object-contain bg-bone-50 dark:bg-slate-800 p-1"
+                onError={() => handleGalleryImageError(url)}
+              />
             </button>
           ))}
         </div>

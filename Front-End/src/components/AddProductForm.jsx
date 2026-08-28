@@ -25,6 +25,21 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
     return typeof cond === 'number' ? cond : (parseInt(cond) || 1);
   };
 
+  const extractImageUrls = (product) => {
+    if (!product) return [];
+    const fromImages = (product.images || []).map((img) => img.url).filter(Boolean);
+    if (fromImages.length > 0) return fromImages;
+    if (product.imageUrl) return [product.imageUrl];
+    return [];
+  };
+
+  const extractImageAltTexts = (product) => (
+    (product?.images || []).reduce((acc, img) => {
+      if (img.url) acc[img.url] = img.altText || '';
+      return acc;
+    }, {})
+  );
+
   const [form, setForm] = useState({
     title: editProduct?.title || '',
     description: editProduct?.description || '',
@@ -33,7 +48,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
     condition: getInitialCondition(editProduct?.condition),
     stockQuantity: editProduct?.stockQuantity || 1,
     categoryId: editProduct?.categoryId || '',
-    imageUrls: editProduct?.images?.map(img => img.url) || (editProduct?.imageUrl ? [editProduct.imageUrl] : []),
+    imageUrls: extractImageUrls(editProduct),
     isPromoted: editProduct?.isPromoted || false,
     status: editProduct?.status || 'Active', // Replaced isHidden with status
     discountPrice: editProduct?.discountPrice?.toString() || '',
@@ -51,7 +66,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
         return acc;
       }, {}) || {}
     })) || [],
-    imageAltTexts: editProduct?.images?.reduce((acc, img) => ({ ...acc, [img.url]: img.altText || '' }), {}) || {},
+    imageAltTexts: extractImageAltTexts(editProduct),
     attributes: editProduct?.attributes?.reduce((acc, attr) => {
       acc[attr.categoryAttribute?.id || attr.categoryAttributeId] = attr.value;
       return acc;
@@ -99,6 +114,16 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
     }
     loadData();
   }, []);
+
+  // Keep gallery in sync when the full product is loaded for editing
+  useEffect(() => {
+    if (!editProduct?.id) return;
+    setForm((prev) => ({
+      ...prev,
+      imageUrls: extractImageUrls(editProduct),
+      imageAltTexts: extractImageAltTexts(editProduct),
+    }));
+  }, [editProduct?.id, editProduct?.images?.length]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
