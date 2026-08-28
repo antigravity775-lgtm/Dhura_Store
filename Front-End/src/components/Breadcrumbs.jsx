@@ -26,7 +26,7 @@ import { Helmet } from 'react-helmet-async';
  *     { name: 'عطر ديور ساوفاج' }
  *   ]} />
  */
-const Breadcrumbs = ({ items = [] }) => {
+const Breadcrumbs = ({ items = [], compact = false, className = '' }) => {
   if (!items || items.length === 0) return null;
 
   const schema = buildBreadcrumbSchema(items);
@@ -45,7 +45,7 @@ const Breadcrumbs = ({ items = [] }) => {
       {/* Visual breadcrumbs */}
       <nav
         aria-label="التنقل التفصيلي"
-        className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 mb-5 overflow-x-auto scrollbar-hide"
+        className={`hidden md:flex items-center gap-1 text-slate-500 dark:text-slate-400 overflow-x-auto scrollbar-hide ${compact ? 'text-xs mb-2' : 'text-sm mb-5'} ${className}`}
       >
         <ol className="flex items-center gap-1 list-none p-0 m-0 flex-nowrap whitespace-nowrap">
           {items.map((item, index) => {

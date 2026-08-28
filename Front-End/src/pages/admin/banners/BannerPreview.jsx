@@ -1,35 +1,35 @@
 /**
  * BannerPreview — Live preview component for a banner object.
  *
- * Used in:
- * 1. AdminBannersTab editor panel (real-time preview as admin types)
- * 2. BannerRenderer on the storefront
- *
- * Props:
- *   banner   — the banner data object
- *   compact  — if true, uses a compact 16:9 container (for editor panel)
+ * Used in admin editor and storefront BannerRenderer.
  */
 
 import React from 'react';
 
 const PLACEMENT_RATIOS = {
-  hero:         'aspect-[16/9] sm:aspect-[21/9] lg:aspect-[3/1] min-h-[300px]',
-  promo_home:   'aspect-[4/1]',
-  announcement: 'h-16',
-  category:     'aspect-[3/1]',
-  product:      'aspect-[3/1]',
-  sidebar:      'aspect-[9/16]',
-  footer:       'aspect-[5/1]',
-  popup:        'aspect-[4/3]',
+  hero: 'aspect-[16/9] sm:aspect-[21/9] lg:aspect-[3/1] min-h-[220px]',
+  promo_home: 'aspect-[2/1] sm:aspect-[4/1]',
+  announcement: 'min-h-[40px]',
+  category: 'aspect-[2/1] sm:aspect-[3/1]',
+  product: 'aspect-[2/1] sm:aspect-[3/1]',
+  sidebar: 'aspect-[9/16] max-h-[420px]',
+  footer: 'aspect-[2/1] sm:aspect-[5/1]',
+  popup: 'aspect-[4/3] sm:aspect-[4/3]',
 };
 
 const ALIGN_CLASSES = {
-  right:  'text-right items-start',
+  right: 'text-right items-start',
   center: 'text-center items-center',
-  left:   'text-left items-end',
+  left: 'text-left items-end',
 };
 
-export default function BannerPreview({ banner, compact = false }) {
+export default function BannerPreview({
+  banner,
+  compact = false,
+  placement: placementProp,
+  isMobile = false,
+  rounded = true,
+}) {
   if (!banner) return null;
 
   const {
@@ -37,58 +37,71 @@ export default function BannerPreview({ banner, compact = false }) {
     subtitle = '',
     description = '',
     imageUrl = '',
+    mobileImageUrl = '',
     bgColor = '#1A0A0A',
     textAlign = 'right',
     overlayOpacity = 30,
     placement = 'promo_home',
+    ctaText = '',
   } = banner;
 
-  const ratioClass = compact ? 'aspect-[16/5]' : (PLACEMENT_RATIOS[placement] || 'aspect-[4/1]');
+  const resolvedPlacement = placementProp || placement;
+  const ratioClass = compact ? 'aspect-[16/5]' : (PLACEMENT_RATIOS[resolvedPlacement] || 'aspect-[4/1]');
   const alignClass = ALIGN_CLASSES[textAlign] || ALIGN_CLASSES.right;
   const overlayAlpha = Math.round((overlayOpacity / 100) * 255).toString(16).padStart(2, '0');
+  const displayImage = isMobile && mobileImageUrl ? mobileImageUrl : imageUrl;
+  const isAnnouncement = resolvedPlacement === 'announcement';
+
+  if (isAnnouncement && !compact) {
+    return null;
+  }
 
   return (
     <div
-      className={`relative w-full ${ratioClass} rounded-2xl overflow-hidden flex flex-col justify-end select-none`}
+      className={`relative w-full ${ratioClass} ${rounded ? 'rounded-2xl' : ''} overflow-hidden flex flex-col justify-end select-none`}
       style={{ background: bgColor || '#1A0A0A' }}
     >
-      {/* Background Image */}
-      {imageUrl && (
+      {displayImage && (
         <img
-          src={imageUrl}
-          alt={title}
+          src={displayImage}
+          alt={title || 'بانر ترويجي'}
           className="absolute inset-0 w-full h-full object-cover"
           draggable={false}
+          loading="lazy"
         />
       )}
 
-      {/* Overlay */}
-      {overlayOpacity > 0 && (
+      {overlayOpacity > 0 && displayImage && (
         <div
           className="absolute inset-0"
           style={{ backgroundColor: `#000000${overlayAlpha}` }}
         />
       )}
 
-      {/* Content */}
-      <div className={`relative z-10 p-2 sm:p-4 flex flex-col gap-0.5 ${alignClass}`}>
-        {title && (
-          <h2 className="text-white font-extrabold text-[10px] sm:text-xs lg:text-sm leading-tight drop-shadow-lg">
-            {title}
-          </h2>
-        )}
-        {subtitle && (
-          <p className="text-white/80 font-semibold text-[9px] sm:text-[10px] leading-snug drop-shadow">
-            {subtitle}
-          </p>
-        )}
-        {description && (
-          <p className="text-white/60 text-[8px] leading-relaxed mt-0.5 line-clamp-2">
-            {description}
-          </p>
-        )}
-      
-      </div>
+      {(title || subtitle || description || ctaText) && (
+        <div className={`relative z-10 p-3 sm:p-4 flex flex-col gap-0.5 ${alignClass}`}>
+          {title && (
+            <h2 className="text-white font-extrabold text-xs sm:text-sm lg:text-base leading-tight drop-shadow-lg">
+              {title}
+            </h2>
+          )}
+          {subtitle && (
+            <p className="text-white/85 font-semibold text-[10px] sm:text-xs leading-snug drop-shadow">
+              {subtitle}
+            </p>
+          )}
+          {description && (
+            <p className="text-white/70 text-[10px] sm:text-xs leading-relaxed mt-0.5 line-clamp-2">
+              {description}
+            </p>
+          )}
+          {ctaText && (
+            <span className="inline-flex mt-2 self-start px-3 py-1 rounded-lg bg-gold-600 text-white text-[10px] sm:text-xs font-bold">
+              {ctaText}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 }

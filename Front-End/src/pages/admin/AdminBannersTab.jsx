@@ -9,6 +9,7 @@ import {
 import useSWR from 'swr';
 import * as api from '../../services/api';
 import BannerPreview from './banners/BannerPreview';
+import { AdminToolbar, AdminPrimaryButton, AdminGhostButton, adminSelectClass } from './AdminUI';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PLACEMENTS = [
@@ -365,25 +366,21 @@ function AdminBannersTab({ showSuccess, setError }) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Megaphone className="w-5 h-5 text-gold-500" /> إدارة البانرات والإعلانات
-          </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{banners.length} بانر إجمالياً — {banners.filter(b => b.status === 'active').length} نشط</p>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={() => setView(v => v === 'analytics' ? 'list' : 'analytics')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${view === 'analytics' ? 'bg-gold-100 dark:bg-gold-900/30 text-gold-700 dark:text-gold-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>
-            <BarChart2 className="w-4 h-4" /> التحليلات
-          </button>
-          <button onClick={() => setEditorBanner({})}
-            className="flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-xl text-sm font-bold transition-all shadow-sm shadow-gold-600/20">
-            <Plus className="w-4 h-4" /> بانر جديد
-          </button>
-        </div>
-      </div>
+      <AdminToolbar
+        title="إدارة البانرات والإعلانات"
+        subtitle={`${banners.length} بانر — ${banners.filter(b => b.status === 'active').length} نشط`}
+        icon={Megaphone}
+        actions={
+          <>
+            <AdminGhostButton onClick={() => setView(v => v === 'analytics' ? 'list' : 'analytics')}>
+              <BarChart2 className="w-4 h-4" /> التحليلات
+            </AdminGhostButton>
+            <AdminPrimaryButton onClick={() => setEditorBanner({})}>
+              <Plus className="w-4 h-4" /> بانر جديد
+            </AdminPrimaryButton>
+          </>
+        }
+      />
 
       {/* Analytics View */}
       {view === 'analytics' && <BannerAnalytics banners={banners} />}

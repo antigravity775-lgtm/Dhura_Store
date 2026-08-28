@@ -14,6 +14,7 @@ import {
 import useSWR from 'swr';
 import * as api from '../../services/api';
 import CategoryAttributesPanel from '../../components/CategoryAttributesPanel';
+import { AdminToolbar, AdminPrimaryButton, AdminGhostButton, AdminCard, AdminEmptyState, AdminLoading } from './AdminUI';
 
 // Build a tree from a flat category list
 function buildTree(categories) {
@@ -211,42 +212,24 @@ const AdminCategoriesTab = ({ openCategoryForm }) => {
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
-        <div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">إدارة التصنيفات</h2>
-          {Array.isArray(categoriesRaw) && (
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {categoriesRaw.length} تصنيف إجمالاً · {tree.length} رئيسي
-            </p>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {tree.length > 0 && (
-            <>
-              <button
-                onClick={expandAll}
-                className="text-xs text-slate-500 hover:text-gold-600 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-gold-300 transition-colors"
-              >
-                توسيع الكل
-              </button>
-              <button
-                onClick={collapseAll}
-                className="text-xs text-slate-500 hover:text-gold-600 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-gold-300 transition-colors"
-              >
-                طي الكل
-              </button>
-            </>
-          )}
-          <button
-            onClick={() => openCategoryForm(null)}
-            className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold text-white bg-gold-600 hover:bg-gold-500 rounded-xl transition-colors shadow-sm shadow-gold-600/20"
-          >
-            <Plus className="w-4 h-4" />
-            إضافة تصنيف
-          </button>
-        </div>
-      </div>
+      <AdminToolbar
+        title="إدارة التصنيفات"
+        subtitle={Array.isArray(categoriesRaw) ? `${categoriesRaw.length} تصنيف · ${tree.length} رئيسي` : undefined}
+        icon={Tag}
+        actions={
+          <>
+            {tree.length > 0 && (
+              <>
+                <AdminGhostButton onClick={expandAll}>توسيع الكل</AdminGhostButton>
+                <AdminGhostButton onClick={collapseAll}>طي الكل</AdminGhostButton>
+              </>
+            )}
+            <AdminPrimaryButton onClick={() => openCategoryForm(null)}>
+              <Plus className="w-4 h-4" /> إضافة تصنيف
+            </AdminPrimaryButton>
+          </>
+        }
+      />
 
       {/* Tree */}
       {isLoading ? (

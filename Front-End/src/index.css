@@ -234,6 +234,11 @@
   }
 }
 
+.category-belt-scroll {
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+}
+
 .category-card:hover .card-shine-effect {
   animation: card-shine 0.8s ease-out;
 }

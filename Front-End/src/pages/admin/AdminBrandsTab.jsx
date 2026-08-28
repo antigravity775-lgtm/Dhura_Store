@@ -1,5 +1,12 @@
 import React, { useState, useRef } from 'react';
 import useSWR from 'swr';
+import {
+  AdminToolbar,
+  AdminSearch,
+  AdminPrimaryButton,
+  AdminLoading,
+  AdminCard,
+} from './AdminUI';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, Edit, Trash2, Search, AlertCircle, Loader2, 
@@ -124,26 +131,22 @@ const AdminBrandsTab = ({ onSuccessMsg }) => {
 
   return (
     <div className="space-y-6">
-      {/* Header & Search */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-        <div className="relative w-full sm:w-96">
-          <input
-            type="text"
-            placeholder="بحث عن علامة تجارية..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50"
-          />
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gold-600 hover:bg-gold-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-gold-600/20"
-        >
-          <Plus className="w-5 h-5" />
-          <span>إضافة علامة تجارية</span>
-        </button>
-      </div>
+      <AdminToolbar
+        title="العلامات التجارية"
+        subtitle="إدارة العلامات المعروضة في المتجر"
+        icon={Crown}
+        actions={
+          <AdminPrimaryButton onClick={() => handleOpenModal()}>
+            <Plus className="w-5 h-5" /> إضافة علامة
+          </AdminPrimaryButton>
+        }
+      >
+        <AdminSearch
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="بحث عن علامة تجارية..."
+        />
+      </AdminToolbar>
 
       {/* States */}
       {isLoading ? (

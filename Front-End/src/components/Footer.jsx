@@ -1,180 +1,249 @@
-import React from "react";
+/**
+ * Footer — تذييل متجر قصة
+ *
+ * EN: Premium two-tier footer — brand + navigation + legal.
+ *     Mobile accordions, desktop columns. Uses only real store data/routes.
+ *
+ * AR: تذييل احترافي من مستويين — العلامة + التنقل + القانوني.
+ *     أكورديون على الجوال، أعمدة على سطح المكتب.
+ */
+
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  MessageCircle,
+  ChevronDown,
+  Phone,
   Mail,
-  Truck,
-  Banknote,
   Instagram,
   Facebook,
+  MapPin,
+  Truck,
 } from "lucide-react";
+
 const logo = "/Logo_192.png";
+
+const SHOP_LINKS = [
+  { to: "/", label: "الرئيسية" },
+  { to: "/categories", label: "الفئات" },
+  { to: "/products", label: "جميع المنتجات" },
+  { to: "/products?promoted=true", label: "العروض" },
+];
+
+const HELP_LINKS = [
+  { to: "/contact", label: "اتصل بنا" },
+  { to: "/branches", label: "فروعنا" },
+  { to: "/my-orders", label: "طلباتي" },
+  { to: "/favorites", label: "المفضلة" },
+];
+
+const ABOUT_LINKS = [
+  { to: "/about", label: "من نحن" },
+  { to: "/privacy-policy", label: "سياسة الخصوصية" },
+];
+
+function FooterNavLink({ to, label }) {
+  return (
+    <li>
+      <Link
+        to={to}
+        className="text-sm text-slate-600 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 transition-colors py-1 inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50 rounded"
+      >
+        {label}
+      </Link>
+    </li>
+  );
+}
+
+function FooterColumn({ title, links }) {
+  return (
+    <nav aria-label={title}>
+      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 mb-3">
+        {title}
+      </h3>
+      <ul className="space-y-1">
+        {links.map((link) => (
+          <FooterNavLink key={link.to + link.label} {...link} />
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function FooterAccordion({ title, links, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen);
+  const panelId = `footer-panel-${title.replace(/\s/g, "-")}`;
+
+  return (
+    <div className="border-b border-slate-200/80 dark:border-slate-800/80">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between py-3.5 text-right focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50 rounded"
+        aria-expanded={open}
+        aria-controls={panelId}
+      >
+        <span className="text-sm font-bold text-slate-900 dark:text-white">{title}</span>
+        <ChevronDown
+          className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      <div
+        id={panelId}
+        role="region"
+        aria-labelledby={undefined}
+        className={`overflow-hidden transition-all duration-200 ${open ? "max-h-48 pb-3" : "max-h-0"}`}
+        aria-hidden={!open}
+      >
+        <ul className="space-y-1 pr-1">
+          {links.map((link) => (
+            <FooterNavLink key={link.to + link.label} {...link} />
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function TikTokIcon({ className }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+    </svg>
+  );
+}
+
+function SocialLinks({ storeInfo, className = "" }) {
+  const links = [
+    storeInfo?.instagramUrl && { href: storeInfo.instagramUrl, label: "انستغرام", Icon: Instagram },
+    storeInfo?.facebookUrl && { href: storeInfo.facebookUrl, label: "فيسبوك", Icon: Facebook },
+    storeInfo?.tiktokUrl && { href: storeInfo.tiktokUrl, label: "تيك توك", Icon: TikTokIcon },
+  ].filter(Boolean);
+
+  if (!links.length) return null;
+
+  return (
+    <div className={`flex items-center gap-2 ${className}`}>
+      {links.map(({ href, label, Icon }) => (
+        <a
+          key={label}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={label}
+          className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 hover:border-gold-300 dark:hover:border-gold-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50"
+        >
+          <Icon className="w-4 h-4" />
+        </a>
+      ))}
+    </div>
+  );
+}
 
 const Footer = ({ storeInfo }) => {
   const phone = (storeInfo?.contactPhone || "").trim();
   const phoneDigits = phone.replace(/[^\d]/g, "");
-  const phoneE164 = phoneDigits ? (phoneDigits.startsWith("967") ? phoneDigits : `967${phoneDigits}`) : "";
-  const whatsappUrl = storeInfo?.whatsappUrl || (phoneE164 ? `https://wa.me/${phoneE164}` : "");
-  const instagramUrl = storeInfo?.instagramUrl || "";
-  const facebookUrl = storeInfo?.facebookUrl || "";
-  const tiktokUrl = storeInfo?.tiktokUrl || "";
+  const email = (storeInfo?.contactEmail || "").trim();
+  const shippingOffer = (storeInfo?.shippingOfferText || "").trim();
+  const tagline = (storeInfo?.seoDescription || "").trim()
+    || "متجرك الإلكتروني — منتجات متنوعة بأسعار منافسة وتجربة تسوق سهلة.";
+
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer
-      className="bg-[#120F09] text-slate-400 py-8 border-t border-[#2A1F0A] mt-auto"
-      dir="rtl"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Grid: Mobile 2-col, Desktop 4-col */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-8">
-          {/* Brand & Short text */}
-          <div className="col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2 mb-3">
-              <img
-                src={logo}
-                alt="شعار GISAAH قصة"
-                width="32"
-                height="32"
-                className="w-8 h-8 rounded-full bg-white object-cover object-center scale-[1.16] border-2 border-gold-800"
-                loading="lazy"
-              />
-              <span className="font-extrabold text-white text-lg tracking-tight font-display">
-                GISAAH <span className="text-gold-400 text-base">قصة</span>
-              </span>
-            </div>
-            <p className="text-xs leading-relaxed text-slate-500 max-w-xs">
-              متجر قصة هو المتجر الالكتروني الاول في اليمن لبيع العطور الاصلية
-              فقط بأسعار أقل من الموقع الرسمي.
-            </p>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h4 className="text-white font-bold text-sm mb-3">الشركة</h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <Link
-                  to="/about"
-                  className="hover:text-white transition-colors flex items-center gap-1.5 group"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-gold-500 transition-colors"></span>
-                  من نحن
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/privacy-policy"
-                  className="hover:text-white transition-colors flex items-center gap-1.5 group"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A1F0A] group-hover:bg-gold-500 transition-colors"></span>
-                  سياسة الخصوصية
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h4 className="text-white font-bold text-sm mb-3">الدعم</h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <Link
-                  to="/contact"
-                  className="hover:text-white transition-colors flex items-center gap-1.5 group"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-gold-500 transition-colors"></span>
-                  اتصل بنا
-                </Link>
-              </li>
-              {storeInfo?.contactEmail && (
-                <li>
-                  <a
-                    href={`tel:${phoneDigits}`}
-                    className="hover:text-white transition-colors flex items-center gap-1.5 group"
-                  >
-                    <Mail className="w-3.5 h-3.5 text-slate-600 group-hover:text-gold-400 transition-colors" />
-                    راسلنا للإستفسار
-                  </a>
-                </li>
-              )}
-            </ul>
-          </div>
-
-          {/* Connect */}
-          <div>
-            <h4 className="text-white font-bold text-sm mb-3">تواصل معنا</h4>
-            <ul className="space-y-2 text-xs">
-              {facebookUrl && (
-                <li>
-                  <a href={facebookUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
-                    <Facebook className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-500 transition-colors" />
-                    فيسبوك
-                  </a>
-                </li>
-              )}
-              {tiktokUrl && (
-                <li>
-                  <a href={tiktokUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5 group">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-3.5 h-3.5 text-slate-600 group-hover:text-slate-300 transition-colors"
-                    >
-                      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-                    </svg>
-                    تيك توك
-                  </a>
-                </li>
-              )}
-              {whatsappUrl && (
-                <li>
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-white transition-colors flex items-center gap-1.5 group"
-                  >
-                    <MessageCircle className="w-3.5 h-3.5 text-slate-600 group-hover:text-green-500 transition-colors" />
-                    واتساب
-                  </a>
-                </li>
-              )}
-              {instagramUrl && (
-                <li>
-                  <a
-                    href={instagramUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-white transition-colors flex items-center gap-1.5 group"
-                  >
-                    <Instagram className="w-3.5 h-3.5 text-slate-600 group-hover:text-pink-500 transition-colors" />
-                    انستغرام
-                  </a>
-                </li>
-              )}
-            </ul>
+    <footer className="mt-auto bg-white dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800/80" dir="rtl">
+      {shippingOffer && (
+        <div className="bg-bone-100 dark:bg-slate-900/60 border-b border-slate-200/60 dark:border-slate-800/60">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 flex items-center justify-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
+            <Truck className="w-3.5 h-3.5 text-gold-600 dark:text-gold-400 flex-shrink-0" />
+            <span className="text-center">{shippingOffer}</span>
           </div>
         </div>
+      )}
 
-        {/* Bottom Socket */}
-        <div className="pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-[11px] text-slate-600 font-medium flex flex-wrap items-center gap-x-2 gap-y-1 justify-center sm:justify-start text-center sm:text-right">
-            <span>&copy; 2026 قصة. جميع الحقوق محفوظة.</span>
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-8 pb-20 md:pb-8 md:pt-10">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8">
+          <div className="max-w-sm">
+            <Link to="/" className="inline-flex items-center gap-2.5 mb-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50 rounded-lg">
+              <img
+                src={logo}
+                alt="شعار GISAAH"
+                width="36"
+                height="36"
+                className="w-9 h-9 rounded-lg bg-white object-cover object-center scale-[1.12] border border-gold-200/80 dark:border-gold-800/60 shadow-sm"
+                loading="lazy"
+              />
+              <span className="font-extrabold text-slate-900 dark:text-white text-base tracking-tight">
+                GISAAH <span className="text-gold-600 dark:text-gold-400 font-bold">قصة</span>
+              </span>
+            </Link>
+            <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400 line-clamp-3">
+              {tagline}
+            </p>
+            <SocialLinks storeInfo={storeInfo} className="mt-4 md:hidden" />
           </div>
 
-          <div className="flex items-center gap-3 opacity-60 mix-blend-luminosity hover:mix-blend-normal transition-all">
-            <div
-              className="flex items-center justify-center p-1.5 bg-slate-800 rounded-md border border-slate-700"
-              title="الدفع عند الاستلام"
-            >
-              <Banknote className="w-4 h-4 text-slate-300" />
-            </div>
+          <SocialLinks storeInfo={storeInfo} className="hidden md:flex" />
+        </div>
 
+        <div className="hidden md:grid md:grid-cols-3 gap-8 lg:gap-12 mb-8">
+          <FooterColumn title="تسوق" links={SHOP_LINKS} />
+          <FooterColumn title="المساعدة" links={HELP_LINKS} />
+          <FooterColumn title="عن المتجر" links={ABOUT_LINKS} />
+        </div>
+
+        <div className="md:hidden mb-6" role="navigation" aria-label="روابط التذييل">
+          <FooterAccordion title="تسوق" links={SHOP_LINKS} defaultOpen />
+          <FooterAccordion title="المساعدة" links={HELP_LINKS} />
+          <FooterAccordion title="عن المتجر" links={ABOUT_LINKS} />
+        </div>
+
+        {(phoneDigits || email) && (
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mb-6 text-xs">
+            {phoneDigits && (
+              <a
+                href={`tel:${phoneDigits}`}
+                className="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50 rounded"
+              >
+                <Phone className="w-3.5 h-3.5 flex-shrink-0" />
+                <span dir="ltr">{phone}</span>
+              </a>
+            )}
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                className="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50 rounded"
+              >
+                <Mail className="w-3.5 h-3.5 flex-shrink-0" />
+                <span className="truncate max-w-[200px]">{email}</span>
+              </a>
+            )}
+            <Link
+              to="/branches"
+              className="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50 rounded"
+            >
+              <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+              فروعنا
+            </Link>
+          </div>
+        )}
+
+        <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center sm:text-right">
+            &copy; {currentYear} GISAAH قصة. جميع الحقوق محفوظة.
+          </p>
+          <div className="flex items-center justify-center sm:justify-end gap-4 text-[11px]">
+            <Link
+              to="/privacy-policy"
+              className="text-slate-500 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50 rounded"
+            >
+              الخصوصية
+            </Link>
+            <Link
+              to="/contact"
+              className="text-slate-500 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50 rounded"
+            >
+              الدعم
+            </Link>
           </div>
         </div>
       </div>

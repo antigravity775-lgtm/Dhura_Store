@@ -1,32 +1,22 @@
 /**
- * HomePage — الصفحة الرئيسية (المُعاد تصميمها)
+ * HomePage — الصفحة الرئيسية (تصميم كثافة عالية)
  *
- * EN: Redesigned high-conversion homepage with two clear navigation paths:
- *     1. Browse by Categories — visual category cards grid
- *     2. Explore Products — "Start Shopping" CTA buttons
- *     Plus a featured product preview grid (8 items).
+ * EN: Dense, high-conversion homepage with compact category belt,
+ *     horizontal product carousels, and smaller product cards.
  *
- *     Layout: OfferBelt → Categories → Start Shopping CTAs → Product Preview
- *
- * AR: الصفحة الرئيسية المُعاد تصميمها مع مسارين واضحين للتنقل:
- *     1. التصفح حسب الأقسام — شبكة بطاقات أقسام مرئية
- *     2. استكشاف المنتجات — أزرار "ابدأ التسوق"
- *     بالإضافة إلى شبكة معاينة المنتجات المميزة (8 عناصر).
+ * AR: صفحة رئيسية كثيفة مع حزام فئات مدمج،
+ *     شرائط منتجات أفقية، وبطاقات منتجات أصغر.
  */
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Truck, BadgePercent, ShieldCheck, Sparkles, Eye
-} from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
-import CategoryGrid from '../components/CategoryGrid';
-import HomepageSections from '../components/HomepageSections';
+import CategoryBelt from '../components/CategoryBelt';
 import HeroSection from '../components/HeroSection';
-import TrustStrip from '../components/TrustStrip';
 import BannerRenderer from '../components/BannerRenderer';
+import ProductCarousel from '../components/ProductCarousel';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -34,21 +24,102 @@ import * as api from '../services/api';
 import { useProducts, useCategories } from '../hooks/useProducts';
 import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../utils/cloudinaryUrl';
 
-// ─── Constants ───
+const SECTION_COUNT = 8;
+const CATEGORY_CAROUSEL_COUNT = 10;
 
-const PREVIEW_COUNT = 8;
+function partitionHomeProducts(products, sectionCount = SECTION_COUNT) {
+  const usedIds = new Set();
 
-/**
- * EN: Offer messages that auto-scroll in the slim promotional belt.
- * AR: رسائل العروض التي تتحرك تلقائياً في حزام الترويج النحيل.
- */
+  const takeUnique = (candidates, count) => {
+    const result = [];
+    for (const p of candidates) {
+      const id = String(p.id);
+      if (usedIds.has(id)) continue;
+      result.push(p);
+      usedIds.add(id);
+      if (result.length >= count) break;
+    }
+    return result;
+  };
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
-};
+  const onOffer = products.filter((p) => p.isPromoted || p.discountPrice);
+  const bestSellers = takeUnique(
+    onOffer.length > 0 ? onOffer : products,
+    sectionCount
+  );
 
-// ─── Helpers ───
+  const newest = [...products].sort(
+    (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+  );
+  const newArrivals = takeUnique(newest, sectionCount);
+
+  const remaining = products.filter((p) => !usedIds.has(String(p.id)));
+  const pools = new Map();
+
+  for (const p of remaining) {
+    const cat = p.categoryName || String(p.categoryId || 'other');
+    if (!pools.has(cat)) pools.set(cat, []);
+    pools.get(cat).push(p);
+  }
+
+  const diverseCandidates = [];
+  const categoryKeys = [...pools.keys()];
+  let hasMore = true;
+
+  while (diverseCandidates.length < sectionCount && hasMore) {
+    hasMore = false;
+    for (const cat of categoryKeys) {
+      const pool = pools.get(cat);
+      if (pool?.length) {
+        diverseCandidates.push(pool.shift());
+        hasMore = true;
+        if (diverseCandidates.length >= sectionCount) break;
+      }
+    }
+  }
+
+  const featuredProducts = takeUnique([...diverseCandidates, ...remaining], sectionCount);
+
+  return { bestSellers, newArrivals, featuredProducts };
+}
+
+function pickCategoryProducts(pool, usedIds, limit = CATEGORY_CAROUSEL_COUNT) {
+  const unused = pool.filter((p) => !usedIds.has(String(p.id)));
+  const used = pool.filter((p) => usedIds.has(String(p.id)));
+  return [...unused, ...used].slice(0, limit);
+}
+
+function buildCategorySections(products, categories, featuredIds) {
+  const usedIds = new Set(featuredIds.map((id) => String(id)));
+  const byCategory = new Map();
+
+  for (const p of products) {
+    const catName = p.categoryName;
+    if (!catName) continue;
+    if (!byCategory.has(catName)) byCategory.set(catName, []);
+    byCategory.get(catName).push(p);
+  }
+
+  const orderedNames = categories.length > 0
+    ? categories.map((c) => c.name).filter((name) => byCategory.has(name))
+    : [...byCategory.keys()].sort((a, b) => a.localeCompare(b, 'ar'));
+
+  return orderedNames
+    .map((name) => {
+      const meta = categories.find((c) => c.name === name);
+      const pool = byCategory.get(name) || [];
+      const sectionProducts = pickCategoryProducts(pool, usedIds, CATEGORY_CAROUSEL_COUNT);
+      if (sectionProducts.length === 0) return null;
+
+      return {
+        id: meta?.id || name,
+        name,
+        slug: meta?.slug,
+        products: sectionProducts,
+      };
+    })
+    .filter(Boolean);
+}
 
 function mapToProduct(p) {
   const rawImage = p.imageUrl || p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
@@ -69,26 +140,9 @@ function mapToProduct(p) {
   };
 }
 
-/**
- * EN: Fisher-Yates shuffle — creates a shuffled copy of the array.
- * AR: خوارزمية فيشر-ييتس — ينشئ نسخة مُعاد ترتيبها من المصفوفة.
- */
-function shuffleArray(arr) {
-  const shuffled = [...arr];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
-// ────────────────────────────────────────────────────────────────────
-// OfferBelt — حزام العروض الترويجية
-// ────────────────────────────────────────────────────────────────────
 const OfferBelt = React.memo(({ shippingOfferText }) => {
   if (!shippingOfferText || !shippingOfferText.trim()) return null;
 
-  // Create an array of identical messages to ensure enough width for continuous scrolling
   const messages = Array(8).fill({
     icon: Sparkles,
     text: shippingOfferText,
@@ -96,17 +150,17 @@ const OfferBelt = React.memo(({ shippingOfferText }) => {
   });
 
   return (
-    <div className="relative w-full bg-gradient-to-r from-[#120F09] via-[#2A1F0A] to-[#120F09] overflow-hidden select-none">
+    <div className="relative z-0 shrink-0 w-full bg-gradient-to-r from-[#120F09] via-[#2A1F0A] to-[#120F09] overflow-hidden select-none border-b border-gold-500/10">
       <div className="absolute inset-0 bg-gradient-to-r from-gold-500/10 via-gold-400/8 to-gold-500/10 animate-pulse" />
-      <div className="offer-belt-track flex items-center gap-12 py-2.5 sm:py-3 whitespace-nowrap">
+      <div className="offer-belt-track flex items-center gap-12 py-2 whitespace-nowrap">
         {messages.map((msg, i) => {
           const Icon = msg.icon;
           return (
             <span
               key={i}
-              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-white/90 flex-shrink-0"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-white/90 flex-shrink-0"
             >
-              <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${msg.color} flex-shrink-0`} />
+              <Icon className={`w-3.5 h-3.5 ${msg.color} flex-shrink-0`} />
               <span>{msg.text}</span>
               <span className="text-white/20 mx-4">|</span>
             </span>
@@ -118,16 +172,12 @@ const OfferBelt = React.memo(({ shippingOfferText }) => {
 });
 OfferBelt.displayName = 'OfferBelt';
 
-// ────────────────────────────────────────────────────────────────────
-// HomePage
-// ────────────────────────────────────────────────────────────────────
 const HomePage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const [shuffleSeed, setShuffleSeed] = useState(0);
-  const [shippingOfferText, setShippingOfferText] = useState(() => {
+  const [shippingOfferText, setShippingOfferText] = React.useState(() => {
     try {
       const cached = localStorage.getItem('gisaah_store_info');
       if (cached) return JSON.parse(cached).shippingOfferText || '';
@@ -135,15 +185,12 @@ const HomePage = () => {
     return '';
   });
 
-  // ─── Auto-scroll handling ───
   useEffect(() => {
     if (window.location.search.includes('scrollTo=categories')) {
-      // Small timeout to ensure DOM is ready and layout is stable
       setTimeout(() => {
         const el = document.getElementById('categories-section');
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Clean up URL so it doesn't auto-scroll again on refresh
           window.history.replaceState({}, document.title, window.location.pathname);
         }
       }, 100);
@@ -160,52 +207,40 @@ const HomePage = () => {
       .catch(() => {
         if (mounted) setShippingOfferText('');
       });
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
-  // ─── SWR Data ───
-  const {
-    data: products,
-    isLoading: productsLoading,
-    error: productsError
-  } = useProducts({});
-
+  const { data: products, isLoading: productsLoading, error: productsError } = useProducts({});
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
   const activeProducts = productsError ? [] : (products || []);
   const showSkeleton = productsLoading && activeProducts.length === 0;
 
-  // ─── Preview Products (8 items, mix of promoted + random) ───
-  const previewProducts = useMemo(() => {
-    if (activeProducts.length === 0) return [];
+  const { bestSellers, newArrivals, featuredProducts } = useMemo(
+    () => partitionHomeProducts(activeProducts, SECTION_COUNT),
+    [activeProducts]
+  );
 
-    // Promoted products first
-    const promoted = activeProducts.filter(p => p.isPromoted);
-    const nonPromoted = activeProducts.filter(p => !p.isPromoted);
+  const categorySections = useMemo(() => {
+    const featuredIds = [
+      ...bestSellers,
+      ...newArrivals,
+      ...featuredProducts,
+    ].map((p) => p.id);
 
-    // Shuffle the non-promoted (shuffleSeed forces re-shuffle when Discover Random is clicked)
-    const shuffledNonPromoted = shuffleArray(nonPromoted);
+    return buildCategorySections(activeProducts, categories, featuredIds);
+  }, [activeProducts, categories, bestSellers, newArrivals, featuredProducts]);
 
-    // Combine: promoted first, then shuffled
-    const combined = [...promoted, ...shuffledNonPromoted];
-    return combined.slice(0, PREVIEW_COUNT);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeProducts, shuffleSeed]);
-
-  const mappedPreviewProducts = useMemo(() => {
-    return previewProducts.map(p => {
+  const mapWithFavorites = useCallback((list) => {
+    return list.map((p) => {
       const mapped = mapToProduct(p);
       mapped.isFavorite = isFavorite(p.id);
       return mapped;
     });
-  }, [previewProducts, isFavorite]);
-
-  // ─── Handlers ───
+  }, [isFavorite]);
 
   const handleQuickAdd = useCallback((p) => {
-    const originalProduct = activeProducts.find(prod => String(prod.id) === String(p.id));
+    const originalProduct = activeProducts.find((prod) => String(prod.id) === String(p.id));
     if (originalProduct) {
       addToCart(originalProduct, 1);
     } else {
@@ -217,96 +252,128 @@ const HomePage = () => {
   }, [activeProducts, addToCart]);
 
   const handleFavoriteToggle = useCallback((p) => {
-    const originalProduct = activeProducts.find(prod => String(prod.id) === String(p.id));
+    const originalProduct = activeProducts.find((prod) => String(prod.id) === String(p.id));
     if (originalProduct) toggleFavorite(originalProduct);
   }, [activeProducts, toggleFavorite]);
+
+  const handleProductClick = useCallback((p) => {
+    navigate(`/product/${p.slug || p.id}`);
+  }, [navigate]);
 
   return (
     <Layout>
       <SEO title="الصفحة الرئيسية" />
 
-      {/* ═══════ حزام العروض / Offer Belt ═══════ */}
       <OfferBelt shippingOfferText={shippingOfferText} />
       <BannerRenderer placement="announcement" />
 
-      {/* ═══════ 0. هيرو / Hero Section ═══════ */}
       <HeroSection />
 
-      {/* ═══════ المحتوى الرئيسي / Main Content ═══════ */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12 lg:pb-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-10 lg:pb-12">
+        <CategoryBelt categories={categories} isLoading={categoriesLoading} />
 
-        {/* ═══════ 2. الأقسام / Category Grid ═══════ */}
-        <CategoryGrid
-          categories={categories}
-          isLoading={categoriesLoading}
+        {productsError && (
+          <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">
+            تعذر تحميل المنتجات حالياً: {productsError.message || 'حدث خطأ غير متوقع'}
+          </div>
+        )}
+
+        {bestSellers.length > 0 && (
+        <ProductCarousel
+          title="الأكثر مبيعاً"
+          subtitle="المنتجات الأكثر طلباً"
+          viewAllHref="/products?promoted=true"
+          products={mapWithFavorites(bestSellers)}
+          isLoading={showSkeleton}
+          onQuickAdd={handleQuickAdd}
+          onClick={handleProductClick}
+          onFavorite={handleFavoriteToggle}
         />
+        )}
 
-        {/* ═══════ بانر ترويجي / Promo Banner ═══════ */}
         <BannerRenderer placement="promo_home" />
 
-        {/* ═══════ 3. ابدأ التسوق / Start Shopping CTAs ═══════ */}
-        <HomepageSections />
+        {newArrivals.length > 0 && (
+          <ProductCarousel
+            title="وصل حديثاً"
+            subtitle="أحدث المنتجات في المتجر"
+            viewAllHref="/products?sort=newest"
+            products={mapWithFavorites(newArrivals)}
+            isLoading={showSkeleton}
+            onQuickAdd={handleQuickAdd}
+            onClick={handleProductClick}
+            onFavorite={handleFavoriteToggle}
+          />
+        )}
 
-        {/* ═══════ 4. معاينة المنتجات / Product Preview ═══════ */}
-        <section>
-          {productsError && (
-            <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">
-              تعذر تحميل المنتجات حالياً: {productsError.message || 'حدث خطأ غير متوقع'}
+        {featuredProducts.length > 0 && (
+        <section className="mb-5 sm:mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h2 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white tracking-tight">
+                منتجات مميزة
+              </h2>
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                مختارات من أفضل المنتجات
+              </p>
             </div>
-          )}
-          {/* Section Header */}
-          <div className="flex items-center justify-between mb-5 sm:mb-6">
-            <div className="flex items-center gap-2.5">
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gold-100 dark:bg-gold-900/40">
-                <Eye className="w-4.5 h-4.5 text-gold-600 dark:text-gold-400" />
-              </div>
-              <div>
-                <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                  العروض الحصرية
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                  أقوى الخصومات والأسعار المميزة
-                </p>
-              </div>
-            </div>
-
             <button
+              type="button"
               onClick={() => navigate('/products')}
-              className="text-xs sm:text-sm font-bold text-gold-600 dark:text-gold-400 hover:text-gold-700 dark:hover:text-gold-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-gold-50 dark:hover:bg-gold-900/30"
+              className="text-xs sm:text-sm font-bold text-gold-600 dark:text-gold-400 hover:text-gold-700 dark:hover:text-gold-300 transition-colors"
             >
               عرض الكل ←
             </button>
           </div>
 
-          {/* Product Grid */}
           {showSkeleton ? (
-            <ProductGrid isLoading={true} loadingCount={PREVIEW_COUNT} />
+            <ProductGrid isLoading loadingCount={SECTION_COUNT} className="!px-0 !py-0" />
           ) : (
-            <AnimatePresence mode="popLayout">
-              <motion.div
-                className="w-full"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0 }}
-                key={`preview-${shuffleSeed}`}
-              >
-                {mappedPreviewProducts.length > 0 ? (
-                  <ProductGrid
-                    products={mappedPreviewProducts}
-                    onQuickAdd={handleQuickAdd}
-                    onClick={(p) => navigate(`/product/${p.slug || p.id}`)}
-                    onFavorite={handleFavoriteToggle}
-                  />
-                ) : (
-                  <div className="text-center py-16 text-slate-400 dark:text-slate-500">
-                    <p className="text-sm">لا توجد منتجات متاحة حالياً</p>
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
+            <ProductGrid
+              products={mapWithFavorites(featuredProducts)}
+              onQuickAdd={handleQuickAdd}
+              onClick={handleProductClick}
+              onFavorite={handleFavoriteToggle}
+              className="!px-0 !py-0"
+            />
           )}
         </section>
+        )}
+
+        {categorySections.length > 0 && (
+          <section className="mt-2" aria-label="منتجات حسب الفئة">
+            {categorySections.map((section) => (
+              <ProductCarousel
+                key={section.id}
+                title={section.name}
+                subtitle={`${section.products.length} منتج`}
+                viewAllHref={
+                  section.slug
+                    ? `/category/${section.slug}`
+                    : `/category/${encodeURIComponent(section.name)}`
+                }
+                products={mapWithFavorites(section.products)}
+                isLoading={showSkeleton}
+                loadingCount={6}
+                onQuickAdd={handleQuickAdd}
+                onClick={handleProductClick}
+                onFavorite={handleFavoriteToggle}
+              />
+            ))}
+          </section>
+        )}
+
+        {showSkeleton && categories.length > 0 && categorySections.length === 0 && (
+          categories.slice(0, 4).map((cat) => (
+            <ProductCarousel
+              key={`cat-skel-${cat.id}`}
+              title={cat.name}
+              products={[]}
+              isLoading
+              loadingCount={6}
+            />
+          ))
+        )}
       </main>
     </Layout>
   );

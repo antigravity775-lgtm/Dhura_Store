@@ -16,6 +16,17 @@ import {
 } from 'lucide-react';
 import * as api from '../../services/api';
 import * as XLSX from 'xlsx';
+import {
+  AdminToolbar,
+  AdminSearch,
+  AdminFilterChips,
+  AdminCard,
+  AdminEmptyState,
+  AdminLoading,
+  AdminGhostButton,
+  AdminFadeIn,
+  adminSelectClass,
+} from './AdminUI';
 
 const AdminOrdersTab = ({ orders, ordersLoading, mutateOrders, showSuccess, setError }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -91,60 +102,61 @@ const AdminOrdersTab = ({ orders, ordersLoading, mutateOrders, showSuccess, setE
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-6">
-        <div className="flex items-center gap-3">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">إدارة الطلبات</h2>
-          <button 
-            onClick={handleExportExcel}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 rounded-lg transition-colors border border-emerald-200 dark:border-emerald-800"
-          >
+      <AdminToolbar
+        title="إدارة الطلبات"
+        subtitle={`${filteredOrders.length} طلب`}
+        icon={ClipboardList}
+        actions={
+          <AdminGhostButton onClick={handleExportExcel}>
             <Download className="w-4 h-4" />
             تصدير Excel
-          </button>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="بحث بالاسم أو رقم الطلب..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-slate-900 dark:text-white transition-all"
-            />
-          </div>
+          </AdminGhostButton>
+        }
+      >
+        <div className="flex flex-col sm:flex-row gap-3">
+          <AdminSearch
+            className="flex-1"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="بحث بالاسم أو رقم الطلب..."
+          />
           <select
             value={orderStatusFilter}
             onChange={(e) => setOrderStatusFilter(e.target.value)}
-            className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-slate-700 dark:text-slate-200"
+            className={`${adminSelectClass} sm:w-44`}
           >
             {orderStatusOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
         </div>
-      </div>
+        <div className="mt-3">
+          <AdminFilterChips
+            items={orderStatusOptions.map((o) => ({ id: o.value, label: o.label }))}
+            value={orderStatusFilter}
+            onChange={setOrderStatusFilter}
+          />
+        </div>
+      </AdminToolbar>
 
       {ordersLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
-        </div>
+        <AdminLoading label="جاري تحميل الطلبات..." />
       ) : orders.length === 0 ? (
-        <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
-          <ClipboardList className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">لا توجد طلبات</h3>
-          <p className="text-slate-500 dark:text-slate-400">لم يتم استلام أي طلبات بعد أو لا توجد نتائج للبحث</p>
-        </div>
+        <AdminEmptyState
+          icon={ClipboardList}
+          title="لا توجد طلبات"
+          description="لم يتم استلام أي طلبات بعد أو لا توجد نتائج للبحث"
+        />
       ) : (
         <div className="space-y-4">
-          {filteredOrders
-            .map((order, index) => {
+          {filteredOrders.map((order, index) => {
               const isExpanded = expandedOrderId === order.id;
               const orderItems = order.orderItems || [];
               const orderDate = new Date(order.orderDate).toLocaleDateString("ar-EG", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
               return (
-                <motion.div key={order.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.03 }} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5">
+                <AdminFadeIn key={order.id} delay={index * 0.03}>
+                <AdminCard className="!p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
@@ -200,7 +212,8 @@ const AdminOrdersTab = ({ orders, ordersLoading, mutateOrders, showSuccess, setE
                       </div>
                     </div>
                   )}
-                </motion.div>
+                </AdminCard>
+                </AdminFadeIn>
               );
             })}
         </div>

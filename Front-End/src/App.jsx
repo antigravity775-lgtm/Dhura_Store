@@ -23,6 +23,7 @@ const ProfilePage = React.lazy(() => import("./pages/ProfilePage"));
 const FavoritesPage = React.lazy(() => import("./pages/FavoritesPage"));
 const ProductsPage = React.lazy(() => import("./pages/ProductsPage"));
 const CategoryPage = React.lazy(() => import("./pages/CategoryPage"));
+const CategoriesPage = React.lazy(() => import("./pages/CategoriesPage"));
 const BrandPage = React.lazy(() => import("./pages/BrandPage"));
 const ProductGridDemo = React.lazy(
   () => import("./components/HighConversionGrid/ProductGridDemo"),
@@ -87,6 +88,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/brand/:slug" element={<BrandPage />} />
           <Route path="/product-grid-demo" element={<ProductGridDemo />} />

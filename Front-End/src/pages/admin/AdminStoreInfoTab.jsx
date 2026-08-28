@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AdminToolbar, AdminCard, adminInputClass } from './AdminUI';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Save,
@@ -83,12 +84,14 @@ const AdminStoreInfoTab = ({ storeInfo, setStoreInfo, handleUpdateStoreInfo, sto
   };
 
   return (
-    <div className="max-w-3xl space-y-8">
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">معلومات المتجر الأساسية</h2>
-      </div>
+    <div className="max-w-3xl space-y-6">
+      <AdminToolbar
+        title="معلومات المتجر"
+        subtitle="التواصل، السوشيال ميديا، وإعدادات الظهور"
+        icon={Info}
+      />
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <AdminCard className="overflow-hidden !p-0">
         <div className="p-5 sm:p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -244,13 +247,9 @@ const AdminStoreInfoTab = ({ storeInfo, setStoreInfo, handleUpdateStoreInfo, sto
             حفظ التغييرات
           </button>
         </div>
-      </div>
+      </AdminCard>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mt-10 mb-6">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">النسخ الاحتياطي لقاعدة البيانات</h2>
-      </div>
-
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <AdminCard>
         <div className="p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
@@ -287,7 +286,7 @@ const AdminStoreInfoTab = ({ storeInfo, setStoreInfo, handleUpdateStoreInfo, sto
             </div>
           </div>
         </div>
-      </div>
+      </AdminCard>
 
       {/* Confirmation Modal */}
       <AnimatePresence>

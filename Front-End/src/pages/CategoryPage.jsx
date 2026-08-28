@@ -1,30 +1,28 @@
 /**
- * CategoryPage — صفحة القسم
+ * CategoryPage — صفحة منتجات القسم
  *
- * Phase 2 update: Uses slug-based routing (/category/:slug).
- * Fetches the category by slug to get metadata (SEO title, subcategories).
- * Shows subcategory navigation when the category has children.
+ * EN: Compact ecommerce product listing for /category/:slug.
+ *     Dense grid, filter/sort toolbar, horizontal category nav.
+ *
+ * AR: صفحة منتجات مدمجة لـ /category/:slug.
+ *     شبكة كثيفة، شريط فلترة وترتيب، تنقل أفقي بين الأقسام.
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Search, LayoutGrid, Loader2, X, ArrowRight, Tag, FolderOpen
-} from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import useSWR from 'swr';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
 import Breadcrumbs from '../components/Breadcrumbs';
 import InfiniteScrollTrigger from '../components/InfiniteScrollTrigger';
+import ProductListingToolbar from '../components/ProductListingToolbar';
 import { ProductGrid } from '../components/HighConversionGrid';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import * as api from '../services/api';
-import { useProductsInfinite } from '../hooks/useProducts';
+import { useProductsInfinite, useCategories } from '../hooks/useProducts';
 import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../utils/cloudinaryUrl';
-
-// ─── Helpers ───
 
 function mapToProduct(p) {
   const rawImage = p.imageUrl || p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
@@ -45,24 +43,19 @@ function mapToProduct(p) {
   };
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
-};
-
-// ─── Subcategory chip ───
-const SubcategoryChip = ({ cat }) => (
+const CompactCategoryPill = ({ cat, isActive }) => (
   <Link
     to={`/category/${cat.slug || cat.id}`}
-    className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-gold-300 dark:hover:border-gold-600 hover:shadow-md transition-all group"
+    className={`flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+      isActive
+        ? 'bg-gold-600 border-gold-600 text-white shadow-sm'
+        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-gold-300 dark:hover:border-gold-600'
+    }`}
   >
-    {cat.iconUrl
-      ? <img src={cat.iconUrl} alt={cat.name} className="w-5 h-5 object-contain rounded" />
-      : <Tag className="w-4 h-4 text-gold-500 group-hover:text-gold-600" />
-    }
-    <span className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
-      {cat.name}
-    </span>
+    {cat.iconUrl && (
+      <img src={cat.iconUrl} alt="" className="w-4 h-4 object-contain rounded-full" />
+    )}
+    <span>{cat.name}</span>
   </Link>
 );
 
@@ -74,22 +67,37 @@ const CategoryPage = () => {
 
   const [searchText, setSearchText] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('default');
+  const [showFilters, setShowFilters] = useState(false);
+  const [offersOnly, setOffersOnly] = useState(false);
+  const [condition, setCondition] = useState('');
 
   React.useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchText), 500);
     return () => clearTimeout(handler);
   }, [searchText]);
 
-  // Fetch category metadata by slug (for SEO + subcategories)
   const { data: categoryData, isLoading: categoryLoading } = useSWR(
     slug ? ['categoryBySlug', slug] : null,
     () => api.getCategoryBySlug(slug)
   );
 
-  const categoryName = categoryData?.name || slug;
-  const subcategories = categoryData?.children?.filter(c => c.isActive) || [];
+  const { data: allCategories = [] } = useCategories();
 
-  // ─── SWR Data — products ───
+  const categoryName = categoryData?.name || slug;
+  const subcategories = categoryData?.children?.filter((c) => c.isActive) || [];
+
+  const siblingCategories = useMemo(() => {
+    if (!allCategories.length) return [];
+    const parentId = categoryData?.parentId || categoryData?.parent?.id;
+    if (parentId) {
+      return allCategories.filter((c) => c.parentId === parentId || c.parent?.id === parentId);
+    }
+    return allCategories.filter((c) => !c.parentId && !c.parent);
+  }, [allCategories, categoryData]);
+
+  const activeFilterCount = (offersOnly ? 1 : 0) + (condition ? 1 : 0);
+
   const {
     data: products,
     isLoading: productsLoading,
@@ -100,203 +108,233 @@ const CategoryPage = () => {
     setSize,
     error: productsError
   } = useProductsInfinite({
-    categoryName: categoryName,   // still uses name on the backend for now
-    search: debouncedSearch
+    categoryName,
+    search: debouncedSearch,
+    specialOffers: offersOnly,
+    condition,
   });
 
   const activeProducts = productsError ? [] : (products || []);
   const showSkeleton = productsLoading && activeProducts.length === 0;
 
-  // Sort promoted first
   const filteredProducts = useMemo(() => {
     const result = [...activeProducts];
-    result.sort((a, b) => {
-      if (a.isPromoted && !b.isPromoted) return -1;
-      if (!a.isPromoted && b.isPromoted) return 1;
-      return 0;
-    });
-    return result;
-  }, [activeProducts]);
 
-  const mappedGridProducts = useMemo(() =>
-    filteredProducts.map(p => ({ ...mapToProduct(p), isFavorite: isFavorite(p.id) })),
+    if (sortOrder === 'price-asc') {
+      result.sort((a, b) => (a.discountPrice || a.price) - (b.discountPrice || b.price));
+    } else if (sortOrder === 'price-desc') {
+      result.sort((a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price));
+    } else if (sortOrder === 'rating') {
+      result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+    } else if (sortOrder === 'newest') {
+      result.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA;
+      });
+    } else {
+      result.sort((a, b) => {
+        if (a.isPromoted && !b.isPromoted) return -1;
+        if (!a.isPromoted && b.isPromoted) return 1;
+        return 0;
+      });
+    }
+
+    return result;
+  }, [activeProducts, sortOrder]);
+
+  const mappedGridProducts = useMemo(
+    () => filteredProducts.map((p) => ({ ...mapToProduct(p), isFavorite: isFavorite(p.id) })),
     [filteredProducts, isFavorite]
   );
 
   const handleQuickAdd = useCallback((p) => {
-    const original = activeProducts.find(prod => String(prod.id) === String(p.id));
+    const original = activeProducts.find((prod) => String(prod.id) === String(p.id));
     if (original) addToCart(original, 1);
     else addToCart({ id: p.id, title: p.title, price: p.price, currency: p.currency || 'USD', mainImageUrl: p.image, imageUrl: p.image }, 1);
   }, [activeProducts, addToCart]);
 
   const handleFavoriteToggle = useCallback((p) => {
-    const original = activeProducts.find(prod => String(prod.id) === String(p.id));
+    const original = activeProducts.find((prod) => String(prod.id) === String(p.id));
     if (original) toggleFavorite(original);
   }, [activeProducts, toggleFavorite]);
 
-  const seoTitle = categoryData?.metaTitle || `قسم ${categoryName}`;
-  const seoDescription = categoryData?.metaDescription || `تصفح أحدث وأفضل العطور والمنتجات في قسم ${categoryName} على متجر قصة — عطور أصلية ١٠٠٪ بأفضل الأسعار.`;
+  const clearFilters = () => {
+    setOffersOnly(false);
+    setCondition('');
+    setShowFilters(false);
+  };
+
+  const seoTitle = categoryData?.metaTitle || `منتجات ${categoryName}`;
+  const seoDescription = categoryData?.metaDescription || `تصفح منتجات قسم ${categoryName} في متجر قصة — تسوق بسهولة وبأفضل الأسعار.`;
 
   return (
     <Layout>
       <SEO title={seoTitle} description={seoDescription} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
 
-        {/* ── Breadcrumbs ── */}
-        <Breadcrumbs items={[
-          { name: 'الرئيسية', url: '/' },
-          { name: 'الأقسام', url: '/products' },
-          ...(categoryData?.parent ? [{ name: categoryData.parent.name, url: `/category/${categoryData.parent.slug || categoryData.parent.id}` }] : []),
-          { name: categoryName },
-        ]} />
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 pb-24 md:pb-10 lg:pb-12">
+        <Breadcrumbs
+          compact
+          items={[
+            { name: 'الرئيسية', url: '/' },
+            { name: 'الفئات', url: '/categories' },
+            ...(categoryData?.parent ? [{ name: categoryData.parent.name, url: `/category/${categoryData.parent.slug || categoryData.parent.id}` }] : []),
+            { name: categoryName },
+          ]}
+        />
 
-        {/* ── Page Header ── */}
-        <div className="flex items-center gap-3 mb-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 hover:border-gold-300 dark:hover:border-gold-600 transition-all shadow-sm"
-            aria-label="العودة"
-          >
-            <ArrowRight className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-violet-100 dark:bg-violet-900/40">
-              {categoryData?.iconUrl
-                ? <img src={categoryData.iconUrl} alt={categoryName} className="w-6 h-6 object-contain rounded" />
-                : <Tag className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-              }
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                {categoryLoading ? <span className="inline-block w-40 h-6 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" /> : categoryName}
-              </h1>
-              {categoryData?.description && (
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 max-w-md line-clamp-1">
-                  {categoryData.description}
-                </p>
-              )}
+        <header className="mb-3">
+          <h1 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">
+            {categoryLoading ? (
+              <span className="inline-block w-32 h-5 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+            ) : (
+              `منتجات ${categoryName}`
+            )}
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            {filteredProducts.length} منتج
+          </p>
+        </header>
+
+        {(siblingCategories.length > 1 || subcategories.length > 0) && (
+          <div className="mb-3 -mx-1">
+            <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1 px-1">
+              {siblingCategories.length > 1
+                ? siblingCategories.map((cat) => (
+                    <CompactCategoryPill
+                      key={cat.id}
+                      cat={cat}
+                      isActive={cat.slug === slug || cat.name === categoryName}
+                    />
+                  ))
+                : subcategories.map((cat) => (
+                    <CompactCategoryPill key={cat.id} cat={cat} isActive={false} />
+                  ))}
             </div>
           </div>
-        </div>
-
-        {/* ── Subcategory Navigation ── */}
-        {subcategories.length > 0 && (
-          <section className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <FolderOpen className="w-4 h-4 text-gold-500" />
-              <h2 className="text-sm font-bold text-slate-700 dark:text-slate-300">الأقسام الفرعية</h2>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {subcategories.map(sub => (
-                <SubcategoryChip key={sub.id} cat={sub} />
-              ))}
-            </div>
-          </section>
         )}
 
-        {/* ── Search ── */}
-        <section className="mb-5">
-          <div className="relative flex-1">
-            <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-              <Search className="w-5 h-5 text-slate-400" />
-            </div>
-            <input
-              type="text"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              placeholder={`ابحث في ${categoryName}...`}
-              className="w-full pr-12 pl-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 shadow-sm transition-all"
-            />
-            {searchText && (
-              <button
-                onClick={() => setSearchText('')}
-                className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
+        <div className="relative mb-3">
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <Search className="w-4 h-4 text-slate-400" />
+          </div>
+          <input
+            type="search"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder={`ابحث في ${categoryName}...`}
+            className="w-full pr-10 pl-9 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/40"
+          />
+          {searchText && (
+            <button
+              type="button"
+              onClick={() => setSearchText('')}
+              className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 hover:text-slate-600"
+              aria-label="مسح البحث"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        <ProductListingToolbar
+          productCount={filteredProducts.length}
+          isValidating={productsValidating && !showSkeleton}
+          sortOrder={sortOrder}
+          onSortChange={setSortOrder}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters((v) => !v)}
+          activeFilterCount={activeFilterCount}
+        />
+
+        {showFilters && (
+          <div className="mb-3 p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3">
+            <label className="flex items-center justify-between gap-3 cursor-pointer">
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">العروض فقط</span>
+              <input
+                type="checkbox"
+                checked={offersOnly}
+                onChange={(e) => setOffersOnly(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-300 text-gold-600 focus:ring-gold-500"
+              />
+            </label>
+            <div>
+              <label htmlFor="condition-filter" className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">
+                الحالة
+              </label>
+              <select
+                id="condition-filter"
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
+                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/40"
               >
-                <X className="w-4 h-4" />
+                <option value="">الكل</option>
+                <option value="1">جديد</option>
+                <option value="2">مستعمل</option>
+                <option value="3">مُجدَّد</option>
+              </select>
+            </div>
+            {activeFilterCount > 0 && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-xs font-bold text-gold-600 dark:text-gold-400 hover:underline"
+              >
+                مسح الفلاتر
               </button>
             )}
           </div>
-        </section>
+        )}
 
-        {/* ── Counter ── */}
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-            {searchText.trim() ? `نتائج: "${searchText.trim()}"` : `منتجات ${categoryName}`}
-          </h2>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
-            {productsValidating && !showSkeleton && <Loader2 className="w-3 h-3 animate-spin text-gold-400" />}
-            <LayoutGrid className="w-3.5 h-3.5" />
-            {filteredProducts.length} منتج
+        {productsError && (
+          <div className="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">
+            تعذر تحميل المنتجات: {productsError.message || 'حدث خطأ غير متوقع'}
           </div>
-        </div>
+        )}
 
-        {/* ── Product Grid ── */}
         {showSkeleton ? (
-          <ProductGrid isLoading={true} loadingCount={8} />
-        ) : (
-          <AnimatePresence mode="popLayout">
-            {filteredProducts.length > 0 ? (
-              <motion.div
-                className="w-full"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0 }}
-                key={slug + searchText}
-              >
-                <ProductGrid
-                  products={mappedGridProducts}
-                  isLoadingMore={isLoadingMore}
-                  onQuickAdd={handleQuickAdd}
-                  onClick={(p) => navigate(`/product/${p.slug || p.id}`)}
-                  onFavorite={handleFavoriteToggle}
-                />
+          <ProductGrid isLoading loadingCount={10} variant="listing" compact />
+        ) : filteredProducts.length > 0 ? (
+          <>
+            <ProductGrid
+              products={mappedGridProducts}
+              isLoadingMore={isLoadingMore}
+              onQuickAdd={handleQuickAdd}
+              onClick={(p) => navigate(`/product/${p.slug || p.id}`)}
+              onFavorite={handleFavoriteToggle}
+              variant="listing"
+              compact
+            />
 
-                <InfiniteScrollTrigger
-                  onIntersect={() => setSize(size + 1)}
-                  isLoadingMore={isLoadingMore}
-                  isReachingEnd={isReachingEnd}
-                />
+            <InfiniteScrollTrigger
+              onIntersect={() => setSize(size + 1)}
+              isLoadingMore={isLoadingMore}
+              isReachingEnd={isReachingEnd}
+            />
 
-                {isReachingEnd && activeProducts.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="flex justify-center mt-12 pb-8"
-                  >
-                    <p className="text-sm sm:text-base font-semibold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-6 py-2.5 rounded-full border border-slate-100 dark:border-slate-800 shadow-sm">
-                      وصلت إلى نهاية المنتجات في هذا القسم ✨
-                    </p>
-                  </motion.div>
-                )}
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-gray-300 dark:border-slate-700"
-              >
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 mb-4 text-slate-400">
-                  <Search className="w-7 h-7" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">لا توجد منتجات</h3>
-                <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto text-sm">
-                  {searchText.trim()
-                    ? <>لم نتمكن من العثور على منتجات تطابق "<span className="font-semibold text-slate-700 dark:text-slate-300">{searchText.trim()}</span>" في هذا القسم.</>
-                    : <>لا توجد منتجات في قسم <span className="font-semibold text-slate-700 dark:text-slate-300">{categoryName}</span> حالياً.</>
-                  }
-                </p>
-                <button
-                  onClick={() => navigate('/')}
-                  className="mt-5 px-5 py-2 bg-gold-600 text-white font-semibold rounded-xl hover:bg-gold-700 transition-colors text-sm"
-                >
-                  العودة للصفحة الرئيسية
-                </button>
-              </motion.div>
+            {isReachingEnd && activeProducts.length > 0 && (
+              <p className="text-center text-xs text-slate-400 dark:text-slate-500 py-6">
+                وصلت إلى نهاية المنتجات في هذا القسم
+              </p>
             )}
-          </AnimatePresence>
+          </>
+        ) : (
+          <div className="text-center py-14 px-4">
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">
+              لا توجد منتجات حالياً
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+              {searchText.trim() || activeFilterCount > 0
+                ? 'جرّب تعديل البحث أو الفلاتر'
+                : 'جرّب تصفح قسم آخر'}
+            </p>
+            <Link
+              to="/categories"
+              className="inline-flex items-center justify-center px-4 py-2 bg-gold-600 text-white text-sm font-bold rounded-lg hover:bg-gold-500 transition-colors"
+            >
+              تصفح جميع الفئات
+            </Link>
+          </div>
         )}
       </main>
     </Layout>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ShoppingBag,
   Eye,
   EyeOff,
   Phone,
@@ -12,41 +11,56 @@ import {
   Loader2,
   ArrowRight,
   AlertCircle,
-  Mail,
+  Sparkles,
+  ShieldCheck,
+  Truck,
+  Store,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import SEO from "../components/SEO";
+
 const logo = "/Logo_192.png";
 
 const cities = [
-  "صنعاء",
-  "عدن",
-  "تعز",
-  "إب",
-  "المكلا",
-  "الحديدة",
-  "ذمار",
-  "حجة",
-  "صعدة",
-  "مأرب",
+  "صنعاء", "عدن", "تعز", "إب", "المكلا", "الحديدة", "ذمار", "حجة", "صعدة", "مأرب",
 ];
 
 const slideVariants = {
   enter: (direction) => ({
-    x: direction > 0 ? 80 : -80,
+    x: direction > 0 ? 40 : -40,
     opacity: 0,
   }),
   center: {
     x: 0,
     opacity: 1,
-    transition: { type: "spring", stiffness: 300, damping: 30 },
+    transition: { type: "spring", stiffness: 320, damping: 32 },
   },
   exit: (direction) => ({
-    x: direction > 0 ? -80 : 80,
+    x: direction > 0 ? -40 : 40,
     opacity: 0,
     transition: { duration: 0.2 },
   }),
 };
+
+const trustItems = [
+  { icon: ShieldCheck, text: "تسوق آمن وموثوق" },
+  { icon: Truck, text: "توصيل سريع لجميع المدن" },
+  { icon: Sparkles, text: "عروض حصرية للأعضاء" },
+];
+
+const inputClass =
+  "w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-400/40 focus:bg-white/[0.08] transition-all";
+
+function AuthInput({ icon: Icon, className = "", ...props }) {
+  return (
+    <div className="relative group">
+      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+        <Icon className="w-5 h-5 text-white/25 group-focus-within:text-gold-400/80 transition-colors" />
+      </div>
+      <input className={`${inputClass} ${className}`.trim()} {...props} />
+    </div>
+  );
+}
 
 const AuthPage = () => {
   const { login, register, isAuthenticated } = useAuth();
@@ -63,31 +77,29 @@ const AuthPage = () => {
     name: "",
     phoneNumber: "",
     city: "",
-    role: 3, // 2=Seller, 3=Buyer
+    role: 3,
   });
 
   const [lockoutTimeLeft, setLockoutTimeLeft] = useState(0);
 
-  // Initialize lockout state from localStorage
   React.useEffect(() => {
-    const lockedUntil = localStorage.getItem('auth_lockout_until');
+    const lockedUntil = localStorage.getItem("auth_lockout_until");
     if (lockedUntil) {
       const remainingMs = parseInt(lockedUntil, 10) - Date.now();
       if (remainingMs > 0) {
         setLockoutTimeLeft(Math.ceil(remainingMs / 1000));
       } else {
-        localStorage.removeItem('auth_lockout_until');
+        localStorage.removeItem("auth_lockout_until");
       }
     }
   }, []);
 
-  // Countdown timer for lockout
   React.useEffect(() => {
     if (lockoutTimeLeft > 0) {
       const timer = setInterval(() => {
         setLockoutTimeLeft((prev) => {
           if (prev <= 1) {
-            localStorage.removeItem('auth_lockout_until');
+            localStorage.removeItem("auth_lockout_until");
             clearInterval(timer);
             return 0;
           }
@@ -98,8 +110,6 @@ const AuthPage = () => {
     }
   }, [lockoutTimeLeft]);
 
-
-  // Redirect if already logged in
   React.useEffect(() => {
     if (isAuthenticated) navigate("/", { replace: true });
   }, [isAuthenticated, navigate]);
@@ -131,7 +141,7 @@ const AuthPage = () => {
           phoneNumber: form.phoneNumber.trim(),
           password: form.password,
           city: form.city,
-          role: parseInt(form.role),
+          role: parseInt(form.role, 10),
         });
       }
       navigate("/", { replace: true });
@@ -140,9 +150,9 @@ const AuthPage = () => {
         const match = err.message.match(/بعد (\d+) دقيقة/);
         const minutes = match ? parseInt(match[1], 10) : 15;
         const lockoutEnd = Date.now() + minutes * 60 * 1000;
-        localStorage.setItem('auth_lockout_until', lockoutEnd.toString());
+        localStorage.setItem("auth_lockout_until", lockoutEnd.toString());
         setLockoutTimeLeft(minutes * 60);
-        setError(""); // Clear normal error in favor of lockout UI
+        setError("");
       } else {
         setError(err.message || "حدث خطأ، حاول مرة أخرى");
       }
@@ -152,347 +162,370 @@ const AuthPage = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center relative overflow-hidden bg-slate-950 px-4 py-12"
-      dir="rtl"
-    >
+    <div className="min-h-screen bg-[#080808] text-white" dir="rtl">
       <SEO title="تسجيل الدخول" noIndex />
-      {/* ========== خلفية متحركة ========== */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-bl from-[#1A150C] via-[#0F0F0F] to-[#050505]"></div>
 
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 1],
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-            opacity: [0.15, 0.3, 0.15],
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-gold-500/15 blur-[140px]"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.25, 1],
-            x: [0, -40, 0],
-            y: [0, 40, 0],
-            opacity: [0.1, 0.22, 0.1],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 3,
-          }}
-          className="absolute bottom-[-20%] left-[-10%] w-[55%] h-[55%] rounded-full bg-gold-700/20 blur-[130px]"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.08, 0.18, 0.08],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 5,
-          }}
-          className="absolute top-[40%] left-[30%] w-[25%] h-[35%] rounded-full bg-gold-700/15 blur-[100px]"
-        />
+      <div className="min-h-screen lg:grid lg:grid-cols-2">
+        {/* ── Brand panel ── */}
+        <div className="relative hidden lg:flex flex-col justify-between overflow-hidden p-10 xl:p-14">
+          <div className="absolute inset-0 bg-gradient-to-bl from-[#1f1608] via-[#0d0d0d] to-[#050505]" />
+          <motion.div
+            animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.35, 0.2] }}
+            transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-gold-500/20 blur-[120px]"
+          />
+          <motion.div
+            animate={{ scale: [1, 1.15, 1], opacity: [0.12, 0.25, 0.12] }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+            className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-amber-700/25 blur-[100px]"
+          />
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)",
+              backgroundSize: "48px 48px",
+            }}
+          />
 
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)",
-            backgroundSize: "50px 50px",
-          }}
-        />
-      </div>
-
-      {/* ========== بطاقة المصادقة ========== */}
-      <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative w-full max-w-md z-10"
-      >
-        {/* الشعار */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-3 group">
-            <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-1 ring-gold-200/60">
-              <img
-                src={logo}
-                alt="شعار GISAAH قصة"
-                className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
-              />
-              <div className="absolute top-0 right-0 w-3 h-3 bg-gold-400 rounded-full border-2 border-white animate-pulse"></div>
-            </div>
-            <span className="font-extrabold text-3xl text-white tracking-tight drop-shadow-md font-display">
-              GISAAH
-            </span>
-          </Link>
-          <p className="text-gold-200/50 text-sm mt-3 font-medium">
-            {isLogin
-              ? "مرحباً بعودتك! سجّل دخولك للمتابعة"
-              : "أنشئ حسابك وابدأ التسوق"}
-          </p>
-        </div>
-
-        {/* بطاقة النموذج */}
-        <div className="bg-white/[0.07] backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl shadow-black/20 overflow-hidden">
-          {/* تبويبات التسجيل / الدخول */}
-          <div className="flex border-b border-white/10">
-            <button
-              onClick={() => switchView(true)}
-              className={`flex-1 py-4 text-sm font-bold transition-all relative ${
-                isLogin ? "text-white" : "text-white/40 hover:text-white/60"
-              }`}
-            >
-              تسجيل الدخول
-              {isLogin && (
-                <motion.div
-                  layoutId="authTab"
-                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-gold-400 rounded-full"
-                />
-              )}
-            </button>
-            <button
-              onClick={() => switchView(false)}
-              className={`flex-1 py-4 text-sm font-bold transition-all relative ${
-                !isLogin ? "text-white" : "text-white/40 hover:text-white/60"
-              }`}
-            >
-              حساب جديد
-              {!isLogin && (
-                <motion.div
-                  layoutId="authTab"
-                  className="absolute bottom-0 left-4 right-4 h-0.5 bg-gold-400 rounded-full"
-                />
-              )}
-            </button>
+          <div className="relative z-10">
+            <Link to="/" className="inline-flex items-center gap-3 group">
+              <div className="w-12 h-12 rounded-2xl bg-white overflow-hidden ring-2 ring-gold-400/40 shadow-lg shadow-gold-500/20">
+                <img src={logo} alt="GISAAH" className="w-full h-full object-cover scale-[1.14]" />
+              </div>
+              <span className="text-2xl font-black tracking-tight">GISAAH</span>
+            </Link>
           </div>
 
-          {/* محتوى النموذج */}
-          <div className="p-6 sm:p-8">
-            {/* رسالة الخطأ أو الحظر */}
-            <AnimatePresence>
-              {(error || lockoutTimeLeft > 0) && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, height: 0 }}
-                  animate={{ opacity: 1, y: 0, height: "auto" }}
-                  exit={{ opacity: 0, y: -10, height: 0 }}
-                  className="mb-4 flex flex-col gap-2 bg-red-500/10 border border-red-500/20 text-red-300 text-sm font-medium px-4 py-3 rounded-xl"
-                >
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                    <span>{lockoutTimeLeft > 0 ? "تم حظر المحاولات مؤقتاً لأسباب أمنية. يرجى الانتظار." : error}</span>
-                  </div>
-                  {lockoutTimeLeft > 0 && (
-                    <div className="text-center font-mono font-bold text-lg text-red-400 mt-1 bg-red-500/10 py-2 rounded-lg">
-                      {Math.floor(lockoutTimeLeft / 60)}:{String(lockoutTimeLeft % 60).padStart(2, '0')}
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+          <div className="relative z-10 max-w-md">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="inline-flex items-center gap-2 rounded-full border border-gold-500/30 bg-gold-500/10 px-3 py-1 mb-6"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-gold-400" />
+              <span className="text-xs font-bold text-gold-300">تجربة تسوق فاخرة</span>
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="text-4xl xl:text-5xl font-black leading-tight mb-4"
+            >
+              مرحباً بك في
+              <span className="block text-transparent bg-clip-text bg-gradient-to-l from-gold-300 via-gold-400 to-amber-200">
+                عالم GISAAH
+              </span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              className="text-slate-400 text-base leading-relaxed"
+            >
+              سجّل دخولك للوصول إلى عروضك الحصرية، تتبع طلباتك، وإدارة حسابك بكل سهولة.
+            </motion.p>
+          </div>
 
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.form
-                key={isLogin ? "login" : "register"}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                onSubmit={handleSubmit}
-                className="space-y-5"
+          <div className="relative z-10 space-y-3">
+            {trustItems.map(({ icon: Icon, text }, i) => (
+              <motion.div
+                key={text}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 + i * 0.1 }}
+                className="flex items-center gap-3 text-sm text-slate-300"
               >
-                {/* الاسم الكامل - التسجيل فقط */}
-                {!isLogin && (
-                  <div>
-                    <label className="block text-xs font-bold text-white/60 mb-2 uppercase tracking-wider">
-                      الاسم الكامل
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                        <User className="w-5 h-5 text-white/30" />
-                      </div>
-                      <input
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        required
-                        placeholder="أدخل اسمك الكامل"
-                        className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500/40 focus:bg-white/[0.08] transition-all"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* رقم الهاتف - كلا النموذجين */}
-                <div>
-                  <label className="block text-xs font-bold text-white/60 mb-2 uppercase tracking-wider">
-                    رقم الهاتف
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                      <Phone className="w-5 h-5 text-white/30" />
-                    </div>
-                    <input
-                      type="tel"
-                      name="phoneNumber"
-                      value={form.phoneNumber}
-                      onChange={handleChange}
-                      required
-                      dir="ltr"
-                      placeholder="77xxxxxxx"
-                      className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500/40 focus:bg-white/[0.08] transition-all text-right"
-                    />
-                  </div>
+                <div className="w-9 h-9 rounded-xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-gold-400" />
                 </div>
-
-                {/* المدينة - التسجيل فقط */}
-                {!isLogin && (
-                  <div>
-                    <label className="block text-xs font-bold text-white/60 mb-2 uppercase tracking-wider">
-                      المدينة
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                        <MapPin className="w-5 h-5 text-white/30" />
-                      </div>
-                      <select
-                        name="city"
-                        value={form.city}
-                        onChange={handleChange}
-                        required
-                        className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500/40 focus:bg-white/[0.08] transition-all appearance-none cursor-pointer"
-                      >
-                        <option
-                          value=""
-                          disabled
-                          className="bg-slate-900 text-slate-400"
-                        >
-                          اختر مدينتك
-                        </option>
-                        {cities.map((city) => (
-                          <option
-                            key={city}
-                            value={city}
-                            className="bg-slate-900 text-white"
-                          >
-                            {city}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                )}
-
-                {/* كلمة المرور */}
-                <div>
-                  <label className="block text-xs font-bold text-white/60 mb-2 uppercase tracking-wider">
-                    كلمة المرور
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                      <Lock className="w-5 h-5 text-white/30" />
-                    </div>
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={form.password}
-                      onChange={handleChange}
-                      required
-                      placeholder="أدخل كلمة المرور"
-                      minLength={6}
-                      className="w-full pr-12 pl-12 py-3.5 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500/40 focus:bg-white/[0.08] transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 left-0 pl-4 flex items-center text-white/30 hover:text-white/60 transition-colors focus:outline-none"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* نسيت كلمة المرور */}
-                {isLogin && (
-                  <div className="text-left">
-                    <button
-                      type="button"
-                      className="text-xs text-gold-300/70 hover:text-gold-300 transition-colors font-medium"
-                    >
-                      نسيت كلمة المرور؟
-                    </button>
-                  </div>
-                )}
-
-                {/* زر الإرسال */}
-                <button
-                  type="submit"
-                  disabled={isLoading || lockoutTimeLeft > 0}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 bg-gold-500 text-white rounded-xl font-bold text-base hover:bg-gold-400 focus:outline-none focus:ring-4 focus:ring-gold-500/40 transition-all shadow-xl shadow-gold-600/20 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>جاري المعالجة...</span>
-                    </>
-                  ) : lockoutTimeLeft > 0 ? (
-                    `محظور (${Math.floor(lockoutTimeLeft / 60)}:${String(lockoutTimeLeft % 60).padStart(2, '0')})`
-                  ) : isLogin ? (
-                    "تسجيل الدخول"
-                  ) : (
-                    "إنشاء الحساب"
-                  )}
-                </button>
-
-                {/* فاصل */}
-                <div className="relative flex items-center gap-3 py-1">
-                  <div className="flex-1 h-px bg-white/10"></div>
-                  <span className="text-[11px] font-semibold text-white/25 uppercase tracking-widest select-none">
-                    أو
-                  </span>
-                  <div className="flex-1 h-px bg-white/10"></div>
-                </div>
-
-                {/* تبديل العرض */}
-                <p className="text-center text-sm text-white/40">
-                  {isLogin ? "ليس لديك حساب؟" : "لديك حساب بالفعل؟"}{" "}
-                  <button
-                    type="button"
-                    onClick={() => switchView(!isLogin)}
-                    className="text-gold-300 hover:text-gold-200 font-bold transition-colors"
-                  >
-                    {isLogin ? "سجّل الآن" : "سجّل دخولك"}
-                  </button>
-                </p>
-              </motion.form>
-            </AnimatePresence>
+                {text}
+              </motion.div>
+            ))}
           </div>
         </div>
 
-        {/* العودة للرئيسية */}
-        <div className="text-center mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-sm text-white/30 hover:text-white/60 transition-colors font-medium group"
+        {/* ── Form panel ── */}
+        <div className="relative flex items-center justify-center px-4 py-10 sm:px-8 lg:px-12 overflow-hidden">
+          <div className="absolute inset-0 lg:hidden bg-gradient-to-b from-[#14100a] via-[#0a0a0a] to-[#050505]" />
+          <motion.div
+            animate={{ opacity: [0.08, 0.18, 0.08] }}
+            transition={{ duration: 10, repeat: Infinity }}
+            className="absolute top-1/4 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-gold-500/15 blur-[100px] lg:hidden"
+          />
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            className="relative w-full max-w-md z-10"
           >
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            العودة للصفحة الرئيسية
-          </Link>
+            {/* Mobile logo */}
+            <div className="lg:hidden text-center mb-8">
+              <Link to="/" className="inline-flex flex-col items-center gap-3">
+                <div className="w-16 h-16 rounded-2xl bg-white overflow-hidden ring-2 ring-gold-400/50 shadow-xl shadow-gold-500/20">
+                  <img src={logo} alt="GISAAH" className="w-full h-full object-cover scale-[1.14]" />
+                </div>
+                <span className="text-2xl font-black">GISAAH</span>
+                <p className="text-sm text-slate-400">
+                  {isLogin ? "سجّل دخولك للمتابعة" : "أنشئ حسابك وابدأ التسوق"}
+                </p>
+              </Link>
+            </div>
+
+            {/* Toggle pills */}
+            <div className="flex p-1 rounded-2xl bg-white/[0.06] border border-white/10 mb-6">
+              {[
+                { id: true, label: "تسجيل الدخول" },
+                { id: false, label: "حساب جديد" },
+              ].map(({ id, label }) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => switchView(id)}
+                  className={`relative flex-1 py-2.5 text-sm font-bold rounded-xl transition-colors ${
+                    isLogin === id ? "text-slate-900" : "text-white/50 hover:text-white/80"
+                  }`}
+                >
+                  {isLogin === id && (
+                    <motion.div
+                      layoutId="authPill"
+                      className="absolute inset-0 bg-gradient-to-l from-gold-400 to-gold-500 rounded-xl shadow-md shadow-gold-500/30"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Card */}
+            <div className="relative rounded-3xl p-[1px] bg-gradient-to-br from-gold-400/50 via-gold-600/20 to-white/10 shadow-2xl shadow-black/40">
+              <div className="rounded-[23px] bg-slate-950/90 backdrop-blur-2xl border border-white/[0.06] overflow-hidden">
+                <div className="hidden lg:block px-8 pt-8 pb-2">
+                  <h2 className="text-xl font-black text-white">
+                    {isLogin ? "تسجيل الدخول" : "إنشاء حساب"}
+                  </h2>
+                  <p className="text-sm text-slate-400 mt-1">
+                    {isLogin ? "أدخل بياناتك للوصول إلى حسابك" : "املأ البيانات للانضمام إلينا"}
+                  </p>
+                </div>
+
+                <div className="p-6 sm:p-8">
+                  <AnimatePresence>
+                    {(error || lockoutTimeLeft > 0) && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mb-5 overflow-hidden"
+                      >
+                        <div className="flex flex-col gap-2 bg-red-500/10 border border-red-500/25 text-red-300 text-sm px-4 py-3 rounded-xl">
+                          <div className="flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                            <span>
+                              {lockoutTimeLeft > 0
+                                ? "تم حظر المحاولات مؤقتاً. يرجى الانتظار."
+                                : error}
+                            </span>
+                          </div>
+                          {lockoutTimeLeft > 0 && (
+                            <div className="text-center font-mono font-bold text-lg text-red-400 bg-red-500/10 py-2 rounded-lg">
+                              {Math.floor(lockoutTimeLeft / 60)}:
+                              {String(lockoutTimeLeft % 60).padStart(2, "0")}
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <AnimatePresence mode="wait" custom={direction}>
+                    <motion.form
+                      key={isLogin ? "login" : "register"}
+                      custom={direction}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      onSubmit={handleSubmit}
+                      className="space-y-4"
+                    >
+                      {!isLogin && (
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                            الاسم الكامل
+                          </label>
+                          <AuthInput
+                            icon={User}
+                            type="text"
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            required
+                            placeholder="أدخل اسمك الكامل"
+                          />
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                          رقم الهاتف
+                        </label>
+                        <AuthInput
+                          icon={Phone}
+                          type="tel"
+                          name="phoneNumber"
+                          value={form.phoneNumber}
+                          onChange={handleChange}
+                          required
+                          dir="ltr"
+                          placeholder="77xxxxxxx"
+                          className="text-right"
+                        />
+                      </div>
+
+                      {!isLogin && (
+                        <>
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                              المدينة
+                            </label>
+                            <div className="relative group">
+                              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                <MapPin className="w-5 h-5 text-white/25 group-focus-within:text-gold-400/80 transition-colors" />
+                              </div>
+                              <select
+                                name="city"
+                                value={form.city}
+                                onChange={handleChange}
+                                required
+                                className={`${inputClass} appearance-none cursor-pointer`}
+                              >
+                                <option value="" disabled className="bg-slate-900">اختر مدينتك</option>
+                                {cities.map((city) => (
+                                  <option key={city} value={city} className="bg-slate-900">{city}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
+                              نوع الحساب
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                              {[
+                                { value: 3, label: "مشتري", icon: User },
+                                { value: 2, label: "بائع", icon: Store },
+                              ].map(({ value, label, icon: Icon }) => (
+                                <button
+                                  key={value}
+                                  type="button"
+                                  onClick={() => setForm((f) => ({ ...f, role: value }))}
+                                  className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-bold transition-all ${
+                                    form.role === value
+                                      ? "bg-gold-500/15 border-gold-400/50 text-gold-300"
+                                      : "bg-white/[0.03] border-white/10 text-white/50 hover:border-white/20"
+                                  }`}
+                                >
+                                  <Icon className="w-4 h-4" />
+                                  {label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                          كلمة المرور
+                        </label>
+                        <div className="relative group">
+                          <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                            <Lock className="w-5 h-5 text-white/25 group-focus-within:text-gold-400/80 transition-colors" />
+                          </div>
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            required
+                            placeholder="أدخل كلمة المرور"
+                            minLength={6}
+                            className={`${inputClass} pl-12`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 left-0 pl-4 flex items-center text-white/30 hover:text-gold-400 transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      {isLogin && (
+                        <div className="text-left">
+                          <button
+                            type="button"
+                            className="text-xs text-gold-400/80 hover:text-gold-300 font-semibold transition-colors"
+                          >
+                            نسيت كلمة المرور؟
+                          </button>
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={isLoading || lockoutTimeLeft > 0}
+                        className="relative w-full overflow-hidden flex items-center justify-center gap-2.5 py-4 mt-2 rounded-xl font-bold text-base text-slate-900 bg-gradient-to-l from-gold-400 via-gold-500 to-amber-500 hover:from-gold-300 hover:via-gold-400 hover:to-amber-400 focus:outline-none focus:ring-4 focus:ring-gold-500/30 shadow-lg shadow-gold-600/25 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            جاري المعالجة...
+                          </>
+                        ) : lockoutTimeLeft > 0 ? (
+                          `محظور (${Math.floor(lockoutTimeLeft / 60)}:${String(lockoutTimeLeft % 60).padStart(2, "0")})`
+                        ) : isLogin ? (
+                          "تسجيل الدخول"
+                        ) : (
+                          "إنشاء الحساب"
+                        )}
+                      </button>
+
+                      <p className="text-center text-sm text-slate-500 pt-1">
+                        {isLogin ? "ليس لديك حساب؟" : "لديك حساب بالفعل؟"}{" "}
+                        <button
+                          type="button"
+                          onClick={() => switchView(!isLogin)}
+                          className="text-gold-400 hover:text-gold-300 font-bold transition-colors"
+                        >
+                          {isLogin ? "سجّل الآن" : "سجّل دخولك"}
+                        </button>
+                      </p>
+                    </motion.form>
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center mt-6">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-gold-400 transition-colors font-medium group"
+              >
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                العودة للصفحة الرئيسية
+              </Link>
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

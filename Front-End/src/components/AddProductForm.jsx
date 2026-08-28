@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, Loader2, ImagePlus, AlertCircle, Cloud, CheckCircle, Sparkles, Star } from 'lucide-react';
 import * as api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { OptionPicker, BooleanPicker, parseAttrOptions, adminInputClass, adminSelectClass } from '../pages/admin/AdminUI';
 
 const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
   const { user } = useAuth();
@@ -454,7 +455,7 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
                       <X className="w-4 h-4" />
                     </button>
                   </div>
-                  <div className="col-span-full border-t border-slate-100 dark:border-slate-600 my-2 pt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <div className="col-span-full border-t border-slate-100 dark:border-slate-600 my-2 pt-3 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                     {variantAttributes.map(attr => {
                       const val = variant.attributes?.[attr.id] ?? '';
                       const handleAttrChange = (newVal) => {
@@ -480,51 +481,35 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
                         );
                       } else if (attr.type === 'BOOLEAN') {
                         inputElement = (
-                          <select
-                            value={val === '' ? '' : String(val)}
-                            onChange={e => handleAttrChange(e.target.value)}
+                          <BooleanPicker
+                            value={val}
+                            onChange={handleAttrChange}
                             required={attr.isRequired}
-                            className="w-full px-2 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800"
-                          >
-                            <option value="" disabled>اختر...</option>
-                            <option value="true">نعم</option>
-                            <option value="false">لا</option>
-                          </select>
+                            size="sm"
+                          />
                         );
                       } else if (attr.type === 'SELECT') {
-                        const opts = attr.options ? JSON.parse(attr.options) : [];
+                        const opts = parseAttrOptions(attr.options);
                         inputElement = (
-                          <select
+                          <OptionPicker
                             value={val}
-                            onChange={e => handleAttrChange(e.target.value)}
+                            onChange={handleAttrChange}
+                            options={opts}
                             required={attr.isRequired}
-                            className="w-full px-2 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800"
-                          >
-                            <option value="" disabled>اختر...</option>
-                            {opts.map(o => <option key={o} value={o}>{o}</option>)}
-                          </select>
+                            size="sm"
+                          />
                         );
                       } else if (attr.type === 'MULTI_SELECT') {
-                        const opts = attr.options ? JSON.parse(attr.options) : [];
-                        const currentVals = typeof val === 'string' && val.length > 0 ? val.split(',') : [];
-                        const toggleVal = (o) => {
-                          const set = new Set(currentVals);
-                          set.has(o) ? set.delete(o) : set.add(o);
-                          handleAttrChange(Array.from(set).join(','));
-                        };
+                        const opts = parseAttrOptions(attr.options);
                         inputElement = (
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {opts.map(o => (
-                              <button
-                                key={o}
-                                type="button"
-                                onClick={() => toggleVal(o)}
-                                className={`px-2 py-0.5 text-[10px] rounded border ${currentVals.includes(o) ? 'bg-gold-50 border-gold-400 text-gold-700' : 'bg-white border-slate-200 text-slate-600'}`}
-                              >
-                                {o}
-                              </button>
-                            ))}
-                          </div>
+                          <OptionPicker
+                            value={val}
+                            onChange={handleAttrChange}
+                            options={opts}
+                            multiple
+                            required={attr.isRequired}
+                            size="sm"
+                          />
                         );
                       }
 
@@ -695,58 +680,34 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
                 );
               } else if (attr.type === 'BOOLEAN') {
                 inputElement = (
-                  <select
-                    value={val === '' ? '' : String(val)}
-                    onChange={e => handleAttrChange(e.target.value)}
+                  <BooleanPicker
+                    value={val}
+                    onChange={handleAttrChange}
                     required={attr.isRequired}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:ring-2 focus:ring-gold-500/40 text-slate-900 dark:text-white"
-                  >
-                    <option value="" disabled>اختر...</option>
-                    <option value="true">نعم / يستخدم</option>
-                    <option value="false">لا / لا يستخدم</option>
-                  </select>
+                    trueLabel="نعم / يستخدم"
+                    falseLabel="لا / لا يستخدم"
+                  />
                 );
               } else if (attr.type === 'SELECT') {
-                const opts = attr.options ? JSON.parse(attr.options) : [];
+                const opts = parseAttrOptions(attr.options);
                 inputElement = (
-                  <select
+                  <OptionPicker
                     value={val}
-                    onChange={e => handleAttrChange(e.target.value)}
+                    onChange={handleAttrChange}
+                    options={opts}
                     required={attr.isRequired}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:ring-2 focus:ring-gold-500/40 text-slate-900 dark:text-white"
-                  >
-                    <option value="" disabled>اختر...</option>
-                    {opts.map(o => <option key={o} value={o}>{o}</option>)}
-                  </select>
+                  />
                 );
               } else if (attr.type === 'MULTI_SELECT') {
-                const opts = attr.options ? JSON.parse(attr.options) : [];
-                const currentVals = typeof val === 'string' && val.length > 0 ? val.split(',') : [];
-                const toggleVal = (o) => {
-                  const set = new Set(currentVals);
-                  set.has(o) ? set.delete(o) : set.add(o);
-                  handleAttrChange(Array.from(set).join(','));
-                };
+                const opts = parseAttrOptions(attr.options);
                 inputElement = (
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {opts.map(o => {
-                      const isSelected = currentVals.includes(o);
-                      return (
-                        <button
-                          key={o}
-                          type="button"
-                          onClick={() => toggleVal(o)}
-                          className={`px-2.5 py-1 text-[11px] rounded-lg border transition-colors ${
-                            isSelected 
-                              ? 'bg-gold-50 border-gold-400 text-gold-700 dark:bg-gold-900/30 dark:border-gold-600 dark:text-gold-300 font-bold'
-                              : 'bg-white border-slate-200 text-slate-600 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300'
-                          }`}
-                        >
-                          {o}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <OptionPicker
+                    value={val}
+                    onChange={handleAttrChange}
+                    options={opts}
+                    multiple
+                    required={attr.isRequired}
+                  />
                 );
               }
 

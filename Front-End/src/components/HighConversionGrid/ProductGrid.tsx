@@ -11,38 +11,39 @@ interface ProductGridProps {
   onFavorite?: (product: Product, isFavorite: boolean) => void;
   title?: string;
   className?: string;
+  compact?: boolean;
+  variant?: 'default' | 'listing';
 }
 
 export const ProductGrid: React.FC<ProductGridProps> = ({
   products,
   isLoading = false,
   isLoadingMore = false,
-  loadingCount = 15,
+  loadingCount = 12,
   onQuickAdd,
   onClick,
   onFavorite,
   title,
-  className = ''
+  className = '',
+  compact = true,
+  variant = 'default',
 }) => {
+  const gridClass = variant === 'listing'
+    ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-2.5'
+    : 'grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-2.5 md:gap-3';
+
   return (
-    <div className={`w-full max-w-7xl mx-auto px-2 sm:px-4 py-6 ${className}`}>
+    <div className={`w-full ${className}`}>
       {title && (
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 pl-1">
+        <h2 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white mb-3">
           {title}
         </h2>
       )}
 
-      {/* 
-        Responsive Grid Details:
-        - 1 column below 380px (very small devices)
-        - 2 columns onwards from 380px (mobile)
-        - 3 columns on sm (tablet)
-        - 4 columns md/lg, 5 columns xl+
-      */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
+      <div className={gridClass}>
         {isLoading ? (
           Array.from({ length: loadingCount }).map((_, index) => (
-            <ProductCard key={`skeleton-initial-${index}`} isLoading={true} />
+            <ProductCard key={`skeleton-initial-${index}`} isLoading compact={compact} />
           ))
         ) : (
           <>
@@ -50,6 +51,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
               <ProductCard
                 key={product.id}
                 product={product}
+                compact={compact}
                 onQuickAdd={onQuickAdd}
                 onClick={onClick}
                 onFavorite={onFavorite}
@@ -57,7 +59,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             ))}
             {isLoadingMore &&
               Array.from({ length: 5 }).map((_, index) => (
-                <ProductCard key={`skeleton-more-${index}`} isLoading={true} />
+                <ProductCard key={`skeleton-more-${index}`} isLoading compact={compact} />
               ))}
           </>
         )}

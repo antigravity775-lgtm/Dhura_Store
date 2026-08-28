@@ -24,6 +24,7 @@ import {
   Phone,
   MapPin,
   Settings,
+  LayoutGrid,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -33,14 +34,23 @@ import * as api from "../services/api";
 import Footer from "./Footer";
 import MobileBottomNav from "./MobileBottomNav";
 import BannerRenderer from "./BannerRenderer";
-import TrustStrip from "./TrustStrip";
+import { useLocation } from "react-router-dom";
+
 const logo = "/Logo_192.png";
+
+const desktopNavLinks = [
+  { to: "/", label: "الرئيسية" },
+  { to: "/products", label: "المنتجات" },
+  { to: "/categories", label: "الفئات" },
+  { to: "/products?promoted=true", label: "العروض" },
+];
 const Layout = React.memo(({ children }) => {
   const { user, isAuthenticated, isSeller, isAdmin, logout } = useAuth();
   const { cartCount } = useCart();
   const { favoritesCount } = useFavorites();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -111,6 +121,8 @@ const Layout = React.memo(({ children }) => {
     [searchQuery, navigate],
   );
 
+  const isHomePage = pathname === '/';
+  const headerOverHero = isHomePage && !scrolled && introStage === 'done';
   const isIntroActive = introStage !== "done";
 
   return (
@@ -196,7 +208,7 @@ const Layout = React.memo(({ children }) => {
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20 relative">
+          <div className="flex items-center justify-between h-14 sm:h-16 relative">
 
             {/* 1. START / RIGHT SIDE (Search + Mobile Menu) */}
             <div className={`flex items-center gap-2 sm:gap-4 flex-1 transition-opacity duration-700 ${introStage === 'center' ? 'opacity-0' : 'opacity-100'}`}>
@@ -220,7 +232,7 @@ const Layout = React.memo(({ children }) => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="block w-full pr-11 pl-4 py-2.5 border border-gray-200 dark:border-gold-800 rounded-full bg-gray-50/80 dark:bg-gold-950/60 text-slate-900 dark:text-gold-50 placeholder-gray-400 dark:placeholder-gold-600 focus:outline-none focus:bg-white dark:focus:bg-gold-950/80 focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-sm text-right"
-                    placeholder="ابحث عن منتجات..."
+                    placeholder="ابحث عن المنتجات..."
                   />
                 </form>
               </div>
@@ -403,6 +415,10 @@ const Layout = React.memo(({ children }) => {
                 <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
                   <Home className="w-5 h-5 text-gold-500" /> الرئيسية
                 </Link>
+
+                <Link to="/categories" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                  <LayoutGrid className="w-5 h-5 text-gold-500" /> الفئات
+                </Link>
                 
                 {/* 2. جميع المنتجات */}
                 <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
@@ -490,11 +506,36 @@ const Layout = React.memo(({ children }) => {
               </div>
             </div>
           )}
+
+          {/* Desktop main navigation */}
+          <nav className="hidden md:flex items-center justify-center gap-1 pb-2.5 border-t border-slate-100/80 dark:border-slate-800/80 pt-2" aria-label="التنقل الرئيسي">
+            {desktopNavLinks.map(({ to, label }) => {
+              const isActive = to === '/'
+                ? pathname === '/'
+                : to.includes('?')
+                  ? pathname === to.split('?')[0]
+                  : pathname.startsWith(to);
+
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-colors ${
+                    isActive
+                      ? 'text-gold-700 dark:text-gold-400 bg-gold-50 dark:bg-gold-900/30'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
         </div>
       </header>
 
       {/* شريط البحث الجوال الثابت / Mobile Persistent Search Bar */}
-      <div className="md:hidden sticky top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-4 py-2">
+      <div className="md:hidden sticky top-14 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-4 py-2">
         <form onSubmit={handleSearch} className="relative w-full">
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
             <Search className="h-4 w-4 text-gray-400 dark:text-slate-500" />
@@ -506,7 +547,7 @@ const Layout = React.memo(({ children }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="block w-full pr-10 pl-4 py-2 border border-gray-200 dark:border-slate-700 rounded-full bg-gray-50/80 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-base text-right"
-            placeholder="ابحث عن عطور فاخرة..."
+            placeholder="ابحث عن المنتجات..."
           />
         </form>
       </div>
@@ -515,7 +556,6 @@ const Layout = React.memo(({ children }) => {
       <main className="flex-grow w-full pb-20 md:pb-0">{children}</main>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <TrustStrip />
         <BannerRenderer placement="footer" />
       </div>
 

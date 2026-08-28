@@ -57,7 +57,7 @@ const HomepageSections = React.memo(() => {
                   تصفح جميع المنتجات
                 </span>
                 <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5 opacity-90">
-                  استعرض كافة العطور المتاحة
+                  استعرض كافة المنتجات المتاحة
                 </span>
               </div>
             </div>

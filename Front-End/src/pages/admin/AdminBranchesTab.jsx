@@ -5,6 +5,7 @@ import {
   Phone, Clock, Link, ToggleLeft, ToggleRight, X, Save
 } from 'lucide-react';
 import * as api from '../../services/api';
+import { AdminToolbar, AdminPrimaryButton, AdminEmptyState, AdminLoading } from './AdminUI';
 
 const EMPTY_FORM = {
   name: '', address: '', city: '', phone: '', whatsapp: '',
@@ -212,31 +213,30 @@ const AdminBranchesTab = () => {
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-gold-500" /> إدارة الفروع والمواقع
-        </h2>
-        <button onClick={() => setModalBranch(null)}
-          className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold text-white bg-gold-600 hover:bg-gold-500 rounded-xl transition-colors shadow-sm shadow-gold-600/20">
-          <Plus className="w-4 h-4" /> إضافة فرع جديد
-        </button>
-      </div>
+      <AdminToolbar
+        title="إدارة الفروع والمواقع"
+        subtitle={`${branches.length} فرع`}
+        icon={MapPin}
+        actions={
+          <AdminPrimaryButton onClick={() => setModalBranch(null)}>
+            <Plus className="w-4 h-4" /> إضافة فرع
+          </AdminPrimaryButton>
+        }
+      />
 
-      {/* Loading */}
       {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
-        </div>
+        <AdminLoading label="جاري تحميل الفروع..." />
       ) : branches.length === 0 ? (
-        <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
-          <Building2 className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">لا توجد فروع</h3>
-          <p className="text-slate-500 dark:text-slate-400 mb-6">أضف أول فرع لمتجرك</p>
-          <button onClick={() => setModalBranch(null)} className="flex items-center gap-2 mx-auto px-6 py-3 bg-gold-600 text-white font-bold rounded-xl hover:bg-gold-500 transition-colors">
-            <Plus className="w-5 h-5" /> إضافة فرع
-          </button>
-        </div>
+        <AdminEmptyState
+          icon={Building2}
+          title="لا توجد فروع"
+          description="أضف أول فرع لمتجرك"
+          action={
+            <AdminPrimaryButton onClick={() => setModalBranch(null)}>
+              <Plus className="w-5 h-5" /> إضافة فرع
+            </AdminPrimaryButton>
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {branches.map((branch, i) => (

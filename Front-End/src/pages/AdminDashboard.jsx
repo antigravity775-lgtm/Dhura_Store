@@ -310,40 +310,133 @@ const AdminDashboard = () => {
     setStoreInfoSaving(false);
   };
 
-  const tabItems = [
-    { id: "dashboard", label: "لوحة التحكم", icon: LayoutDashboard },
-    { id: "orders", label: "إدارة الطلبات", icon: ClipboardList },
-    { id: "users", label: "المستخدمين", icon: Users },
-    { id: "products", label: "المحتوى", icon: Package },
-    { id: "categories", label: "التصنيفات", icon: Tag },
-    { id: "brands", label: "العلامات التجارية", icon: Crown },
-    { id: "banners", label: "الإعلانات", icon: Megaphone },
-    { id: "branches", label: "الفروع", icon: MapPin },
-    { id: "storeInfo", label: "معلومات المتجر", icon: Info },
+  const tabGroups = [
+    {
+      label: 'نظرة عامة',
+      items: [{ id: 'dashboard', label: 'لوحة التحكم', icon: LayoutDashboard }],
+    },
+    {
+      label: 'العمليات',
+      items: [
+        { id: 'orders', label: 'إدارة الطلبات', icon: ClipboardList },
+        { id: 'users', label: 'المستخدمين', icon: Users },
+      ],
+    },
+    {
+      label: 'المتجر',
+      items: [
+        { id: 'products', label: 'المحتوى', icon: Package },
+        { id: 'categories', label: 'التصنيفات', icon: Tag },
+        { id: 'brands', label: 'العلامات التجارية', icon: Crown },
+      ],
+    },
+    {
+      label: 'التسويق',
+      items: [
+        { id: 'banners', label: 'الإعلانات', icon: Megaphone },
+        { id: 'branches', label: 'الفروع', icon: MapPin },
+      ],
+    },
+    {
+      label: 'الإعدادات',
+      items: [{ id: 'storeInfo', label: 'معلومات المتجر', icon: Info }],
+    },
   ];
+
+  const activeTabMeta = tabGroups.flatMap((g) => g.items).find((t) => t.id === activeTab);
+
+  const renderNavButton = (tab, compact = false) => (
+    <button
+      key={tab.id}
+      type="button"
+      onClick={() => setActiveTab(tab.id)}
+      className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all ${
+        activeTab === tab.id
+          ? 'bg-gradient-to-l from-gold-500/20 to-gold-600/10 text-gold-700 dark:text-gold-300 border border-gold-400/30 shadow-sm shadow-gold-500/10'
+          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
+      }`}
+    >
+      <tab.icon className={`w-4 h-4 flex-shrink-0 ${activeTab === tab.id ? 'text-gold-600 dark:text-gold-400' : ''}`} />
+      {!compact && <span className="truncate">{tab.label}</span>}
+    </button>
+  );
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-bone dark:bg-slate-950 font-sans" dir="rtl">
-        {/* Top Bar */}
-        <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row gap-3 sm:items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-0 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700 ring-1 ring-gold-200/60">
-                <img src={logo} alt="شعار GISAAH قصة" className="w-full h-full object-cover object-center scale-[1.16]" />
-              </div>
-              <div>
-                <h1 className="font-extrabold text-slate-900 dark:text-white text-lg leading-none">لوحة المسؤول</h1>
-                <p className="text-xs text-slate-400 mt-0.5">مرحباً، {user?.fullName || "مسؤول"}</p>
+      <div className="min-h-screen bg-[#f8f6f1] dark:bg-slate-950 font-sans" dir="rtl">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(218,165,32,0.06),_transparent_50%)] pointer-events-none" />
+
+        <div className="relative flex min-h-screen">
+          {/* Sidebar — desktop */}
+          <aside className="hidden lg:flex w-72 flex-col border-l border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl sticky top-0 h-screen">
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 bg-white rounded-2xl flex items-center justify-center shadow-md shadow-gold-500/10 overflow-hidden border border-gold-200/50 ring-2 ring-gold-500/10">
+                  <img src={logo} alt="GISAAH" className="w-full h-full object-cover scale-[1.12]" />
+                </div>
+                <div className="min-w-0">
+                  <h1 className="font-black text-slate-900 dark:text-white text-base leading-tight">لوحة المسؤول</h1>
+                  <p className="text-[11px] text-slate-400 truncate">مرحباً، {user?.fullName || 'مسؤول'}</p>
+                </div>
               </div>
             </div>
-            <Link to="/" className="text-sm text-slate-500 hover:text-gold-600 font-medium transition-colors flex items-center gap-1">
-              <Home className="w-4 h-4" /> الرئيسية
-            </Link>
-          </div>
-        </header>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+            <nav className="flex-1 overflow-y-auto p-4 space-y-5">
+              {tabGroups.map((group) => (
+                <div key={group.label}>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 mb-2">{group.label}</p>
+                  <div className="space-y-1">
+                    {group.items.map((tab) => renderNavButton(tab))}
+                  </div>
+                </div>
+              ))}
+            </nav>
+
+            <div className="p-4 border-t border-slate-100 dark:border-slate-800">
+              <Link
+                to="/"
+                className="flex items-center justify-center gap-2 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-4 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:border-gold-400/40 hover:text-gold-700 dark:hover:text-gold-300 transition-all"
+              >
+                <Home className="w-4 h-4" />
+                العودة للمتجر
+              </Link>
+            </div>
+          </aside>
+
+          {/* Main area */}
+          <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-0">
+            {/* Mobile header */}
+            <header className="lg:hidden sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800">
+              <div className="px-4 py-3 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-xl overflow-hidden border border-gold-200/50 flex-shrink-0">
+                    <img src={logo} alt="GISAAH" className="w-full h-full object-cover scale-[1.12]" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-slate-900 dark:text-white truncate">
+                      {activeTabMeta?.label || 'لوحة المسؤول'}
+                    </p>
+                    <p className="text-[10px] text-slate-400 truncate">{user?.fullName || 'مسؤول'}</p>
+                  </div>
+                </div>
+                <Link to="/" className="text-xs font-semibold text-gold-600 flex items-center gap-1 flex-shrink-0">
+                  <Home className="w-3.5 h-3.5" />
+                  المتجر
+                </Link>
+              </div>
+            </header>
+
+            {/* Desktop page header */}
+            <header className="hidden lg:block border-b border-slate-200/60 dark:border-slate-800/80 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+              <div className="px-6 lg:px-8 py-5">
+                <p className="text-xs font-semibold text-gold-600 dark:text-gold-400 mb-1">GISAAH Admin</p>
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+                  {activeTabMeta?.label || 'لوحة التحكم'}
+                </h2>
+              </div>
+            </header>
+
+            <div className="flex-1 px-4 sm:px-6 lg:px-8 py-5 lg:py-7">
           {/* Notifications */}
           <AnimatePresence>
             {error && (
@@ -360,18 +453,35 @@ const AdminDashboard = () => {
             )}
           </AnimatePresence>
 
-          {/* Tabs */}
-          <div className="flex flex-wrap gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-6 overflow-x-auto">
-            {tabItems.map((tab) => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${activeTab === tab.id ? "bg-white dark:bg-slate-700 text-gold-700 dark:text-gold-300 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}>
-                <tab.icon className="w-4 h-4" />
+          {/* Tabs — mobile horizontal scroll */}
+          <div className="lg:hidden flex gap-1.5 overflow-x-auto pb-1 mb-5 -mx-1 px-1 scrollbar-hide">
+            {tabGroups.flatMap((g) => g.items).map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-gold-600 text-white shadow-md shadow-gold-600/25'
+                    : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                <tab.icon className="w-3.5 h-3.5" />
                 {tab.label}
               </button>
             ))}
           </div>
 
           {/* Active Tab Content */}
-          {activeTab === "dashboard" && <AdminDashboardTab stats={stats} statsLoading={statsLoading} orders={orders} />}
+          {activeTab === "dashboard" && (
+            <AdminDashboardTab
+              stats={stats}
+              statsLoading={statsLoading}
+              orders={orders}
+              onNavigateTab={setActiveTab}
+              userName={user?.fullName}
+            />
+          )}
           {activeTab === "orders" && <AdminOrdersTab orders={orders} ordersLoading={ordersLoading} mutateOrders={mutateOrders} showSuccess={showSuccessMsg} setError={setError} />}
           {activeTab === "users" && <AdminUsersTab users={users} usersLoading={usersLoading} handleBlockUser={handleBlockUser} handleChangeRole={handleChangeRole} handleDeleteUser={handleDeleteUser} />}
           {activeTab === "products" && <AdminProductsTab openEditProductModal={openEditProductModal} />}
@@ -381,18 +491,32 @@ const AdminDashboard = () => {
           {activeTab === "branches" && <AdminBranchesTab />}
           {activeTab === "storeInfo" && <AdminStoreInfoTab storeInfo={storeInfo} setStoreInfo={setStoreInfo} handleUpdateStoreInfo={handleUpdateStoreInfo} storeInfoSaving={storeInfoSaving} />}
 
+            </div>
+          </div>
         </div>
 
         {/* Add/Edit Product Modal */}
         <AnimatePresence>
           {showProductForm && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={closeProductModal}>
-              <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl dark:border dark:border-slate-700">
-                <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingProduct ? "تعديل المنتج" : "إضافة منتج جديد"}</h3>
-                  <button onClick={closeProductModal} className="p-1 hover:bg-slate-100 rounded-lg"><X className="w-5 h-5 text-slate-400" /></button>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-6" onClick={closeProductModal}>
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 16 }}
+                transition={{ duration: 0.25 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg lg:max-w-4xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden"
+              >
+                <div className="flex-shrink-0 flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-gradient-to-l from-gold-50/50 to-white dark:from-gold-900/10 dark:to-slate-900">
+                  <div>
+                    <h3 className="text-lg font-black text-slate-900 dark:text-white">{editingProduct ? "تعديل المنتج" : "إضافة منتج جديد"}</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">املأ التفاصيل واختر الخيارات من البطاقات أدناه</p>
+                  </div>
+                  <button type="button" onClick={closeProductModal} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"><X className="w-5 h-5 text-slate-400" /></button>
                 </div>
-                <AddProductForm onSuccess={handleProductCreated} onCancel={closeProductModal} editProduct={editingProduct} />
+                <div className="flex-1 overflow-y-auto overscroll-contain">
+                  <AddProductForm onSuccess={handleProductCreated} onCancel={closeProductModal} editProduct={editingProduct} />
+                </div>
               </motion.div>
             </motion.div>
           )}

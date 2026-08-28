@@ -10,6 +10,16 @@ import {
   Loader2,
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import {
+  AdminToolbar,
+  AdminSearch,
+  AdminCard,
+  AdminEmptyState,
+  AdminLoading,
+  AdminGhostButton,
+  AdminFadeIn,
+  OptionPicker,
+} from './AdminUI';
 
 const AdminUsersTab = ({ users, usersLoading, handleBlockUser, handleChangeRole, handleDeleteUser }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,43 +62,38 @@ const AdminUsersTab = ({ users, usersLoading, handleBlockUser, handleChangeRole,
     return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${styles[role] || styles.Buyer}`}>{labels[role] || role}</span>;
   };
 
+  const roleOptions = ['Buyer', 'Seller', 'Admin'];
+  const roleLabels = { Buyer: 'مشتري', Seller: 'بائع', Admin: 'مسؤول' };
+
   return (
     <div>
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-6">
-        <div className="flex items-center gap-3">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">إدارة المستخدمين</h2>
-          <button 
-            onClick={handleExportExcel}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 rounded-lg transition-colors border border-emerald-200"
-          >
+      <AdminToolbar
+        title="إدارة المستخدمين"
+        subtitle={`${filteredUsers.length} مستخدم`}
+        icon={Users}
+        actions={
+          <AdminGhostButton onClick={handleExportExcel}>
             <Download className="w-4 h-4" />
             تصدير Excel
-          </button>
-        </div>
-        <div className="relative w-full sm:w-64">
-          <Search className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="بحث بالاسم أو رقم الهاتف..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-gold-500/50 transition-all dark:bg-slate-900 dark:border-slate-700"
-          />
-        </div>
-      </div>
+          </AdminGhostButton>
+        }
+      >
+        <AdminSearch
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="بحث بالاسم أو رقم الهاتف..."
+        />
+      </AdminToolbar>
 
       {usersLoading ? (
-        <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-gold-500 animate-spin" /></div>
+        <AdminLoading label="جاري تحميل المستخدمين..." />
       ) : users.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-300 dark:bg-slate-900 dark:border-slate-700">
-          <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">لا يوجد مستخدمين</h3>
-        </div>
+        <AdminEmptyState icon={Users} title="لا يوجد مستخدمين" description="لم يتم تسجيل أي مستخدمين بعد." />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredUsers
-            .map((u, i) => (
-              <motion.div key={u.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.02 }} className="bg-white p-5 rounded-2xl border shadow-sm dark:bg-slate-900 dark:border-slate-800">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {filteredUsers.map((u, i) => (
+              <AdminFadeIn key={u.id} delay={i * 0.02}>
+              <AdminCard className="!p-5 hover:shadow-lg hover:shadow-gold-500/5 transition-shadow">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-full bg-gold-100 flex items-center justify-center text-gold-600 font-bold text-lg dark:bg-gold-900/30 dark:text-gold-400">
                     {u.fullName?.charAt(0)}
@@ -100,23 +105,29 @@ const AdminUsersTab = ({ users, usersLoading, handleBlockUser, handleChangeRole,
                   {getRoleBadge(u.role)}
                 </div>
                 
-                <div className="flex items-center gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <button onClick={() => handleBlockUser(u.id)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-colors ${u.isBlocked ? 'text-emerald-600 bg-emerald-50' : 'text-orange-600 bg-orange-50'}`}>
-                    {u.isBlocked ? <><ShieldCheck className="w-3.5 h-3.5" /> فك الحظر</> : <><ShieldBan className="w-3.5 h-3.5" /> حظر</>}
-                  </button>
-                  
-                  <select value={u.role} onChange={(e) => handleChangeRole(u.id, e.target.value)} className="px-2 py-1.5 bg-slate-50 border rounded-lg text-xs font-semibold dark:bg-slate-800">
-                    <option value="Buyer">مشتري</option>
-                    <option value="Seller">بائع</option>
-                    <option value="Admin">مسؤول</option>
-                  </select>
-
-                  <div className="flex-1" />
-                  <button onClick={() => handleDeleteUser(u.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">تغيير الدور</p>
+                  <OptionPicker
+                    value={roleLabels[u.role] || u.role}
+                    onChange={(label) => {
+                      const role = Object.entries(roleLabels).find(([, l]) => l === label)?.[0];
+                      if (role) handleChangeRole(u.id, role);
+                    }}
+                    options={roleOptions.map((r) => roleLabels[r])}
+                    required
+                    size="sm"
+                  />
+                  <div className="flex items-center gap-2">
+                    <button type="button" onClick={() => handleBlockUser(u.id)} className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl transition-colors ${u.isBlocked ? 'text-emerald-600 bg-emerald-500/10' : 'text-orange-600 bg-orange-500/10'}`}>
+                      {u.isBlocked ? <><ShieldCheck className="w-3.5 h-3.5" /> فك الحظر</> : <><ShieldBan className="w-3.5 h-3.5" /> حظر</>}
+                    </button>
+                    <button type="button" onClick={() => handleDeleteUser(u.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-              </motion.div>
+              </AdminCard>
+              </AdminFadeIn>
             ))}
         </div>
       )}
