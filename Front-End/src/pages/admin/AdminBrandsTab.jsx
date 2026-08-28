@@ -10,7 +10,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, Edit, Trash2, Search, AlertCircle, Loader2, 
-  Image as ImageIcon, CheckCircle, Package 
+  Image as ImageIcon, CheckCircle, Package, Crown 
 } from 'lucide-react';
 import * as api from '../../services/api';
 
