@@ -115,6 +115,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/seo', seoRoutes);
 app.use('/api/branches', branchRoutes);
+app.use('/api/brands', require('./src/routes/brandRoutes'));
 
 // Error handling
 app.use(notFound);

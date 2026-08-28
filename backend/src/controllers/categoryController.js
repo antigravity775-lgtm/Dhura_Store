@@ -15,8 +15,10 @@ class CategoryController {
       
       let queryArgs = {
         include: {
-          products: { select: { id: true } }
-        }
+          products: { select: { id: true } },
+          children: true
+        },
+        orderBy: { sortOrder: 'asc' }
       };
 
       if (pageNumber && pageSize) {
@@ -40,6 +42,52 @@ class CategoryController {
   }
 
   /**
+   * Get category by ID
+   * GET /api/categories/:id
+   */
+  async getCategoryById(req, res) {
+    try {
+      const category = await prisma.category.findUnique({
+        where: { id: req.params.id },
+        include: {
+          children: true,
+          parent: true
+        }
+      });
+      if (!category) {
+        res.status(404);
+        throw new Error('Category not found');
+      }
+      res.json(category);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Get category by slug
+   * GET /api/categories/slug/:slug
+   */
+  async getCategoryBySlug(req, res) {
+    try {
+      const category = await prisma.category.findUnique({
+        where: { slug: req.params.slug },
+        include: {
+          children: true,
+          parent: true
+        }
+      });
+      if (!category) {
+        res.status(404);
+        throw new Error('Category not found');
+      }
+      res.json(category);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Get products by category
    * GET /api/categories/:id/products
    */
@@ -54,13 +102,21 @@ class CategoryController {
       }
 
       const products = await prisma.product.findMany({
-        where: { categoryId, isHidden: false },
+        where: { categoryId, status: 'Active' },
         include: {
-          seller: { select: { id: true, fullName: true, city: true, isVerified: true } }
-        }
+          seller: { select: { id: true, fullName: true, city: true, isVerified: true } },
+          images: { where: { isPrimary: true }, take: 1 },
+          brand: { select: { name: true } },
+        },
       });
 
-      res.json(products);
+      // Add imageUrl shim for backward compat
+      const mapped = products.map(p => ({
+        ...p,
+        imageUrl: p.images?.[0]?.url ?? null,
+      }));
+
+      res.json(mapped);
     } catch (error) {
       throw error;
     }
@@ -90,18 +146,38 @@ class CategoryController {
    */
   async createCategory(req, res) {
     try {
-      if (!req.body.name) {
-        throw new ValidationError('Category name is required');
+      const { name, iconUrl, imageUrl, description, parentId, isActive, sortOrder, metaTitle, metaDescription } = req.body;
+      if (!name) throw new ValidationError('Category name is required');
+
+      // Generate deterministic slug: normalized-name + 8-char id suffix
+      const id = require('crypto').randomUUID();
+      let slug = req.body.slug;
+      if (!slug) {
+        const slugBase = name
+          .toLowerCase()
+          .replace(/[^a-z0-9\u0600-\u06ff]+/gi, '-')
+          .replace(/^-+|-+$/g, '')
+          .replace(/-{2,}/g, '-');
+        slug = `${slugBase}-${id.replace(/-/g, '').slice(0, 8)}`;
       }
 
       const category = await prisma.category.create({
         data: {
-          name: req.body.name,
-          iconUrl: req.body.iconUrl || null
-        }
+          id,
+          name,
+          slug,
+          iconUrl: iconUrl || null,
+          imageUrl: imageUrl || null,
+          description: description || null,
+          parentId: parentId || null,
+          isActive: isActive !== undefined ? isActive : true,
+          sortOrder: sortOrder ?? 0,
+          metaTitle: metaTitle || null,
+          metaDescription: metaDescription || null,
+        },
       });
 
-      res.status(201).json(category.id);
+      res.status(201).json(category);
     } catch (error) {
       throw error;
     }
@@ -125,12 +201,49 @@ class CategoryController {
         throw new Error('Category not found');
       }
 
+      // Hierarchy cycle detection
+      if (req.body.parentId && req.body.parentId !== existing.parentId) {
+        if (req.body.parentId === req.params.id) {
+          res.status(400);
+          throw new Error('لا يمكن أن يكون القسم أباً لنفسه');
+        }
+        
+        let currentParentId = req.body.parentId;
+        while (currentParentId) {
+          if (currentParentId === req.params.id) {
+            res.status(400);
+            throw new Error('لا يمكن وضع القسم تحت أحد أقسامه الفرعية');
+          }
+          const parent = await prisma.category.findUnique({ where: { id: currentParentId }, select: { parentId: true } });
+          currentParentId = parent?.parentId;
+        }
+      }
+
+      let slug = req.body.slug !== undefined ? req.body.slug : existing.slug;
+      // Re-generate slug if name changed and no explicit slug provided
+      if (req.body.name && req.body.name !== existing.name && req.body.slug === undefined) {
+        const slugBase = req.body.name
+          .toLowerCase()
+          .replace(/[^a-z0-9\u0600-\u06ff]+/gi, '-')
+          .replace(/^-+|-+$/g, '')
+          .replace(/-{2,}/g, '-');
+        slug = `${slugBase}-${req.params.id.replace(/-/g, '').slice(0, 8)}`;
+      }
+
       const updated = await prisma.category.update({
         where: { id: req.params.id },
         data: {
-          name: req.body.name,
-          iconUrl: req.body.iconUrl || null
-        }
+          name: req.body.name ?? existing.name,
+          slug,
+          iconUrl: req.body.iconUrl !== undefined ? (req.body.iconUrl || null) : existing.iconUrl,
+          imageUrl: req.body.imageUrl !== undefined ? (req.body.imageUrl || null) : existing.imageUrl,
+          description: req.body.description !== undefined ? (req.body.description || null) : existing.description,
+          parentId: req.body.parentId !== undefined ? (req.body.parentId || null) : existing.parentId,
+          isActive: req.body.isActive !== undefined ? req.body.isActive : existing.isActive,
+          sortOrder: req.body.sortOrder !== undefined ? req.body.sortOrder : existing.sortOrder,
+          metaTitle: req.body.metaTitle !== undefined ? (req.body.metaTitle || null) : existing.metaTitle,
+          metaDescription: req.body.metaDescription !== undefined ? (req.body.metaDescription || null) : existing.metaDescription,
+        },
       });
 
       res.status(200).json(updated);
@@ -147,20 +260,28 @@ class CategoryController {
     try {
       const existing = await prisma.category.findUnique({
         where: { id: req.params.id },
-        include: { products: { select: { id: true } } }
+        include: { 
+          products: { select: { id: true } },
+          children: { select: { id: true } }
+        }
       });
       if (!existing) {
         res.status(404);
         throw new Error('Category not found');
       }
 
+      if (existing.children && existing.children.length > 0) {
+        res.status(400);
+        throw new Error('لا يمكن حذف هذا القسم لأنه يحتوي على أقسام فرعية. يرجى حذف أو نقل الأقسام الفرعية أولاً.');
+      }
+
       const productIds = existing.products.map(p => p.id);
 
-      // Cascade delete: OrderItems -> CartItems -> Favorites -> Products -> Category
+      // Simplified cascade:
+      // - OrderItem.productId → SET NULL automatically (DB-level FK)
+      // - CartItem, Favorite, ProductImage, etc. → CASCADE from product delete
+      // We only need to delete products first (Category FK is RESTRICT by default)
       await prisma.$transaction([
-        prisma.orderItem.deleteMany({ where: { productId: { in: productIds } } }),
-        prisma.cartItem.deleteMany({ where: { productId: { in: productIds } } }),
-        prisma.favorite.deleteMany({ where: { productId: { in: productIds } } }),
         prisma.product.deleteMany({ where: { categoryId: req.params.id } }),
         prisma.category.delete({ where: { id: req.params.id } }),
       ]);

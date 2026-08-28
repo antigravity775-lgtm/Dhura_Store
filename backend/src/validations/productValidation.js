@@ -10,14 +10,54 @@ const createProductSchema = Joi.object({
   categoryId: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).required(),
   sellerId: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).optional(),
   isPromoted: Joi.boolean().optional(),
-  isHidden: Joi.boolean().optional(),
-  mainImageUrl: Joi.string().uri().allow(null, '').optional(),
+  imageUrls: Joi.array().items(Joi.string().uri().allow(null, '')).max(5).optional(),
   discountPrice: Joi.number().positive().allow(null, '').optional(),
-  promotionLabel: Joi.string().allow(null, '').optional()
+  promotionLabel: Joi.string().allow(null, '').optional(),
+  status: Joi.string().valid('Draft', 'Active', 'OutOfStock', 'Archived').optional(),
+  sku: Joi.string().allow(null, '').optional(),
+  hasVariants: Joi.boolean().optional(),
+  lowStockThreshold: Joi.number().integer().min(0).optional(),
+  metaTitle: Joi.string().allow(null, '').optional(),
+  metaDescription: Joi.string().allow(null, '').optional(),
+  brandId: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).allow(null).optional(),
+  isHidden: Joi.boolean().optional(), // legacy support
+  images: Joi.array().items(Joi.object({
+    url: Joi.string().uri().required(),
+    altText: Joi.string().allow(null, '').optional(),
+  })).max(5).optional(),
+  attributes: Joi.array().items(Joi.object({
+    categoryAttributeId: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).required(),
+    value: Joi.alternatives().try(Joi.string(), Joi.number(), Joi.boolean()).required(),
+  })).optional(),
+  variants: Joi.array().items(Joi.object({
+    sku: Joi.string().required(),
+    price: Joi.number().positive().required(),
+    discountPrice: Joi.number().positive().allow(null, '').optional(),
+    stockQuantity: Joi.number().integer().min(0).required(),
+    isActive: Joi.boolean().optional(),
+    sortOrder: Joi.number().integer().min(0).optional(),
+    attributes: Joi.array().items(Joi.object({
+      categoryAttributeId: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).required(),
+      value: Joi.alternatives().try(Joi.string(), Joi.number(), Joi.boolean()).required(),
+    })).optional(),
+  })).optional(),
 });
 
+// Shared attributes sub-schema
+const attributesSchema = Joi.array().items(
+  Joi.object({
+    categoryAttributeId: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).required(),
+    value: Joi.alternatives().try(
+      Joi.string(),
+      Joi.number(),
+      Joi.boolean()
+    ).required(),
+  })
+).optional();
+
 const updateProductSchema = createProductSchema.keys({
-  id: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).required()
+  id: Joi.string().guid({ version: ['uuidv4', 'uuidv5'] }).required(),
+  attributes: attributesSchema,
 });
 
 module.exports = { createProductSchema, updateProductSchema };

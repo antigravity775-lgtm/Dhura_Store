@@ -67,8 +67,8 @@ function escapeXml(str) {
 
 async function fetchProducts() {
   return prisma.product.findMany({
-    where: { isHidden: false },
-    select: { id: true, title: true, slug: true, mainImageUrl: true, updatedAt: true, createdAt: true },
+    where: { status: 'Active' },
+    select: { id: true, title: true, slug: true, updatedAt: true, createdAt: true, images: { where: { isPrimary: true }, take: 1 } },
     orderBy: { createdAt: 'desc' },
   });
 }
@@ -126,7 +126,7 @@ async function getSitemap(req, res) {
       lastmod: formatDate(product.updatedAt),
       changefreq: 'weekly',
       priority: 0.8,
-      image: product.mainImageUrl ? { url: product.mainImageUrl, title: product.title } : null,
+      image: product.images?.[0]?.url ? { url: product.images[0].url, title: product.title } : null,
     });
   }
 
@@ -184,7 +184,7 @@ async function getSitemapProducts(req, res) {
       lastmod: formatDate(product.updatedAt),
       changefreq: 'weekly',
       priority: 0.8,
-      image: product.mainImageUrl ? { url: product.mainImageUrl, title: product.title } : null,
+      image: product.images?.[0]?.url ? { url: product.images[0].url, title: product.title } : null,
     });
   }
 
@@ -276,8 +276,8 @@ async function getRss(req, res) {
   }
 
   const products = await prisma.product.findMany({
-    where: { isHidden: false },
-    select: { id: true, title: true, slug: true, description: true, mainImageUrl: true, price: true, currency: true, createdAt: true },
+    where: { status: 'Active' },
+    select: { id: true, title: true, slug: true, description: true, price: true, currency: true, createdAt: true, images: { where: { isPrimary: true }, take: 1 } },
     orderBy: { createdAt: 'desc' },
     take: 50,
   });
@@ -307,8 +307,8 @@ async function getRss(req, res) {
       <description>${escapeXml(description)}</description>
       <pubDate>${pubDate}</pubDate>
 `;
-    if (product.mainImageUrl) {
-      xml += `      <enclosure url="${escapeXml(product.mainImageUrl)}" type="image/jpeg" length="0"/>\n`;
+    if (product.images?.[0]?.url) {
+      xml += `      <enclosure url="${escapeXml(product.images[0].url)}" type="image/jpeg" length="0"/>\n`;
     }
     xml += `    </item>\n`;
   }

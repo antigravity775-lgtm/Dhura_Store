@@ -34,6 +34,7 @@ export const FavoritesProvider = ({ children }) => {
         currency: product.currency,
         condition: product.condition,
         categoryName: product.categoryName,
+        imageUrl: product.imageUrl || product.mainImageUrl,
         mainImageUrl: product.mainImageUrl,
         stockQuantity: product.stockQuantity,
       }];

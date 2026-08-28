@@ -49,7 +49,7 @@ export function buildProductSchema(product) {
     '@type': 'Product',
     name: product.title,
     description: (product.description || '').substring(0, 500),
-    image: product.mainImageUrl || `${BASE_URL}/Logo.png`,
+    image: product.imageUrl || product.mainImageUrl || `${BASE_URL}/Logo.png`,
     sku: product.id,
     brand: {
       '@type': 'Brand',

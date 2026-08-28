@@ -258,7 +258,7 @@ export async function getMyProducts() {
   return normalizeProductsListResponse(data);
 }
 
-// ─── Image Upload (Local API) ───
+// ─── Image Upload & Gallery (Local API) ───
 export async function uploadImageToCloudinary(file) {
   const formData = new FormData();
   formData.append('file', file);
@@ -277,6 +277,40 @@ export async function uploadImageToCloudinary(file) {
   return data.secure_url;
 }
 
+export async function addProductImage(productId, { url, altText, isPrimary, sortOrder }) {
+  return request(`/products/${productId}/images`, {
+    method: 'POST',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ url, altText, isPrimary, sortOrder })
+  });
+}
+
+export async function getProductImages(productId) {
+  return request(`/products/${productId}/images`, { headers: jsonHeaders() });
+}
+
+export async function deleteProductImage(productId, imageId) {
+  return request(`/products/${productId}/images/${imageId}`, {
+    method: 'DELETE',
+    headers: jsonHeaders()
+  });
+}
+
+export async function setProductImagePrimary(productId, imageId) {
+  return request(`/products/${productId}/images/${imageId}/primary`, {
+    method: 'PATCH',
+    headers: jsonHeaders()
+  });
+}
+
+export async function reorderProductImages(productId, orderedIds) {
+  return request(`/products/${productId}/images/reorder`, {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ orderedIds })
+  });
+}
+
 // ─── Categories ───
 export async function getCategories({ pageNumber, pageSize } = {}) {
   const params = new URLSearchParams();
@@ -286,8 +320,54 @@ export async function getCategories({ pageNumber, pageSize } = {}) {
   return request(`/categories${qs ? `?${qs}` : ''}`, { headers: jsonHeaders() });
 }
 
+export async function getCategoryBySlug(slug) {
+  return request(`/categories/slug/${encodeURIComponent(slug)}`, { headers: jsonHeaders() });
+}
+
 export async function getProductsByCategory(categoryId) {
   return request(`/categories/${categoryId}/products`, { headers: jsonHeaders() });
+}
+
+// ─── Category Attributes ───
+/**
+ * Get all attributes for a category.
+ * @param {string} categoryId
+ * @param {string} [scopeFilter] e.g. 'PRODUCT,BOTH' (for seller form)
+ */
+export async function getCategoryAttributes(categoryId, scopeFilter) {
+  const qs = scopeFilter ? `?scope=${encodeURIComponent(scopeFilter)}` : '';
+  return request(`/categories/${categoryId}/attributes${qs}`, { headers: jsonHeaders() });
+}
+
+export async function createCategoryAttribute(categoryId, data) {
+  return request(`/categories/${categoryId}/attributes`, {
+    method: 'POST',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateCategoryAttribute(categoryId, attrId, data) {
+  return request(`/categories/${categoryId}/attributes/${attrId}`, {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteCategoryAttribute(categoryId, attrId) {
+  return request(`/categories/${categoryId}/attributes/${attrId}`, {
+    method: 'DELETE',
+    headers: jsonHeaders(),
+  });
+}
+
+export async function reorderCategoryAttributes(categoryId, orderedIds) {
+  return request(`/categories/${categoryId}/attributes/reorder`, {
+    method: 'PUT',
+    headers: jsonHeaders(),
+    body: JSON.stringify({ orderedIds }),
+  });
 }
 
 export async function uploadCategoryIcon(file) {
@@ -477,6 +557,44 @@ export async function deleteCategory(id) {
     method: 'DELETE',
     headers: jsonHeaders(),
   });
+}
+
+// ─── Brands ───
+export async function getBrands() {
+  return request('/brands', { headers: jsonHeaders() });
+}
+
+export async function getBrandById(id) {
+  return request(`/brands/${id}`, { headers: jsonHeaders() });
+}
+
+export async function getBrandBySlug(slug) {
+  return request(`/brands/slug/${encodeURIComponent(slug)}`, { headers: jsonHeaders() });
+}
+
+export async function getProductsByBrand(brandId) {
+  return request(`/brands/${brandId}/products`, { headers: jsonHeaders() });
+}
+
+export async function uploadBrandLogo(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(`${BASE_URL}/brands/upload-logo`, { method: 'POST', body: formData, credentials: 'include' });
+  if (!res.ok) throw new Error('فشل رفع الشعار');
+  const data = await res.json();
+  return data.url;
+}
+
+export async function createBrand(data) {
+  return request('/brands', { method: 'POST', headers: jsonHeaders(), body: JSON.stringify(data) });
+}
+
+export async function updateBrand(id, data) {
+  return request(`/brands/${id}`, { method: 'PUT', headers: jsonHeaders(), body: JSON.stringify(data) });
+}
+
+export async function deleteBrand(id) {
+  return request(`/brands/${id}`, { method: 'DELETE', headers: jsonHeaders() });
 }
 
 export async function getExchangeRates() {

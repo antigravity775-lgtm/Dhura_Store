@@ -12,7 +12,10 @@ class FavoritesController {
       where: { userId },
       include: {
         product: {
-          include: { category: true },
+          include: {
+            category: true,
+            images: { where: { isPrimary: true }, take: 1 },
+          },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -26,10 +29,13 @@ class FavoritesController {
       price: Number(f.product.price),
       discountPrice: f.product.discountPrice ? Number(f.product.discountPrice) : null,
       currency: f.product.currency,
-      mainImageUrl: f.product.mainImageUrl,
+      // imageUrl: new field using ProductImage
+      imageUrl: f.product.images?.[0]?.url ?? null,
       categoryName: f.product.category?.name || null,
       isPromoted: f.product.isPromoted,
       promotionLabel: f.product.promotionLabel,
+      slug: f.product.slug,
+      status: f.product.status,
       favoritedAt: f.createdAt,
     }));
 

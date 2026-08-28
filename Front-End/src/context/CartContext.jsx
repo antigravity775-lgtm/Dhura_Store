@@ -45,6 +45,7 @@ export const CartProvider = ({ children }) => {
           title: product.title,
           price: product.discountPrice ?? product.price,
           currency: product.currency,
+          imageUrl: product.imageUrl || product.mainImageUrl,
           mainImageUrl: product.mainImageUrl,
           stockQuantity: product.stockQuantity || 9999,
           quantity: cappedQty,

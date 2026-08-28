@@ -190,9 +190,9 @@ const AdminOrdersTab = ({ orders, ordersLoading, mutateOrders, showSuccess, setE
                       <div className="grid gap-3">
                         {orderItems.map((item, i) => (
                           <div key={i} className="flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                            <img src={item.product?.mainImageUrl} alt={item.product?.title} className="w-12 h-12 object-cover rounded-md" />
+                            <img src={item.productImageUrl || item.product?.imageUrl || item.product?.mainImageUrl} alt={item.productTitle || item.product?.title} className="w-12 h-12 object-cover rounded-md" />
                             <div className="flex-1">
-                              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{item.product?.title}</h4>
+                              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{item.productTitle || item.product?.title}</h4>
                               <p className="text-xs text-slate-500">الكمية: {item.quantity}</p>
                             </div>
                           </div>

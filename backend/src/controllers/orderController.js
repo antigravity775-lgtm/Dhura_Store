@@ -55,7 +55,7 @@ class OrderController {
 
         const product = await prisma.product.findUnique({ where: { id: item.productId } });
         if (!product) throw new ValidationError(`Product not found: ${item.productId}`);
-        if (product.isHidden) throw new ValidationError(`Product is not available: ${product.title}`);
+        if (product.status !== 'Active') throw new ValidationError(`Product is not available: ${product.title}`);
         if (product.stockQuantity < item.quantity) {
           throw new ValidationError(`الكمية المطلوبة من "${product.title}" (${item.quantity}) تتجاوز المخزون المتاح (${product.stockQuantity})`);
         }
@@ -65,13 +65,24 @@ class OrderController {
           throw new ValidationError('لا يمكن إتمام طلب واحد بعملات مختلفة. الرجاء إتمام كل عملة في طلب منفصل.');
         }
 
-        const unitPrice = Number(product.price);
+        // Use discountPrice if available (Mode A — no variants)
+        const unitPrice = Number(product.discountPrice ?? product.price);
         totalAmount += unitPrice * item.quantity;
+
+        // Fetch primary image for snapshot (new architecture as source of truth)
+        const primaryImage = await prisma.productImage.findFirst({
+          where: { productId: product.id, isPrimary: true },
+          select: { url: true },
+        });
 
         resolvedItems.push({
           productId: item.productId,
           quantity: item.quantity,
-          unitPrice
+          unitPrice,
+          // Populate snapshot fields at order creation time (immutable after this)
+          productTitle: product.title,
+          productImageUrl: primaryImage?.url ?? null,
+          productSku: product.sku ?? null,
         });
       }
 
@@ -96,7 +107,8 @@ class OrderController {
           orderItems: {
             include: {
               product: {
-                select: { id: true, title: true, price: true, currency: true, mainImageUrl: true }
+                select: { id: true, title: true, slug: true, currency: true, status: true,
+                  images: { where: { isPrimary: true }, take: 1 } }
               }
             }
           },
@@ -125,7 +137,8 @@ class OrderController {
           orderItems: {
             include: {
               product: {
-                select: { id: true, title: true, price: true, currency: true, condition: true, mainImageUrl: true }
+                select: { id: true, title: true, slug: true, currency: true, condition: true, status: true,
+                  images: { where: { isPrimary: true }, take: 1 } }
               }
             }
           },
@@ -168,7 +181,8 @@ class OrderController {
           orderItems: {
             include: {
               product: {
-                select: { id: true, title: true, price: true, currency: true, condition: true, mainImageUrl: true }
+                select: { id: true, title: true, slug: true, currency: true, condition: true, status: true,
+                  images: { where: { isPrimary: true }, take: 1 } }
               }
             }
           },
@@ -213,7 +227,8 @@ class OrderController {
             },
             include: {
               product: {
-                select: { id: true, title: true, price: true, currency: true, condition: true, mainImageUrl: true }
+                select: { id: true, title: true, slug: true, currency: true, condition: true, status: true,
+                  images: { where: { isPrimary: true }, take: 1 } }
               }
             }
           }
@@ -260,7 +275,8 @@ class OrderController {
           orderItems: {
             include: {
               product: {
-                select: { id: true, title: true, price: true, currency: true, mainImageUrl: true, stockQuantity: true }
+                select: { id: true, title: true, slug: true, currency: true, status: true, stockQuantity: true,
+                  images: { where: { isPrimary: true }, take: 1 } }
               }
             }
           }

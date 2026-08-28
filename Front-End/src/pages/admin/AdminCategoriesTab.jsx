@@ -1,128 +1,302 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Tag,
   Plus,
   Edit3,
   Trash2,
   Loader2,
+  ChevronDown,
+  ChevronRight,
+  FolderOpen,
+  Folder,
 } from 'lucide-react';
-import useSWRInfinite from "swr/infinite";
+import useSWR from 'swr';
 import * as api from '../../services/api';
-import InfiniteScrollTrigger from '../../components/InfiniteScrollTrigger';
+import CategoryAttributesPanel from '../../components/CategoryAttributesPanel';
 
-const AdminCategoriesTab = ({ openCategoryForm }) => {
-  const getKeyCategories = (pageIndex, previousPageData) => {
-    if (previousPageData && !previousPageData.length) return null;
-    return ["adminCategories", pageIndex + 1];
-  };
+// Build a tree from a flat category list
+function buildTree(categories) {
+  const map = {};
+  const roots = [];
 
-  const {
-    data: categoriesData,
-    size: categoriesSize,
-    setSize: setCategoriesSize,
-    isLoading: categoriesLoadingInitial,
-    isValidating: categoriesValidating,
-    mutate: mutateCategories,
-  } = useSWRInfinite(getKeyCategories, async ([_key, pageNumber]) => {
-    return api.getCategories({ pageNumber, pageSize: 15 });
+  categories.forEach(cat => {
+    map[cat.id] = { ...cat, _children: [] };
   });
 
-  const categories = categoriesData ? [].concat(...categoriesData.filter(Boolean)) : [];
-  const categoriesLoading = categoriesLoadingInitial && !categories.length;
-  const categoriesLoadingMore = categoriesValidating || (categoriesSize > 0 && categoriesData && typeof categoriesData[categoriesSize - 1] === "undefined");
-  const categoriesIsEmpty = categoriesData?.[0]?.length === 0;
-  const categoriesIsReachingEnd = categoriesIsEmpty || (categoriesData && categoriesData[categoriesData.length - 1]?.length < 15);
+  categories.forEach(cat => {
+    if (cat.parentId && map[cat.parentId]) {
+      map[cat.parentId]._children.push(map[cat.id]);
+    } else {
+      roots.push(map[cat.id]);
+    }
+  });
 
-  const handleDeleteCategory = async (id) => {
-    if (!confirm("هل أنت متأكد من حذف هذا التصنيف؟")) return;
+  // Sort each level by sortOrder
+  const sortLevel = (nodes) => {
+    nodes.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    nodes.forEach(n => sortLevel(n._children));
+    return nodes;
+  };
+
+  return sortLevel(roots);
+}
+
+// Recursive category tree row
+const CategoryRow = ({ node, depth = 0, openCategoryForm, openAttributesPanel, onDelete, expandedIds, toggleExpanded }) => {
+  const hasChildren = node._children && node._children.length > 0;
+  const isExpanded = expandedIds.has(node.id);
+  const indent = depth * 24;
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, x: -8 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.18 }}
+        className="flex items-center gap-3 px-4 py-3 group hover:bg-slate-50 dark:hover:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800 last:border-b-0"
+      >
+        {/* Indent spacer + expand toggle */}
+        <div className="flex items-center flex-shrink-0" style={{ width: indent + 20 }}>
+          {depth > 0 && (
+            <span
+              className="block w-4 border-l-2 border-b-2 border-slate-200 dark:border-slate-700 rounded-bl-md mr-2"
+              style={{ height: 16, marginTop: -8, flexShrink: 0 }}
+            />
+          )}
+          {hasChildren ? (
+            <button
+              onClick={() => toggleExpanded(node.id)}
+              className="p-1 rounded-lg text-slate-400 hover:text-gold-500 hover:bg-gold-50 dark:hover:bg-gold-900/20 transition-colors flex-shrink-0"
+            >
+              {isExpanded
+                ? <ChevronDown className="w-4 h-4" />
+                : <ChevronRight className="w-4 h-4" />}
+            </button>
+          ) : (
+            <span className="w-6 flex-shrink-0" />
+          )}
+        </div>
+
+        {/* Icon */}
+        <div className="w-9 h-9 rounded-xl bg-gold-50 dark:bg-gold-900/30 text-gold-600 dark:text-gold-400 flex items-center justify-center flex-shrink-0">
+          {node.iconUrl
+            ? <img src={node.iconUrl} alt={node.name} className="w-6 h-6 object-contain rounded" />
+            : (hasChildren
+              ? (isExpanded ? <FolderOpen className="w-4 h-4" /> : <Folder className="w-4 h-4" />)
+              : <Tag className="w-4 h-4" />)
+          }
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-slate-900 dark:text-white text-sm truncate">{node.name}</span>
+            {node.isActive === false && (
+              <span className="px-1.5 py-0.5 text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-md">مخفي</span>
+            )}
+            {hasChildren && (
+              <span className="px-1.5 py-0.5 text-[10px] font-bold bg-gold-50 dark:bg-gold-900/30 text-gold-600 dark:text-gold-400 rounded-md">
+                {node._children.length} فرعي
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 mt-0.5">
+            <span className="text-[11px] text-slate-400 dark:text-slate-500 truncate max-w-[160px]">
+              /{node.slug || '—'}
+            </span>
+            <span className="text-[11px] text-slate-400">{node.productsCount ?? 0} منتج</span>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+          <button
+            onClick={() => openAttributesPanel(node)}
+            className="px-2 py-1.5 text-[11px] font-bold text-slate-500 hover:text-white hover:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 rounded-lg transition-colors mr-1"
+            title="إدارة الخصائص"
+          >
+            خصائص
+          </button>
+          <button
+            onClick={() => openCategoryForm(node)}
+            className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all"
+            title="تعديل"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => onDelete(node.id, node.name, hasChildren)}
+            className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all"
+            title="حذف"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </motion.div>
+
+      {/* Children (collapsible) */}
+      <AnimatePresence initial={false}>
+        {hasChildren && isExpanded && (
+          <motion.div
+            key={`children-${node.id}`}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            {node._children.map(child => (
+              <CategoryRow
+                key={child.id}
+                node={child}
+                depth={depth + 1}
+                openCategoryForm={openCategoryForm}
+                openAttributesPanel={openAttributesPanel}
+                onDelete={onDelete}
+                expandedIds={expandedIds}
+                toggleExpanded={toggleExpanded}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+const AdminCategoriesTab = ({ openCategoryForm }) => {
+  const { data: categoriesRaw, isLoading, mutate } = useSWR(
+    'allCategoriesAdmin',
+    () => api.getCategories()
+  );
+
+  const [expandedIds, setExpandedIds] = useState(new Set());
+  const [selectedCategoryForAttrs, setSelectedCategoryForAttrs] = useState(null);
+
+  const toggleExpanded = (id) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const expandAll = () => {
+    if (!categoriesRaw) return;
+    setExpandedIds(new Set(categoriesRaw.filter(c => c.parentId === null || !c.parentId).map(c => c.id)));
+  };
+
+  const collapseAll = () => setExpandedIds(new Set());
+
+  const tree = useMemo(() => {
+    if (!Array.isArray(categoriesRaw) || categoriesRaw.length === 0) return [];
+    return buildTree(categoriesRaw);
+  }, [categoriesRaw]);
+
+  const handleDelete = async (id, name, hasChildren) => {
+    if (hasChildren) {
+      alert(`لا يمكن حذف تصنيف "${name}" لأنه يحتوي على أقسام فرعية. يرجى حذف أو نقل الأقسام الفرعية أولاً.`);
+      return;
+    }
+    if (!confirm(`هل أنت متأكد من حذف تصنيف "${name}"؟ سيتم حذف جميع منتجاته.`)) return;
     try {
       await api.deleteCategory(id);
-      mutateCategories();
-      alert("تم حذف التصنيف");
+      mutate();
+      alert('تم حذف التصنيف');
     } catch (err) {
-      alert("فشل حذف التصنيف: " + (err.message || ""));
+      alert('فشل حذف التصنيف: ' + (err.message || ''));
     }
   };
 
   return (
     <div>
+      {/* Header */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">إدارة التصنيفات</h2>
-        <button 
-          onClick={() => openCategoryForm(null)}
-          className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold text-white bg-gold-600 hover:bg-gold-500 rounded-xl transition-colors shadow-sm shadow-gold-600/20"
-        >
-          <Plus className="w-4 h-4" />
-          إضافة تصنيف جديد
-        </button>
+        <div>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">إدارة التصنيفات</h2>
+          {Array.isArray(categoriesRaw) && (
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {categoriesRaw.length} تصنيف إجمالاً · {tree.length} رئيسي
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {tree.length > 0 && (
+            <>
+              <button
+                onClick={expandAll}
+                className="text-xs text-slate-500 hover:text-gold-600 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-gold-300 transition-colors"
+              >
+                توسيع الكل
+              </button>
+              <button
+                onClick={collapseAll}
+                className="text-xs text-slate-500 hover:text-gold-600 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-gold-300 transition-colors"
+              >
+                طي الكل
+              </button>
+            </>
+          )}
+          <button
+            onClick={() => openCategoryForm(null)}
+            className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold text-white bg-gold-600 hover:bg-gold-500 rounded-xl transition-colors shadow-sm shadow-gold-600/20"
+          >
+            <Plus className="w-4 h-4" />
+            إضافة تصنيف
+          </button>
+        </div>
       </div>
 
-      {categoriesLoading ? (
-        <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-gold-500 animate-spin" /></div>
-      ) : categories.length === 0 ? (
+      {/* Tree */}
+      {isLoading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
+        </div>
+      ) : tree.length === 0 ? (
         <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
           <Tag className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
           <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">لا توجد تصنيفات</h3>
           <p className="text-slate-500 dark:text-slate-400 mb-6">قم بإضافة أول تصنيف لترتيب منتجاتك</p>
-          <button onClick={() => openCategoryForm(null)} className="flex items-center gap-2 mx-auto px-6 py-3 bg-gold-600 text-white font-bold rounded-xl hover:bg-gold-500 transition-colors shadow-lg shadow-gold-600/20">
+          <button
+            onClick={() => openCategoryForm(null)}
+            className="flex items-center gap-2 mx-auto px-6 py-3 bg-gold-600 text-white font-bold rounded-xl hover:bg-gold-500 transition-colors shadow-lg shadow-gold-600/20"
+          >
             <Plus className="w-5 h-5" /> إضافة تصنيف
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categories.map((cat, index) => (
-            <motion.div key={cat.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: index * 0.03 }} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 group hover:border-gold-200 dark:hover:border-gold-800 transition-colors">
-              <div className="w-12 h-12 rounded-xl bg-gold-50 dark:bg-gold-900/30 text-gold-600 dark:text-gold-400 flex items-center justify-center flex-shrink-0">
-                {cat.iconUrl ? <img src={cat.iconUrl} alt={cat.name} className="w-7 h-7 object-contain" /> : <Tag className="w-6 h-6" />}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-slate-900 dark:text-white truncate">{cat.name}</h3>
-                <div className="text-xs text-slate-500 mt-1">{cat.productsCount || 0} منتجات</div>
-              </div>
-              <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openCategoryForm(cat)} className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg">
-                  <Edit3 className="w-4 h-4" />
-                </button>
-                <button onClick={() => handleDeleteCategory(cat.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </motion.div>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          {/* Column headers */}
+          <div className="flex items-center gap-3 px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <span className="flex-1">التصنيف / الرابط</span>
+            <span className="w-16 text-left">المنتجات</span>
+            <span className="w-16 text-left">الإجراءات</span>
+          </div>
+          {tree.map(rootNode => (
+            <CategoryRow
+              key={rootNode.id}
+              node={rootNode}
+              depth={0}
+              openCategoryForm={openCategoryForm}
+              openAttributesPanel={setSelectedCategoryForAttrs}
+              onDelete={handleDelete}
+              expandedIds={expandedIds}
+              toggleExpanded={toggleExpanded}
+            />
           ))}
-
-          {/* Skeleton Loaders for Infinite Scroll */}
-          {categoriesLoadingMore && (
-            Array.from({ length: 4 }).map((_, i) => (
-              <div key={`skeleton-cat-${i}`} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 animate-pulse">
-                <div className="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-800 flex-shrink-0"></div>
-                <div className="flex-1 min-w-0">
-                  <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-2/3 mb-2"></div>
-                  <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/3"></div>
-                </div>
-              </div>
-            ))
-          )}
         </div>
       )}
 
-      {/* Infinite Scroll Trigger */}
-      {!categoriesLoading && !categoriesIsReachingEnd && (
-        <InfiniteScrollTrigger
-          onIntersect={() => setCategoriesSize(categoriesSize + 1)}
-          isLoadingMore={categoriesLoadingMore}
-          isReachingEnd={categoriesIsReachingEnd}
-        />
-      )}
-
-      {/* Completion State */}
-      {categoriesIsReachingEnd && categories.length > 0 && (
-        <div className="flex justify-center mt-8 pb-4">
-          <p className="text-sm font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800/50 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-800">
-            تم تحميل جميع التصنيفات ✨
-          </p>
-        </div>
-      )}
+      {/* Attributes Panel */}
+      <AnimatePresence>
+        {selectedCategoryForAttrs && (
+          <CategoryAttributesPanel
+            category={selectedCategoryForAttrs}
+            onClose={() => setSelectedCategoryForAttrs(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

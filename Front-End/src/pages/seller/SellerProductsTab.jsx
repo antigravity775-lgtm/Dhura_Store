@@ -79,8 +79,14 @@ const SellerProductsTab = () => {
     loadProducts();
   };
 
-  const openEditModal = (product) => {
-    setEditingProduct(product);
+  const openEditModal = async (product) => {
+    try {
+      // Fetch the full product (includes variants + attributes) before opening the form
+      const fullProduct = await api.getProductById(product.id);
+      setEditingProduct(fullProduct || product);
+    } catch {
+      setEditingProduct(product);
+    }
     setShowAddForm(true);
   };
   const closeModal = () => {
@@ -186,7 +192,7 @@ const SellerProductsTab = () => {
                 }`}
               >
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0 border border-slate-200 dark:border-slate-700">
-                  <img src={product.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=200&q=60'} alt={product.title} className="w-full h-full object-cover" />
+                  <img src={product.imageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=200&q=60'} alt={product.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">{product.title}</h3>

@@ -12,7 +12,10 @@ class CartController {
       where: { userId },
       include: {
         product: {
-          include: { category: true },
+          include: {
+            category: true,
+            images: { where: { isPrimary: true }, take: 1 },
+          },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -25,7 +28,9 @@ class CartController {
       price: Number(ci.product.discountPrice || ci.product.price),
       originalPrice: Number(ci.product.price),
       currency: ci.product.currency,
-      mainImageUrl: ci.product.mainImageUrl,
+      imageUrl: ci.product.images?.[0]?.url ?? null,
+      slug: ci.product.slug,
+      status: ci.product.status,
       categoryName: ci.product.category?.name || null,
       quantity: ci.quantity,
     }));

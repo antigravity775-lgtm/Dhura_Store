@@ -73,7 +73,7 @@ const FavoritesPage = () => {
                     className="w-28 sm:w-40 flex-shrink-0 bg-slate-50 dark:bg-slate-800 relative"
                   >
                     <img
-                      src={product.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80'}
+                      src={product.imageUrl || product.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80'}
                       alt={product.title}
                       className="w-full h-full object-cover"
                     />

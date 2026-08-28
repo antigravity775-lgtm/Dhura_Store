@@ -174,7 +174,8 @@ const AdminProductsTab = ({ openEditProductModal }) => {
   // UI Helpers
   const getStatusBadge = (p) => {
     if (p.stockQuantity === 0) return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-800"><AlertCircle className="w-3 h-3" /> نفد المخزون</span>;
-    if (p.isHidden) return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 ring-1 ring-inset ring-slate-200 dark:ring-slate-700">مخفي</span>;
+    if (p.status === 'Archived' || p.isHidden) return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 ring-1 ring-inset ring-slate-200 dark:ring-slate-700">مخفي</span>;
+    if (p.status === 'Draft') return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 ring-1 ring-inset ring-yellow-200 dark:ring-yellow-800">مسودة</span>;
     return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 ring-1 ring-inset ring-emerald-200 dark:ring-emerald-800"><CheckCircle2 className="w-3 h-3" /> نشط</span>;
   };
 
@@ -336,7 +337,7 @@ const AdminProductsTab = ({ openEditProductModal }) => {
                     </button>
                     
                     <div className="relative w-12 h-12 sm:w-10 sm:h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0 border border-slate-200 dark:border-slate-700">
-                      <img src={p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=100&q=80'} alt="" className="w-full h-full object-cover" />
+                      <img src={p.imageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=100&q=80'} alt="" className="w-full h-full object-cover" />
                     </div>
                     
                     <div className="flex flex-col min-w-0">

@@ -69,7 +69,7 @@ const RelatedProducts = React.memo(({ categoryName, currentId }) => {
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
         {related.map((p) => {
           const img = getOptimizedImageUrl(
-            p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=400&q=70',
+            p.imageUrl || p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=400&q=70',
             IMAGE_WIDTHS.GRID_CARD
           );
           const fav = isFavorite(p.id);

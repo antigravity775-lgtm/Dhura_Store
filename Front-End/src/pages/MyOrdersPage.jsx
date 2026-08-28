@@ -184,13 +184,13 @@ const MyOrdersPage = () => {
                             <div key={item.id} className="flex items-center gap-3 bg-bone dark:bg-slate-900/50 rounded-xl p-3">
                               <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0 border border-slate-200 dark:border-slate-600">
                                 <img
-                                  src={item.product?.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=100&q=60'}
-                                  alt={item.product?.title}
+                                  src={item.productImageUrl || item.product?.imageUrl || item.product?.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=100&q=60'}
+                                  alt={item.productTitle || item.product?.title || 'منتج'}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{item.product?.title || 'منتج'}</p>
+                                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{item.productTitle || item.product?.title || 'منتج'}</p>
                                 <p className="text-xs text-slate-400 mt-0.5">
                                   الكمية: {item.quantity} × {Number(item.unitPrice || 0).toLocaleString('en-US')}
                                 </p>

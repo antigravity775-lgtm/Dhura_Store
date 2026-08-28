@@ -21,7 +21,7 @@ class AdminController {
       ] = await Promise.all([
         prisma.user.count(),
         prisma.user.count({ where: { role: 'Seller' } }),
-        prisma.product.count({ where: { isHidden: false } }),
+        prisma.product.count({ where: { status: 'Active' } }),
         prisma.order.count(),
         prisma.order.count({ where: { status: 'Pending' } })
       ]);
@@ -175,10 +175,10 @@ class AdminController {
       }
 
       if (status === 'active') {
-        whereClause.isHidden = false;
+        whereClause.status = 'Active';
         whereClause.stockQuantity = { gt: 0 };
       } else if (status === 'hidden') {
-        whereClause.isHidden = true;
+        whereClause.status = 'Archived';
       } else if (status === 'outofstock') {
         whereClause.stockQuantity = 0;
       }
@@ -188,7 +188,8 @@ class AdminController {
         orderBy: { createdAt: 'desc' },
         include: {
           category: { select: { id: true, name: true } },
-          seller: { select: { id: true, fullName: true } }
+          seller: { select: { id: true, fullName: true } },
+          images: { where: { isPrimary: true }, take: 1 }
         }
       };
 
@@ -202,7 +203,8 @@ class AdminController {
       const mapped = products.map(p => ({
         ...p,
         categoryName: p.category?.name || null,
-        sellerName: p.seller?.fullName || null
+        sellerName: p.seller?.fullName || null,
+        imageUrl: p.images?.[0]?.url ?? null
       }));
       res.json(mapped);
     } catch (error) {
@@ -222,11 +224,9 @@ class AdminController {
         throw new Error('Product not found');
       }
 
-      // Delete related OrderItems first to avoid foreign key constraint violations
-      await prisma.$transaction([
-        prisma.orderItem.deleteMany({ where: { productId: req.params.id } }),
-        prisma.product.delete({ where: { id: req.params.id } })
-      ]);
+      // orderItems: productId SET NULL automatically (DB-level FK)
+      // cartItems, favorites, images: CASCADE from product delete
+      await prisma.product.delete({ where: { id: req.params.id } });
       
       res.status(204).send();
     } catch (error) {
@@ -241,13 +241,10 @@ class AdminController {
   async bulkUpdateProductStatus(req, res) {
     try {
       const { ids, isHidden } = req.body;
-      if (!Array.isArray(ids) || ids.length === 0) {
-        throw new BadRequestError('Product IDs are required');
-      }
-
+      const newStatus = isHidden ? 'Archived' : 'Active';
       await prisma.product.updateMany({
         where: { id: { in: ids } },
-        data: { isHidden: !!isHidden }
+        data: { status: newStatus },
       });
 
       res.status(200).json({ message: 'Products status updated successfully' });
@@ -289,13 +286,9 @@ class AdminController {
         throw new BadRequestError('Product IDs are required');
       }
 
-      // Delete related OrderItems first
-      await prisma.$transaction([
-        prisma.orderItem.deleteMany({ where: { productId: { in: ids } } }),
-        prisma.cartItem.deleteMany({ where: { productId: { in: ids } } }),
-        prisma.favorite.deleteMany({ where: { productId: { in: ids } } }),
-        prisma.product.deleteMany({ where: { id: { in: ids } } })
-      ]);
+      // orderItems: productId SET NULL automatically (DB-level FK)
+      // cartItems, favorites: CASCADE from product delete
+      await prisma.product.deleteMany({ where: { id: { in: ids } } });
       
       res.status(200).json({ message: 'Products deleted successfully' });
     } catch (error) {

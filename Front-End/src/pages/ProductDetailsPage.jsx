@@ -104,6 +104,8 @@ const ProductDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedVariantId, setSelectedVariantId] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [storeInfo, setStoreInfo] = useState(null);
   const [errorType, setErrorType] = useState(null); // 'not_found' | 'server_error'
@@ -114,6 +116,7 @@ const ProductDetailsPage = () => {
     setNotFound(false);
     setErrorType(null);
     setAddedToCart(false);
+    setSelectedImageIndex(0);
 
     async function load() {
       try {
@@ -134,6 +137,9 @@ const ProductDetailsPage = () => {
 
         if (mounted) {
           setProduct(data);
+          if (data.hasVariants && data.variants?.length > 0) {
+            setSelectedVariantId(data.variants[0].id);
+          }
           setLoading(false);
           // GA4 e-commerce tracking
           trackViewItem(data);
@@ -169,8 +175,23 @@ const ProductDetailsPage = () => {
     };
   }, []);
 
+  const selectedVariant = useMemo(() => {
+    if (!product || !product.hasVariants || !product.variants) return null;
+    return product.variants.find(v => v.id === selectedVariantId) || null;
+  }, [product, selectedVariantId]);
+
+  const displayPrice = selectedVariant ? Number(selectedVariant.price) : Number(product?.price || 0);
+  const displayDiscount = selectedVariant ? (selectedVariant.discountPrice ? Number(selectedVariant.discountPrice) : null) : (product?.discountPrice ? Number(product.discountPrice) : null);
+  const displayStock = selectedVariant ? selectedVariant.stockQuantity : (product?.stockQuantity || 0);
+
   const handleAddToCart = () => {
     if (!product) return;
+    if (product.hasVariants) {
+      // Phase 7 cart dependency
+      return;
+    }
+    if (displayStock <= 0) return;
+    
     addToCart(product, 1);
     trackAddToCart(product, 1);
     setAddedToCart(true);
@@ -274,10 +295,16 @@ const ProductDetailsPage = () => {
   }
 
   const conditionText = api.ConditionMap[product.condition] || "جديد";
-  const rawImageUrl =
-    product.mainImageUrl ||
-    "https://images.unsplash.com/photo-1560472355-536de3962603?w=1000&q=80";
-  const imageUrl = getOptimizedImageUrl(rawImageUrl, IMAGE_WIDTHS.DETAIL);
+
+  // Build gallery from relational images array, fall back to single imageUrl
+  const galleryImages = product.images?.length > 0
+    ? product.images.map(img => img.url)
+    : (product.imageUrl ? [product.imageUrl] : ["https://images.unsplash.com/photo-1560472355-536de3962603?w=1000&q=80"]);
+
+  const safeIndex = Math.min(selectedImageIndex, galleryImages.length - 1);
+  const activeRawUrl = galleryImages[safeIndex];
+  const activeImageUrl = getOptimizedImageUrl(activeRawUrl, IMAGE_WIDTHS.DETAIL);
+  const rawImageUrl = galleryImages[0]; // used for SEO
 
   // ── Structured data ──
   const productSchema = buildProductSchema(product);
@@ -305,18 +332,81 @@ const ProductDetailsPage = () => {
         <Breadcrumbs items={breadcrumbItems} />
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14">
-          {/* ========== العمود الأيمن: الصورة ========== */}
-          <div className="w-full lg:w-[55%] flex flex-col gap-4 select-none">
+          {/* ========== العمود الأيمن: معرض الصور ========== */}
+          <div className="w-full lg:w-[55%] flex flex-col gap-3 select-none">
+            {/* Main image */}
             <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm">
-              <img
-                src={imageUrl}
+              <motion.img
+                key={activeRawUrl}
+                src={activeImageUrl}
                 alt={`${product.title} - ${product.categoryName || 'عطر'}`}
                 width="800"
                 height="600"
                 fetchpriority="high"
+                initial={{ opacity: 0, scale: 1.03 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.25 }}
                 className="absolute inset-0 w-full h-full object-cover"
               />
+              {/* Navigation arrows for multi-image */}
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setSelectedImageIndex(i => (i - 1 + galleryImages.length) % galleryImages.length)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:bg-white dark:hover:bg-slate-700 transition-colors"
+                    aria-label="الصورة السابقة"
+                  >
+                    <ChevronRight className="w-5 h-5 text-slate-700 dark:text-slate-200" />
+                  </button>
+                  <button
+                    onClick={() => setSelectedImageIndex(i => (i + 1) % galleryImages.length)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:bg-white dark:hover:bg-slate-700 transition-colors"
+                    aria-label="الصورة التالية"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-slate-700 dark:text-slate-200" />
+                  </button>
+                  {/* Dot indicators */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+                    {galleryImages.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedImageIndex(idx)}
+                        className={`rounded-full transition-all ${
+                          idx === safeIndex
+                            ? 'w-5 h-2 bg-white shadow-sm'
+                            : 'w-2 h-2 bg-white/50 hover:bg-white/80'
+                        }`}
+                        aria-label={`صورة ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
+
+            {/* Thumbnail strip — shown only when there are multiple images */}
+            {galleryImages.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                {galleryImages.map((url, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImageIndex(idx)}
+                    className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${
+                      idx === safeIndex
+                        ? 'border-gold-400 shadow-md shadow-gold-200/50 dark:shadow-gold-900/30 scale-105'
+                        : 'border-slate-200 dark:border-slate-700 opacity-70 hover:opacity-100 hover:border-slate-400'
+                    }`}
+                    aria-label={`عرض الصورة ${idx + 1}`}
+                  >
+                    <img
+                      src={getOptimizedImageUrl(url, 150)}
+                      alt={`${product.title} ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ========== العمود الأيسر: تفاصيل المنتج ========== */}
@@ -338,9 +428,9 @@ const ProductDetailsPage = () => {
                   {product.categoryName}
                 </span>
               )}
-              {product.stockQuantity > 0 && (
+              {displayStock > 0 && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-700">
-                  متوفر ({product.stockQuantity})
+                  متوفر ({displayStock})
                 </span>
               )}
               {product.isPromoted && (
@@ -368,13 +458,13 @@ const ProductDetailsPage = () => {
             })()}
 
             {/* شارة الشح / Scarcity Badge */}
-            {product.stockQuantity > 0 && product.stockQuantity <= 5 && (
+            {displayStock > 0 && displayStock <= 5 && (
               <div className="inline-flex items-center gap-1.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-600 dark:text-red-400 rounded-xl px-3 py-1.5 text-xs font-bold mb-3 animate-pulse">
                 <Zap className="w-3.5 h-3.5" />
-                متبقي {product.stockQuantity} قطعة فقط!
+                متبقي {displayStock} قطعة فقط!
               </div>
             )}
-            {product.stockQuantity === 0 && (
+            {displayStock === 0 && (
               <div className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-xl px-3 py-1.5 text-xs font-bold mb-3">
                 نفد المخزون
               </div>
@@ -383,23 +473,23 @@ const ProductDetailsPage = () => {
             {/* السعر وأزرار الإجراء */}
             <div className="flex items-center justify-between mb-6">
               <div>
-                {product.discountPrice ? (
+                {displayDiscount ? (
                   <>
                     <div className="text-lg text-slate-400 dark:text-slate-500 line-through mb-1">
-                      {formatPrice(product.price, product.currency)}
+                      {formatPrice(displayPrice, product.currency)}
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
                         {formatPrice(
-                          Number(product.discountPrice),
+                          Number(displayDiscount),
                           product.currency,
                         )}
                       </span>
                       <span className="px-2.5 py-1 text-sm font-bold text-white bg-red-500 rounded-lg shadow-sm">
                         -
                         {Math.round(
-                          ((product.price - product.discountPrice) /
-                            product.price) *
+                          ((displayPrice - displayDiscount) /
+                            displayPrice) *
                           100,
                         )}
                         %
@@ -408,7 +498,8 @@ const ProductDetailsPage = () => {
                   </>
                 ) : (
                   <div className="text-3xl sm:text-4xl font-black text-gold-600 dark:text-gold-400 tracking-tight">
-                    {formatPrice(product.price, product.currency)}
+                    {!selectedVariant && product.hasVariants && <span className="text-sm text-slate-500 ml-2">يبدأ من</span>}
+                    {formatPrice(displayPrice, product.currency)}
                   </div>
                 )}
               </div>
@@ -441,6 +532,73 @@ const ProductDetailsPage = () => {
             </div>
 
             <hr className="border-slate-200/80 dark:border-slate-700 mb-6" />
+
+            {/* خيارات المنتج / Variant Selection */}
+            {product.hasVariants && product.variants?.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                  <div className="w-1 h-5 bg-gold-500 rounded-full"></div>
+                  الخيارات المتاحة
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {product.variants.map((variant) => {
+                    // Extract a readable label from the variant's attributes
+                    const label = variant.attributes?.map(a => a.value).join(' - ') || variant.sku || 'متغير';
+                    const isSelected = selectedVariantId === variant.id;
+                    const isOutOfStock = variant.stockQuantity <= 0;
+                    
+                    return (
+                      <button
+                        key={variant.id}
+                        onClick={() => setSelectedVariantId(variant.id)}
+                        className={`relative px-4 py-2 rounded-xl text-sm font-bold transition-all overflow-hidden ${
+                          isSelected
+                            ? 'bg-gold-50 dark:bg-gold-900/30 border-2 border-gold-400 text-gold-700 dark:text-gold-300 shadow-sm'
+                            : 'bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-gold-300 hover:text-gold-600'
+                        } ${isOutOfStock ? 'opacity-60' : ''}`}
+                      >
+                        {label}
+                        {isOutOfStock && (
+                          <span className="absolute inset-0 bg-white/40 dark:bg-slate-900/40 cursor-not-allowed">
+                            <span className="absolute top-1/2 left-0 w-full h-[1.5px] bg-red-400 -rotate-12 transform -translate-y-1/2"></span>
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* المواصفات / Specifications */}
+            {product.attributes && product.attributes.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                  <div className="w-1 h-5 bg-gold-500 rounded-full"></div>
+                  المواصفات
+                </h3>
+                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+                  <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                    {product.attributes.map((attr, idx) => {
+                      const attrName = attr.categoryAttribute?.name || 'مواصفة';
+                      let displayValue = attr.value;
+                      if (attr.categoryAttribute?.type === 'BOOLEAN') {
+                        displayValue = (attr.value === 'true' || attr.value === '1') ? 'نعم' : 'لا';
+                      } else if (attr.categoryAttribute?.type === 'MULTI_SELECT') {
+                        displayValue = attr.value.split(',').join('، ');
+                      }
+                      
+                      return (
+                        <div key={attr.id || idx} className="flex px-4 py-3 text-sm">
+                          <span className="w-1/3 font-semibold text-slate-600 dark:text-slate-400">{attrName}</span>
+                          <span className="w-2/3 text-slate-900 dark:text-slate-200 font-medium text-left" dir="auto">{displayValue}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* الوصف */}
             {product.description && (
@@ -475,16 +633,23 @@ const ProductDetailsPage = () => {
               {/* زر إضافة للسلة (Primary CTA) */}
               <motion.button
                 onClick={handleAddToCart}
-                disabled={addedToCart}
+                disabled={addedToCart || product.hasVariants}
                 className={`flex-1 flex items-center justify-center gap-2 h-[52px] sm:h-14 rounded-xl font-extrabold text-[15px] sm:text-base shadow-lg transition-all ${
-                  addedToCart
+                  product.hasVariants 
+                    ? "bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed border border-slate-300 dark:border-slate-700"
+                    : addedToCart
                     ? "bg-emerald-500 text-white shadow-emerald-500/20"
                     : "bg-gold-600 text-white shadow-gold-600/20 hover:bg-gold-500"
                 } focus:outline-none focus:ring-4 focus:ring-gold-500/30`}
-                whileHover={!addedToCart ? { scale: 1.01 } : {}}
-                whileTap={!addedToCart ? { scale: 0.98 } : {}}
+                whileHover={!addedToCart && !product.hasVariants ? { scale: 1.01 } : {}}
+                whileTap={!addedToCart && !product.hasVariants ? { scale: 0.98 } : {}}
               >
-                {addedToCart ? (
+                {product.hasVariants ? (
+                  <>
+                    <Package className="w-5 h-5" />
+                    شراء المتغيرات قيد التحديث
+                  </>
+                ) : addedToCart ? (
                   <>
                     <Check className="w-5 h-5" />
                     تمت الإضافة للسلة

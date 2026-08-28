@@ -25,4 +25,40 @@ function uploadBuffer(buffer, folder = 'uploads') {
   });
 }
 
-module.exports = { uploadBuffer };
+/**
+ * Extract Cloudinary public_id from a secure URL.
+ * Handles URLs with or without transformation strings.
+ * e.g. https://res.cloudinary.com/demo/image/upload/v1234/products/abc.jpg → products/abc
+ *      https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/v1234/products/abc.jpg → products/abc
+ */
+function extractPublicId(url) {
+  if (!url || typeof url !== 'string') return null;
+  try {
+    // Match: /upload/ then skip optional transforms, then v\d+/, then capture until last dot
+    const match = url.match(/\/upload\/(?:[^/]+\/)*v\d+\/(.+?)(?:\.[^.]+)?$/);
+    if (match) return match[1];
+    // Fallback for URLs without version token
+    const fallback = url.match(/\/upload\/(.+?)(?:\.[^.]+)?$/);
+    if (fallback) return fallback[1];
+  } catch (_) { /* ignore */ }
+  return null;
+}
+
+/**
+ * Delete an image from Cloudinary by its full URL.
+ * Silently resolves (does not throw) if the URL is not a Cloudinary URL or deletion fails.
+ * @param {string} url - The Cloudinary secure_url of the image to delete
+ * @returns {Promise<object>} Cloudinary destroy result
+ */
+async function deleteByUrl(url) {
+  const publicId = extractPublicId(url);
+  if (!publicId) return { result: 'not_cloudinary_url' };
+  try {
+    return await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+  } catch (err) {
+    console.error(`[Cloudinary] deleteByUrl failed for publicId="${publicId}":`, err.message);
+    return { result: 'error', message: err.message };
+  }
+}
+
+module.exports = { uploadBuffer, deleteByUrl };

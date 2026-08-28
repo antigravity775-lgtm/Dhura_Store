@@ -78,15 +78,18 @@ const CategoryCard = React.memo(({ category, isLoading = false }) => {
 
   if (isLoading || !category) return <CategoryCardSkeleton />;
 
-  const { name, iconUrl, _count } = category;
+  const { name, slug, iconUrl, _count } = category;
   const productCount = _count?.products ?? category.productCount ?? null;
   const hasImage = iconUrl && !imgError;
   const emoji = CATEGORY_EMOJI_MAP[name] || DEFAULT_EMOJI;
   const [gradFrom, gradTo] = getGradientForName(name);
 
+  // Use slug if available, fall back to encoded name for backward compat
+  const categoryHref = slug ? `/category/${slug}` : `/category/${encodeURIComponent(name)}`;
+
   return (
     <button
-      onClick={() => navigate(`/category/${encodeURIComponent(name)}`)}
+      onClick={() => navigate(categoryHref)}
         className="category-card group relative flex flex-col justify-end rounded-2xl overflow-hidden h-36 sm:h-44 cursor-pointer appearance-none bg-transparent border-2 border-dashed border-gray-300 dark:border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/60 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 shadow-sm hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-black/40 transition-all duration-300 hover:-translate-y-1 active:scale-[0.97] w-full text-right"
       aria-label={`تصفح قسم ${name}`}
     >

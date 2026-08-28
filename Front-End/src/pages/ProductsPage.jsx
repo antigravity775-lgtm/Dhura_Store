@@ -30,7 +30,7 @@ import { getOptimizedImageUrl, IMAGE_WIDTHS } from '../utils/cloudinaryUrl';
 // ─── Helpers ───
 
 function mapToProduct(p) {
-  const rawImage = p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
+  const rawImage = p.imageUrl || p.mainImageUrl || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80';
   return {
     id: p.id,
     slug: p.slug || p.id,
@@ -162,7 +162,7 @@ const ProductsPage = () => {
     } else {
       addToCart({
         id: p.id, title: p.title, price: p.price,
-        currency: p.currency || 'USD', mainImageUrl: p.image
+        currency: p.currency || 'USD', mainImageUrl: p.image, imageUrl: p.image
       }, 1);
     }
   }, [activeProducts, addToCart]);

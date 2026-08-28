@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, Loader2, ImagePlus, AlertCircle, Cloud, CheckCircle, Sparkles } from 'lucide-react';
+import { Upload, X, Loader2, ImagePlus, AlertCircle, Cloud, CheckCircle, Sparkles, Star } from 'lucide-react';
 import * as api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
   const { user } = useAuth();
   const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
+  const [uploadingIndex, setUploadingIndex] = useState(null);
 
   const isEdit = !!editProduct;
 
@@ -30,28 +32,71 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
     condition: getInitialCondition(editProduct?.condition),
     stockQuantity: editProduct?.stockQuantity || 1,
     categoryId: editProduct?.categoryId || '',
-    mainImageUrl: editProduct?.mainImageUrl || '',
+    imageUrls: editProduct?.images?.map(img => img.url) || (editProduct?.imageUrl ? [editProduct.imageUrl] : []),
     isPromoted: editProduct?.isPromoted || false,
-    isHidden: editProduct?.isHidden || false,
+    status: editProduct?.status || 'Active', // Replaced isHidden with status
     discountPrice: editProduct?.discountPrice?.toString() || '',
     promotionLabel: editProduct?.promotionLabel || '',
+    sku: editProduct?.sku || '',
+    hasVariants: editProduct?.hasVariants || false,
+    lowStockThreshold: editProduct?.lowStockThreshold || 5,
+    metaTitle: editProduct?.metaTitle || '',
+    metaDescription: editProduct?.metaDescription || '',
+    brandId: editProduct?.brandId || '',
+    variants: editProduct?.variants?.map(v => ({
+      ...v,
+      attributes: v.attributes?.reduce((acc, attr) => {
+        acc[attr.categoryAttribute?.id || attr.categoryAttributeId] = attr.value;
+        return acc;
+      }, {}) || {}
+    })) || [],
+    imageAltTexts: editProduct?.images?.reduce((acc, img) => ({ ...acc, [img.url]: img.altText || '' }), {}) || {},
+    attributes: editProduct?.attributes?.reduce((acc, attr) => {
+      acc[attr.categoryAttribute?.id || attr.categoryAttributeId] = attr.value;
+      return acc;
+    }, {}) || {},
   });
 
+  const [categoryAttributes, setCategoryAttributes] = useState([]);
+  const [variantAttributes, setVariantAttributes] = useState([]);
+
+  // Fetch category attributes when category changes
   useEffect(() => {
-    async function loadCategories() {
+    if (!form.categoryId) {
+      setCategoryAttributes([]);
+      setVariantAttributes([]);
+      return;
+    }
+    
+    Promise.all([
+      api.getCategoryAttributes(form.categoryId, 'PRODUCT,BOTH'),
+      api.getCategoryAttributes(form.categoryId, 'VARIANT,BOTH')
+    ])
+      .then(([prodAttrs, varAttrs]) => {
+        setCategoryAttributes(prodAttrs || []);
+        setVariantAttributes(varAttrs || []);
+      })
+      .catch(err => console.error('Failed to load category attributes:', err));
+  }, [form.categoryId]);
+
+  useEffect(() => {
+    async function loadData() {
       try {
-        const data = await api.getCategories();
-        setCategories(data || []);
+        const [catsData, brandsData] = await Promise.all([
+          api.getCategories(),
+          api.getBrands().catch(() => []) // Graceful fail if brands API has issues
+        ]);
+        setCategories(catsData || []);
+        setBrands(brandsData || []);
       } catch {
         setCategories([
           { id: 'cat1', name: 'الطاقة الشمسية' },
           { id: 'cat2', name: 'لابتوبات' },
-          { id: 'cat3', name: 'هواتف' },
-          { id: 'cat4', name: 'البن اليمني' },
         ]);
+        setBrands([]);
       }
     }
-    loadCategories();
+    loadData();
   }, []);
 
   const handleChange = (e) => {
@@ -60,33 +105,57 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
     setError('');
   };
 
-  const handleImageUpload = async (file) => {
-    if (!file || !file.type.startsWith('image/')) {
-      setError('يرجى اختيار ملف صورة صالح');
-      return;
-    }
+  const MAX_IMAGES = 5;
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError('حجم الصورة يجب أن يكون أقل من 5 ميجابايت');
+  const handleImageUpload = async (files) => {
+    const fileArray = Array.from(files);
+    const validFiles = fileArray.filter(f => f.type.startsWith('image/') && f.size <= 5 * 1024 * 1024);
+    if (validFiles.length === 0) {
+      setError('يرجى اختيار ملفات صور صالحة (بحجم أقل من 5 ميجابايت)');
       return;
     }
+    const currentCount = form.imageUrls.length;
+    const availableSlots = MAX_IMAGES - currentCount;
+    if (availableSlots <= 0) {
+      setError(`الحد الأقصى ${MAX_IMAGES} صور لكل منتج`);
+      return;
+    }
+    const toUpload = validFiles.slice(0, availableSlots);
 
     setUploading(true);
     setError('');
     try {
-      const url = await api.uploadImageToCloudinary(file);
-      setForm(prev => ({ ...prev, mainImageUrl: url }));
+      const uploaded = [];
+      for (let i = 0; i < toUpload.length; i++) {
+        setUploadingIndex(currentCount + i);
+        const url = await api.uploadImageToCloudinary(toUpload[i]);
+        uploaded.push(url);
+      }
+      setForm(prev => ({ ...prev, imageUrls: [...prev.imageUrls, ...uploaded] }));
     } catch (err) {
-      setError(err.message || 'فشل رفع الصورة، جرّب لصق رابط الصورة يدوياً');
+      setError(err.message || 'فشل رفع الصورة');
     }
     setUploading(false);
+    setUploadingIndex(null);
+  };
+
+  const handleRemoveImage = (index) => {
+    setForm(prev => ({ ...prev, imageUrls: prev.imageUrls.filter((_, i) => i !== index) }));
+  };
+
+  const handleSetPrimary = (index) => {
+    setForm(prev => {
+      const newUrls = [...prev.imageUrls];
+      const [primary] = newUrls.splice(index, 1);
+      return { ...prev, imageUrls: [primary, ...newUrls] };
+    });
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     setDragActive(false);
-    if (e.dataTransfer.files?.[0]) {
-      handleImageUpload(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files?.length) {
+      handleImageUpload(e.dataTransfer.files);
     }
   };
 
@@ -124,11 +193,26 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           stockQuantity: parseInt(form.stockQuantity),
           condition: parseInt(form.condition),
           categoryId: form.categoryId || editProduct.categoryId,
-          mainImageUrl: form.mainImageUrl || null,
+          images: form.imageUrls.map(url => ({ url, altText: form.imageAltTexts[url] || null })),
           isPromoted: form.isPromoted,
-          isHidden: form.isHidden,
+          status: form.status,
           discountPrice: form.discountPrice ? parseFloat(form.discountPrice) : null,
           promotionLabel: form.promotionLabel || null,
+          sku: form.sku || null,
+          hasVariants: form.hasVariants,
+          variants: form.hasVariants ? form.variants.map(v => ({
+            ...v,
+            attributes: Object.entries(v.attributes || {})
+              .filter(([_, value]) => value !== undefined && value !== '')
+              .map(([categoryAttributeId, value]) => ({ categoryAttributeId, value }))
+          })) : [],
+          brandId: form.brandId || null,
+          lowStockThreshold: parseInt(form.lowStockThreshold) || 5,
+          metaTitle: form.metaTitle || null,
+          metaDescription: form.metaDescription || null,
+          attributes: Object.entries(form.attributes)
+            .filter(([_, value]) => value !== undefined && value !== '')
+            .map(([categoryAttributeId, value]) => ({ categoryAttributeId, value })),
         });
       } else {
         await api.createProduct({
@@ -140,11 +224,26 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           stockQuantity: parseInt(form.stockQuantity),
           categoryId: form.categoryId,
           sellerId: user?.id,
-          mainImageUrl: form.mainImageUrl || null,
+          images: form.imageUrls.map(url => ({ url, altText: form.imageAltTexts[url] || null })),
           isPromoted: form.isPromoted,
-          isHidden: form.isHidden,
+          status: form.status,
           discountPrice: form.discountPrice ? parseFloat(form.discountPrice) : null,
           promotionLabel: form.promotionLabel || null,
+          sku: form.sku || null,
+          hasVariants: form.hasVariants,
+          variants: form.hasVariants ? form.variants.map(v => ({
+            ...v,
+            attributes: Object.entries(v.attributes || {})
+              .filter(([_, value]) => value !== undefined && value !== '')
+              .map(([categoryAttributeId, value]) => ({ categoryAttributeId, value }))
+          })) : [],
+          brandId: form.brandId || null,
+          lowStockThreshold: parseInt(form.lowStockThreshold) || 5,
+          metaTitle: form.metaTitle || null,
+          metaDescription: form.metaDescription || null,
+          attributes: Object.entries(form.attributes)
+            .filter(([_, value]) => value !== undefined && value !== '')
+            .map(([categoryAttributeId, value]) => ({ categoryAttributeId, value })),
         });
       }
       onSuccess?.();
@@ -165,18 +264,31 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
         </div>
       )}
 
-      {/* العنوان */}
-      <div>
-        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">عنوان المنتج</label>
-        <input
-          type="text"
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          required
-          placeholder="مثال: آيفون 15 برو ماكس 256 جيجا"
-          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400"
-        />
+      {/* العنوان و SKU */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="md:col-span-2">
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">عنوان المنتج <span className="text-red-500">*</span></label>
+          <input
+            type="text"
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            required
+            placeholder="مثال: آيفون 15 برو ماكس 256 جيجا"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">رقم الصنف (SKU)</label>
+          <input
+            type="text"
+            name="sku"
+            value={form.sku}
+            onChange={handleChange}
+            placeholder="مثال: IPH15-PRO-256"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400"
+          />
+        </div>
       </div>
 
       {/* السعر + العملة */}
@@ -211,29 +323,227 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
       </div>
 
       {/* ── إعدادات الظهور ── */}
-      <div className="flex items-center justify-between p-4 bg-bone dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">إخفاء المنتج</label>
-          <span className="text-xs text-slate-500 dark:text-slate-400">عند تفعيله، لن يظهر المنتج للعملاء في المتجر</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="p-4 bg-bone dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">حالة المنتج</label>
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/40 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+          >
+            <option value="Active">نشط (يظهر للعملاء)</option>
+            <option value="Draft">مسودة (قيد التجهيز)</option>
+            <option value="OutOfStock">نفذت الكمية</option>
+            <option value="Archived">مؤرشف (مخفي)</option>
+          </select>
         </div>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={form.isHidden}
-          onClick={() => setForm(prev => ({ ...prev, isHidden: !prev.isHidden }))}
-          className={`relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/40 ${
-            form.isHidden
-              ? 'bg-red-500 shadow-lg shadow-red-500/25'
-              : 'bg-slate-200 dark:bg-slate-600'
-          }`}
-        >
-          <span
-            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${
-              form.isHidden ? 'translate-x-6' : 'translate-x-1'
-            }`}
-          />
-        </button>
+        <div className="flex items-center justify-between p-4 bg-bone dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">يحتوي على متغيرات (أحجام/ألوان)</label>
+            <span className="text-xs text-slate-500 dark:text-slate-400">تفعيل خيارات متعددة للمنتج</span>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={form.hasVariants}
+            onClick={() => setForm(prev => ({ ...prev, hasVariants: !prev.hasVariants }))}
+            className={`relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors duration-300 focus:outline-none ${form.hasVariants ? 'bg-gold-500' : 'bg-slate-300 dark:bg-slate-600'}`}
+          >
+            <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-300 ${form.hasVariants ? 'translate-x-6' : 'translate-x-1'}`} />
+          </button>
+        </div>
       </div>
+
+      {/* ── إدارة المتغيرات (Variants Manager) ── */}
+      {form.hasVariants && (
+        <div className="bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-gold-500" />
+              متغيرات المنتج
+            </h4>
+            <button
+              type="button"
+              onClick={() => {
+                setForm(prev => ({
+                  ...prev,
+                  variants: [
+                    ...prev.variants,
+                    { sku: '', price: form.price, discountPrice: form.discountPrice, stockQuantity: 0, isActive: true, sortOrder: prev.variants.length }
+                  ]
+                }));
+              }}
+              className="px-3 py-1.5 bg-gold-50 text-gold-700 font-bold rounded-lg text-xs hover:bg-gold-100 transition-colors"
+            >
+              + إضافة متغير
+            </button>
+          </div>
+
+          {form.variants.length === 0 ? (
+            <div className="text-center py-6 text-sm text-slate-500">لا يوجد أي متغيرات مضافة حتى الآن.</div>
+          ) : (
+            <div className="space-y-3">
+              {form.variants.map((variant, index) => (
+                <div key={index} className="grid grid-cols-1 md:grid-cols-5 gap-2 p-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl relative">
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">SKU المتغير</label>
+                    <input
+                      type="text"
+                      value={variant.sku}
+                      onChange={(e) => {
+                        const newVariants = [...form.variants];
+                        newVariants[index].sku = e.target.value;
+                        setForm(prev => ({ ...prev, variants: newVariants }));
+                      }}
+                      className="w-full px-2 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800"
+                      placeholder="مثال: BLK-50ML"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">السعر</label>
+                    <input
+                      type="number"
+                      value={variant.price}
+                      onChange={(e) => {
+                        const newVariants = [...form.variants];
+                        newVariants[index].price = e.target.value;
+                        setForm(prev => ({ ...prev, variants: newVariants }));
+                      }}
+                      className="w-full px-2 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">سعر الخصم</label>
+                    <input
+                      type="number"
+                      value={variant.discountPrice || ''}
+                      onChange={(e) => {
+                        const newVariants = [...form.variants];
+                        newVariants[index].discountPrice = e.target.value;
+                        setForm(prev => ({ ...prev, variants: newVariants }));
+                      }}
+                      className="w-full px-2 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">الكمية</label>
+                    <input
+                      type="number"
+                      value={variant.stockQuantity}
+                      onChange={(e) => {
+                        const newVariants = [...form.variants];
+                        newVariants[index].stockQuantity = e.target.value;
+                        setForm(prev => ({ ...prev, variants: newVariants }));
+                      }}
+                      className="w-full px-2 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800"
+                    />
+                  </div>
+                  <div className="flex items-end pb-0.5 justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForm(prev => ({
+                          ...prev,
+                          variants: prev.variants.filter((_, i) => i !== index)
+                        }));
+                      }}
+                      className="p-1.5 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors"
+                      title="حذف المتغير"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="col-span-full border-t border-slate-100 dark:border-slate-600 my-2 pt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
+                    {variantAttributes.map(attr => {
+                      const val = variant.attributes?.[attr.id] ?? '';
+                      const handleAttrChange = (newVal) => {
+                        const newVariants = [...form.variants];
+                        newVariants[index] = {
+                          ...newVariants[index],
+                          attributes: { ...newVariants[index].attributes, [attr.id]: newVal }
+                        };
+                        setForm(prev => ({ ...prev, variants: newVariants }));
+                      };
+
+                      let inputElement = null;
+                      if (attr.type === 'TEXT' || attr.type === 'NUMBER') {
+                        inputElement = (
+                          <input
+                            type={attr.type === 'NUMBER' ? 'number' : 'text'}
+                            value={val}
+                            onChange={e => handleAttrChange(e.target.value)}
+                            required={attr.isRequired}
+                            placeholder={attr.name}
+                            className="w-full px-2 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800"
+                          />
+                        );
+                      } else if (attr.type === 'BOOLEAN') {
+                        inputElement = (
+                          <select
+                            value={val === '' ? '' : String(val)}
+                            onChange={e => handleAttrChange(e.target.value)}
+                            required={attr.isRequired}
+                            className="w-full px-2 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800"
+                          >
+                            <option value="" disabled>اختر...</option>
+                            <option value="true">نعم</option>
+                            <option value="false">لا</option>
+                          </select>
+                        );
+                      } else if (attr.type === 'SELECT') {
+                        const opts = attr.options ? JSON.parse(attr.options) : [];
+                        inputElement = (
+                          <select
+                            value={val}
+                            onChange={e => handleAttrChange(e.target.value)}
+                            required={attr.isRequired}
+                            className="w-full px-2 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800"
+                          >
+                            <option value="" disabled>اختر...</option>
+                            {opts.map(o => <option key={o} value={o}>{o}</option>)}
+                          </select>
+                        );
+                      } else if (attr.type === 'MULTI_SELECT') {
+                        const opts = attr.options ? JSON.parse(attr.options) : [];
+                        const currentVals = typeof val === 'string' && val.length > 0 ? val.split(',') : [];
+                        const toggleVal = (o) => {
+                          const set = new Set(currentVals);
+                          set.has(o) ? set.delete(o) : set.add(o);
+                          handleAttrChange(Array.from(set).join(','));
+                        };
+                        inputElement = (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {opts.map(o => (
+                              <button
+                                key={o}
+                                type="button"
+                                onClick={() => toggleVal(o)}
+                                className={`px-2 py-0.5 text-[10px] rounded border ${currentVals.includes(o) ? 'bg-gold-50 border-gold-400 text-gold-700' : 'bg-white border-slate-200 text-slate-600'}`}
+                              >
+                                {o}
+                              </button>
+                            ))}
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div key={attr.id}>
+                          <label className="block text-[10px] font-bold text-slate-500 mb-1">
+                            {attr.name} {attr.isRequired && <span className="text-red-500">*</span>}
+                          </label>
+                          {inputElement}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── ترويج المنتج / Promotion Section ── */}
       <div className="bg-gradient-to-br from-gold-50/50 via-purple-50/30 to-pink-50/30 dark:from-gold-900/20 dark:via-purple-900/10 dark:to-pink-900/10 rounded-2xl border border-gold-100 dark:border-gold-800/40 p-4 space-y-3">
@@ -327,10 +637,150 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
         </div>
       )}
 
-      {/* الحالة + الكمية */}
-      <div className="grid grid-cols-2 gap-3">
+      {/* العلامة التجارية */}
+      <div>
+        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">العلامة التجارية (اختياري)</label>
+        <select
+          name="brandId"
+          value={form.brandId}
+          onChange={handleChange}
+          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 appearance-none cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+        >
+          <option value="">-- بدون علامة تجارية --</option>
+          {brands.map(brand => (
+            <option key={brand.id} value={brand.id}>{brand.name}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* المواصفات (الخصائص الديناميكية) */}
+      {categoryAttributes.length > 0 && (
+        <div className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-4 h-4 text-slate-500" />
+            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">مواصفات المنتج</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {categoryAttributes.map(attr => {
+              const val = form.attributes[attr.id] ?? '';
+              const handleAttrChange = (val) => {
+                setForm(prev => ({
+                  ...prev,
+                  attributes: { ...prev.attributes, [attr.id]: val }
+                }));
+              };
+
+              let inputElement = null;
+
+              if (attr.type === 'TEXT') {
+                inputElement = (
+                  <input
+                    type="text"
+                    value={val}
+                    onChange={e => handleAttrChange(e.target.value)}
+                    required={attr.isRequired}
+                    placeholder="مثال: شرقي، خشبي..."
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:ring-2 focus:ring-gold-500/40 text-slate-900 dark:text-white"
+                  />
+                );
+              } else if (attr.type === 'NUMBER') {
+                inputElement = (
+                  <input
+                    type="number"
+                    value={val}
+                    onChange={e => handleAttrChange(e.target.value)}
+                    required={attr.isRequired}
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:ring-2 focus:ring-gold-500/40 text-slate-900 dark:text-white"
+                  />
+                );
+              } else if (attr.type === 'BOOLEAN') {
+                inputElement = (
+                  <select
+                    value={val === '' ? '' : String(val)}
+                    onChange={e => handleAttrChange(e.target.value)}
+                    required={attr.isRequired}
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:ring-2 focus:ring-gold-500/40 text-slate-900 dark:text-white"
+                  >
+                    <option value="" disabled>اختر...</option>
+                    <option value="true">نعم / يستخدم</option>
+                    <option value="false">لا / لا يستخدم</option>
+                  </select>
+                );
+              } else if (attr.type === 'SELECT') {
+                const opts = attr.options ? JSON.parse(attr.options) : [];
+                inputElement = (
+                  <select
+                    value={val}
+                    onChange={e => handleAttrChange(e.target.value)}
+                    required={attr.isRequired}
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:ring-2 focus:ring-gold-500/40 text-slate-900 dark:text-white"
+                  >
+                    <option value="" disabled>اختر...</option>
+                    {opts.map(o => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                );
+              } else if (attr.type === 'MULTI_SELECT') {
+                const opts = attr.options ? JSON.parse(attr.options) : [];
+                const currentVals = typeof val === 'string' && val.length > 0 ? val.split(',') : [];
+                const toggleVal = (o) => {
+                  const set = new Set(currentVals);
+                  set.has(o) ? set.delete(o) : set.add(o);
+                  handleAttrChange(Array.from(set).join(','));
+                };
+                inputElement = (
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {opts.map(o => {
+                      const isSelected = currentVals.includes(o);
+                      return (
+                        <button
+                          key={o}
+                          type="button"
+                          onClick={() => toggleVal(o)}
+                          className={`px-2.5 py-1 text-[11px] rounded-lg border transition-colors ${
+                            isSelected 
+                              ? 'bg-gold-50 border-gold-400 text-gold-700 dark:bg-gold-900/30 dark:border-gold-600 dark:text-gold-300 font-bold'
+                              : 'bg-white border-slate-200 text-slate-600 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300'
+                          }`}
+                        >
+                          {o}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              }
+
+              return (
+                <div key={attr.id} className={attr.type === 'MULTI_SELECT' ? 'md:col-span-2' : ''}>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">
+                    {attr.name} {attr.isRequired && <span className="text-red-500">*</span>}
+                  </label>
+                  {inputElement}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* حالة المنتج، الحالة، الكمية */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">الحالة</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">حالة العرض (الظهور)</label>
+          <select
+            name="status"
+            value={form.status || 'Draft'}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 appearance-none cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+          >
+            <option value="Draft">مسودة (Draft)</option>
+            <option value="Active">نشط (Active)</option>
+            <option value="OutOfStock">نفدت الكمية (Out Of Stock)</option>
+            <option value="Archived">مؤرشف (Archived)</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">حالة المنتج</label>
           <div className="flex gap-2">
             {[
               { val: 1, label: 'جديد' },
@@ -352,105 +802,204 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           </div>
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">الكمية</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">الكمية بالمخزون</label>
           <input
             type="number"
             name="stockQuantity"
             value={form.stockQuantity}
             onChange={handleChange}
-            min="1"
+            min="0"
+            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">تنبيه المخزون المنخفض</label>
+          <input
+            type="number"
+            name="lowStockThreshold"
+            value={form.lowStockThreshold}
+            onChange={handleChange}
+            min="0"
             className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400"
           />
         </div>
       </div>
 
-      {/* رفع الصورة */}
-      <div>
-        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">صورة المنتج</label>
-          
-          {form.mainImageUrl ? (
-            <div 
-              className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 bg-bone dark:bg-slate-700 cursor-pointer group"
-              onClick={() => fileInputRef.current?.click()}
-              title="اضغط لتغيير الصورة"
-            >
-              <img src={form.mainImageUrl} alt="preview" className="w-full h-40 object-cover group-hover:opacity-75 transition-opacity" />
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-white font-bold text-sm bg-black/50 px-3 py-1.5 rounded-lg flex items-center gap-2">
-                  <ImagePlus className="w-4 h-4" /> تغيير الصورة
-                </span>
-              </div>
-              <div className="absolute top-2 left-2 flex gap-1 z-10">
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); setForm(prev => ({ ...prev, mainImageUrl: '' })); }}
-                  className="p-1.5 bg-red-500 text-white rounded-lg shadow-lg hover:bg-red-600 transition-colors"
-                  title="حذف الصورة"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-lg z-10 shadow-md">
-                <CheckCircle className="w-3 h-3" />
-                تم الرفع
-              </div>
-            </div>
-          ) : (
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              className={`relative flex flex-col items-center justify-center gap-2 py-8 rounded-xl border-2 border-dashed cursor-pointer transition-all ${
-                dragActive
-                  ? 'border-gold-400 bg-gold-50 dark:bg-gold-900/20'
-                  : 'border-slate-200 dark:border-slate-600 bg-bone dark:bg-slate-700 hover:border-gold-300 hover:bg-gold-50/50 dark:hover:bg-gold-900/20'
-              }`}
-            >
-              {uploading ? (
-                <>
-                  <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
-                  <span className="text-sm font-medium text-gold-600">جاري رفع الصورة...</span>
-                </>
-              ) : (
-                <>
-                  <div className="p-3 bg-gold-100 rounded-xl">
-                    <Cloud className="w-6 h-6 text-gold-500" />
-                  </div>
-                  <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">اسحب الصورة هنا أو اضغط للاختيار</span>
-                  <span className="text-[10px] text-slate-400">PNG, JPG — حد أقصى 5 ميجابايت</span>
-                </>
-              )}
-            </div>
-          )}
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              if (e.target.files?.[0]) handleImageUpload(e.target.files[0]);
-              e.target.value = ''; // Reset input to allow re-selection
-            }}
-          />
-
-          {/* رابط يدوي بديل */}
-          <div className="mt-2">
-            <details className="text-xs">
-              <summary className="text-slate-400 cursor-pointer hover:text-gold-500 transition-colors">أو أدخل رابط الصورة يدوياً</summary>
-              <input
-                type="url"
-                name="mainImageUrl"
-                value={form.mainImageUrl}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-                dir="ltr"
-                className="mt-2 w-full px-3 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 text-left"
-              />
-            </details>
+      {/* SEO و العلامة التجارية */}
+      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50 p-4 space-y-4">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">تحسين محركات البحث (SEO) والعلامة التجارية</span>
+        </div>
+        <div className="grid grid-cols-1 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">العلامة التجارية (Brand ID) - اختياري</label>
+            <input
+              type="text"
+              name="brandId"
+              value={form.brandId || ''}
+              onChange={handleChange}
+              placeholder="معرف العلامة التجارية إن وجد"
+              className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">عنوان SEO (Meta Title)</label>
+            <input
+              type="text"
+              name="metaTitle"
+              value={form.metaTitle || ''}
+              onChange={handleChange}
+              placeholder="عنوان مخصص لمحركات البحث (اختياري)"
+              className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">وصف SEO (Meta Description)</label>
+            <textarea
+              name="metaDescription"
+              value={form.metaDescription || ''}
+              onChange={handleChange}
+              rows={2}
+              placeholder="وصف مخصص لمحركات البحث (اختياري)"
+              className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 resize-none"
+            />
           </div>
         </div>
+      </div>
+
+
+      {/* رفع الصور — Multi-Image Gallery */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400">صور المنتج</label>
+          <span className="text-[10px] text-slate-400">{form.imageUrls.length} / {MAX_IMAGES}</span>
+        </div>
+
+        {/* Thumbnail Grid */}
+        {form.imageUrls.length > 0 && (
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-3">
+            {form.imageUrls.map((url, idx) => (
+              <div key={idx} className="flex flex-col gap-1">
+                <div className="relative group aspect-square rounded-xl overflow-hidden border-2 bg-slate-100 dark:bg-slate-800 flex-shrink-0"
+                  style={{ borderColor: idx === 0 ? 'rgb(234 179 8)' : 'transparent' }}
+                >
+                  <img src={url} alt={`صورة ${idx + 1}`} className="w-full h-full object-cover" />
+                  {/* Overlay buttons */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 p-1">
+                    {idx !== 0 && (
+                      <button type="button" onClick={() => handleSetPrimary(idx)}
+                        className="flex items-center gap-1 px-2 py-1 bg-gold-500 text-white text-[10px] font-bold rounded-lg w-full justify-center"
+                        title="تعيين كصورة رئيسية"
+                      >
+                        <Star className="w-3 h-3" /> رئيسية
+                      </button>
+                    )}
+                    <button type="button" onClick={() => handleRemoveImage(idx)}
+                      className="flex items-center gap-1 px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded-lg w-full justify-center"
+                      title="حذف الصورة"
+                    >
+                      <X className="w-3 h-3" /> حذف
+                    </button>
+                  </div>
+                  {/* Primary badge */}
+                  {idx === 0 && (
+                    <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-gold-500 text-white text-[9px] font-bold rounded-md shadow">
+                      رئيسية
+                    </div>
+                  )}
+                </div>
+                <input 
+                  type="text" 
+                  placeholder="وصف الصورة (Alt)" 
+                  value={form.imageAltTexts[url] || ''}
+                  onChange={(e) => setForm(prev => ({ ...prev, imageAltTexts: { ...prev.imageAltTexts, [url]: e.target.value } }))}
+                  className="w-full text-[10px] px-2 py-1 border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400"
+                />
+              </div>
+            ))}
+            {/* Loading placeholder */}
+            {uploading && (
+              <div className="aspect-square rounded-xl border-2 border-dashed border-gold-300 bg-gold-50 dark:bg-gold-900/20 flex items-center justify-center">
+                <Loader2 className="w-6 h-6 text-gold-500 animate-spin" />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Drop Zone — only shown when under limit */}
+        {form.imageUrls.length < MAX_IMAGES && (
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            className={`relative flex flex-col items-center justify-center gap-2 py-6 rounded-xl border-2 border-dashed cursor-pointer transition-all ${
+              dragActive
+                ? 'border-gold-400 bg-gold-50 dark:bg-gold-900/20'
+                : 'border-slate-200 dark:border-slate-600 bg-bone dark:bg-slate-700 hover:border-gold-300 hover:bg-gold-50/50 dark:hover:bg-gold-900/20'
+            }`}
+          >
+            {uploading && form.imageUrls.length === 0 ? (
+              <>
+                <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
+                <span className="text-sm font-medium text-gold-600">جاري رفع الصور...</span>
+              </>
+            ) : (
+              <>
+                <div className="p-3 bg-gold-100 dark:bg-gold-900/40 rounded-xl">
+                  <ImagePlus className="w-6 h-6 text-gold-500" />
+                </div>
+                <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">
+                  {form.imageUrls.length === 0 ? 'اسحب الصور هنا أو اضغط للاختيار' : 'إضافة المزيد من الصور'}
+                </span>
+                <span className="text-[10px] text-slate-400">PNG, JPG — حد أقصى 5 ميجابايت لكل صورة — حتى {MAX_IMAGES} صور</span>
+              </>
+            )}
+          </div>
+        )}
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => {
+            if (e.target.files?.length) handleImageUpload(e.target.files);
+            e.target.value = '';
+          }}
+        />
+
+        {/* Manual URL input */}
+        <div className="mt-2">
+          <details className="text-xs">
+            <summary className="text-slate-400 cursor-pointer hover:text-gold-500 transition-colors">أو أدخل رابط صورة يدوياً</summary>
+            <div className="flex gap-2 mt-2">
+              <input
+                type="url"
+                id="manual-image-url"
+                placeholder="https://example.com/image.jpg"
+                dir="ltr"
+                className="flex-1 px-3 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 text-left"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const input = document.getElementById('manual-image-url');
+                  const url = input?.value?.trim();
+                  if (url && form.imageUrls.length < MAX_IMAGES) {
+                    setForm(prev => ({ ...prev, imageUrls: [...prev.imageUrls, url] }));
+                    if (input) input.value = '';
+                  }
+                }}
+                className="px-3 py-2 bg-gold-100 dark:bg-gold-900/40 text-gold-700 dark:text-gold-300 font-bold text-sm rounded-xl hover:bg-gold-200 transition-colors"
+              >
+                إضافة
+              </button>
+            </div>
+          </details>
+        </div>
+      </div>
 
       {/* الوصف */}
       <div>
@@ -465,6 +1014,23 @@ const AddProductForm = ({ onSuccess, onCancel, editProduct }) => {
           className="w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 resize-none"
         />
       </div>
+
+      {/* إعدادات تحسين محركات البحث SEO */}
+      <details className="group border-t border-slate-100 dark:border-slate-700 pt-3">
+        <summary className="text-sm font-bold text-slate-600 dark:text-slate-400 cursor-pointer hover:text-gold-500 transition-colors list-none">
+          إعدادات تحسين محركات البحث (SEO) للمنتج
+        </summary>
+        <div className="mt-3 space-y-3">
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">عنوان الميتا (Meta Title)</label>
+            <input type="text" name="metaTitle" value={form.metaTitle} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/40" />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5">وصف الميتا (Meta Description)</label>
+            <textarea name="metaDescription" value={form.metaDescription} onChange={handleChange} rows="2" className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/40 resize-none" />
+          </div>
+        </div>
+      </details>
 
       {/* الأزرار */}
       <div className="flex gap-3 pt-2">

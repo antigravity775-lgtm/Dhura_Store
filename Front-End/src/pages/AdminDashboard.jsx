@@ -41,7 +41,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import useSWR, { preload } from "swr";
+import useSWR, { preload, mutate } from "swr";
 import * as api from "../services/api";
 import AddProductForm from "../components/AddProductForm";
 
@@ -54,6 +54,7 @@ import AdminCategoriesTab from "./admin/AdminCategoriesTab";
 import AdminStoreInfoTab from "./admin/AdminStoreInfoTab";
 import AdminBannersTab from "./admin/AdminBannersTab";
 import AdminBranchesTab from "./admin/AdminBranchesTab";
+import AdminBrandsTab from "./admin/AdminBrandsTab";
 
 const logo = "/Logo_192.png";
 
@@ -160,7 +161,9 @@ const AdminDashboard = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [categoryForm, setCategoryForm] = useState({ name: "", iconUrl: "" });
+  const [categoryForm, setCategoryForm] = useState({ name: "", slug: "", iconUrl: "", description: "", imageUrl: "", parentId: "", isActive: true, sortOrder: 0, metaTitle: "", metaDescription: "" });
+
+  const { data: allCategories } = useSWR(isAuth && showCategoryForm ? "allCategories" : null, () => api.getCategories());
 
   useEffect(() => {
     if (!isAuthenticated || !isAdmin) {
@@ -222,8 +225,15 @@ const AdminDashboard = () => {
     mutateProducts();
   };
 
-  const openEditProductModal = (product) => {
-    setEditingProduct(product);
+  const openEditProductModal = async (product) => {
+    try {
+      // Fetch the full product (includes variants + attributes) before opening the form
+      const fullProduct = await api.getProductById(product.id);
+      setEditingProduct(fullProduct || product);
+    } catch {
+      // Fallback to the list-level product if the detail fetch fails
+      setEditingProduct(product);
+    }
     setShowProductForm(true);
   };
 
@@ -235,10 +245,21 @@ const AdminDashboard = () => {
   const openCategoryForm = (cat = null) => {
     if (cat) {
       setEditingCategory(cat);
-      setCategoryForm({ name: cat.name, iconUrl: cat.iconUrl || "" });
+      setCategoryForm({
+        name: cat.name,
+        slug: cat.slug || "",
+        iconUrl: cat.iconUrl || "",
+        description: cat.description || "",
+        imageUrl: cat.imageUrl || "",
+        parentId: cat.parentId || "",
+        isActive: cat.isActive !== false,
+        sortOrder: cat.sortOrder || 0,
+        metaTitle: cat.metaTitle || "",
+        metaDescription: cat.metaDescription || "",
+      });
     } else {
       setEditingCategory(null);
-      setCategoryForm({ name: "", iconUrl: "" });
+      setCategoryForm({ name: "", iconUrl: "", description: "", imageUrl: "", parentId: "", isActive: true, sortOrder: 0, metaTitle: "", metaDescription: "" });
     }
     setShowCategoryForm(true);
   };
@@ -248,14 +269,27 @@ const AdminDashboard = () => {
       setError("اسم التصنيف مطلوب");
       return;
     }
+    const payload = {
+      name: categoryForm.name,
+      slug: categoryForm.slug.trim() || undefined, // undefined = auto-generate on backend
+      iconUrl: categoryForm.iconUrl || null,
+      description: categoryForm.description || null,
+      imageUrl: categoryForm.imageUrl || null,
+      parentId: categoryForm.parentId || null,
+      isActive: categoryForm.isActive,
+      sortOrder: parseInt(categoryForm.sortOrder) || 0,
+      metaTitle: categoryForm.metaTitle || null,
+      metaDescription: categoryForm.metaDescription || null,
+    };
+
     try {
       if (editingCategory) {
-        await api.updateCategory(editingCategory.id, { name: categoryForm.name, iconUrl: categoryForm.iconUrl || null });
-        mutateCategories();
+        await api.updateCategory(editingCategory.id, payload);
+        mutate(key => Array.isArray(key) && key[0] === 'adminCategories');
         showSuccessMsg("تم تحديث التصنيف");
       } else {
-        await api.createCategory({ name: categoryForm.name, iconUrl: categoryForm.iconUrl || null });
-        mutateCategories();
+        await api.createCategory(payload);
+        mutate(key => Array.isArray(key) && key[0] === 'adminCategories');
         showSuccessMsg("تم إضافة التصنيف بنجاح 🎉");
       }
       setShowCategoryForm(false);
@@ -264,16 +298,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteCategory = async (id) => {
-    if (!confirm("هل أنت متأكد من حذف هذا التصنيف؟")) return;
-    try {
-      await api.deleteCategory(id);
-      mutateCategories();
-      showSuccessMsg("تم حذف التصنيف");
-    } catch (err) {
-      setError("فشل حذف التصنيف: " + (err.message || ""));
-    }
-  };
 
   const handleUpdateStoreInfo = async () => {
     setStoreInfoSaving(true);
@@ -288,135 +312,226 @@ const AdminDashboard = () => {
 
   const tabItems = [
     { id: "dashboard", label: "لوحة التحكم", icon: LayoutDashboard },
-    { id: "orders",    label: "إدارة الطلبات", icon: ClipboardList },
-    { id: "users",     label: "المستخدمين",    icon: Users },
-    { id: "products",  label: "المحتوى",        icon: Package },
-    { id: "categories",label: "التصنيفات",    icon: Tag },
-    { id: "banners",   label: "الإعلانات",    icon: Megaphone },
-    { id: "branches",  label: "الفروع",       icon: MapPin },
+    { id: "orders", label: "إدارة الطلبات", icon: ClipboardList },
+    { id: "users", label: "المستخدمين", icon: Users },
+    { id: "products", label: "المحتوى", icon: Package },
+    { id: "categories", label: "التصنيفات", icon: Tag },
+    { id: "brands", label: "العلامات التجارية", icon: Crown },
+    { id: "banners", label: "الإعلانات", icon: Megaphone },
+    { id: "branches", label: "الفروع", icon: MapPin },
     { id: "storeInfo", label: "معلومات المتجر", icon: Info },
   ];
 
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-bone dark:bg-slate-950 font-sans" dir="rtl">
-      {/* Top Bar */}
-      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row gap-3 sm:items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-0 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700 ring-1 ring-gold-200/60">
-              <img src={logo} alt="شعار GISAAH قصة" className="w-full h-full object-cover object-center scale-[1.16]" />
+        {/* Top Bar */}
+        <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row gap-3 sm:items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-0 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700 ring-1 ring-gold-200/60">
+                <img src={logo} alt="شعار GISAAH قصة" className="w-full h-full object-cover object-center scale-[1.16]" />
+              </div>
+              <div>
+                <h1 className="font-extrabold text-slate-900 dark:text-white text-lg leading-none">لوحة المسؤول</h1>
+                <p className="text-xs text-slate-400 mt-0.5">مرحباً، {user?.fullName || "مسؤول"}</p>
+              </div>
             </div>
-            <div>
-              <h1 className="font-extrabold text-slate-900 dark:text-white text-lg leading-none">لوحة المسؤول</h1>
-              <p className="text-xs text-slate-400 mt-0.5">مرحباً، {user?.fullName || "مسؤول"}</p>
-            </div>
+            <Link to="/" className="text-sm text-slate-500 hover:text-gold-600 font-medium transition-colors flex items-center gap-1">
+              <Home className="w-4 h-4" /> الرئيسية
+            </Link>
           </div>
-          <Link to="/" className="text-sm text-slate-500 hover:text-gold-600 font-medium transition-colors flex items-center gap-1">
-            <Home className="w-4 h-4" /> الرئيسية
-          </Link>
-        </div>
-      </header>
+        </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        {/* Notifications */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+          {/* Notifications */}
+          <AnimatePresence>
+            {error && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-4 flex flex-col sm:flex-row gap-3 sm:items-center justify-between bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
+                <span className="flex items-center gap-2"><AlertCircle className="w-4 h-4" /> {error}</span>
+                <button onClick={() => setError("")}><X className="w-4 h-4" /></button>
+              </motion.div>
+            )}
+            {success && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-4 flex flex-col sm:flex-row gap-3 sm:items-center justify-between bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50 text-green-600 dark:text-green-400 text-sm px-4 py-3 rounded-xl">
+                <span className="flex items-center gap-2"><CheckCircle className="w-4 h-4" /> {success}</span>
+                <button onClick={() => setSuccess("")}><X className="w-4 h-4" /></button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Tabs */}
+          <div className="flex flex-wrap gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-6 overflow-x-auto">
+            {tabItems.map((tab) => (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${activeTab === tab.id ? "bg-white dark:bg-slate-700 text-gold-700 dark:text-gold-300 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}>
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Active Tab Content */}
+          {activeTab === "dashboard" && <AdminDashboardTab stats={stats} statsLoading={statsLoading} orders={orders} />}
+          {activeTab === "orders" && <AdminOrdersTab orders={orders} ordersLoading={ordersLoading} mutateOrders={mutateOrders} showSuccess={showSuccessMsg} setError={setError} />}
+          {activeTab === "users" && <AdminUsersTab users={users} usersLoading={usersLoading} handleBlockUser={handleBlockUser} handleChangeRole={handleChangeRole} handleDeleteUser={handleDeleteUser} />}
+          {activeTab === "products" && <AdminProductsTab openEditProductModal={openEditProductModal} />}
+          {activeTab === "categories" && <AdminCategoriesTab openCategoryForm={openCategoryForm} />}
+          {activeTab === "brands" && <AdminBrandsTab onSuccessMsg={showSuccessMsg} />}
+          {activeTab === "banners" && <AdminBannersTab showSuccess={showSuccessMsg} setError={setError} />}
+          {activeTab === "branches" && <AdminBranchesTab />}
+          {activeTab === "storeInfo" && <AdminStoreInfoTab storeInfo={storeInfo} setStoreInfo={setStoreInfo} handleUpdateStoreInfo={handleUpdateStoreInfo} storeInfoSaving={storeInfoSaving} />}
+
+        </div>
+
+        {/* Add/Edit Product Modal */}
         <AnimatePresence>
-          {error && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-4 flex flex-col sm:flex-row gap-3 sm:items-center justify-between bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
-              <span className="flex items-center gap-2"><AlertCircle className="w-4 h-4" /> {error}</span>
-              <button onClick={() => setError("")}><X className="w-4 h-4" /></button>
-            </motion.div>
-          )}
-          {success && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-4 flex flex-col sm:flex-row gap-3 sm:items-center justify-between bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50 text-green-600 dark:text-green-400 text-sm px-4 py-3 rounded-xl">
-              <span className="flex items-center gap-2"><CheckCircle className="w-4 h-4" /> {success}</span>
-              <button onClick={() => setSuccess("")}><X className="w-4 h-4" /></button>
+          {showProductForm && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={closeProductModal}>
+              <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl dark:border dark:border-slate-700">
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingProduct ? "تعديل المنتج" : "إضافة منتج جديد"}</h3>
+                  <button onClick={closeProductModal} className="p-1 hover:bg-slate-100 rounded-lg"><X className="w-5 h-5 text-slate-400" /></button>
+                </div>
+                <AddProductForm onSuccess={handleProductCreated} onCancel={closeProductModal} editProduct={editingProduct} />
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Tabs */}
-        <div className="flex flex-wrap gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-6 overflow-x-auto">
-          {tabItems.map((tab) => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${activeTab === tab.id ? "bg-white dark:bg-slate-700 text-gold-700 dark:text-gold-300 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}>
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Active Tab Content */}
-        {activeTab === "dashboard"  && <AdminDashboardTab stats={stats} statsLoading={statsLoading} orders={orders} />}
-        {activeTab === "orders"     && <AdminOrdersTab orders={orders} ordersLoading={ordersLoading} mutateOrders={mutateOrders} showSuccess={showSuccessMsg} setError={setError} />}
-        {activeTab === "users"      && <AdminUsersTab users={users} usersLoading={usersLoading} handleBlockUser={handleBlockUser} handleChangeRole={handleChangeRole} handleDeleteUser={handleDeleteUser} />}
-        {activeTab === "products"   && <AdminProductsTab openEditProductModal={openEditProductModal} />}
-        {activeTab === "categories" && <AdminCategoriesTab openCategoryForm={openCategoryForm} />}
-        {activeTab === "banners"    && <AdminBannersTab showSuccess={showSuccessMsg} setError={setError} />}
-        {activeTab === "branches"   && <AdminBranchesTab />}
-        {activeTab === "storeInfo"  && <AdminStoreInfoTab storeInfo={storeInfo} setStoreInfo={setStoreInfo} handleUpdateStoreInfo={handleUpdateStoreInfo} storeInfoSaving={storeInfoSaving} />}
-
-      </div>
-
-      {/* Add/Edit Product Modal */}
-      <AnimatePresence>
-        {showProductForm && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={closeProductModal}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl dark:border dark:border-slate-700">
-              <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingProduct ? "تعديل المنتج" : "إضافة منتج جديد"}</h3>
-                <button onClick={closeProductModal} className="p-1 hover:bg-slate-100 rounded-lg"><X className="w-5 h-5 text-slate-400" /></button>
-              </div>
-              <AddProductForm onSuccess={handleProductCreated} onCancel={closeProductModal} editProduct={editingProduct} />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Category Form Modal */}
-      <AnimatePresence>
-        {showCategoryForm && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowCategoryForm(false)}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md shadow-2xl dark:border dark:border-slate-700">
-              <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingCategory ? "تعديل التصنيف" : "إضافة تصنيف جديد"}</h3>
-                <button onClick={() => setShowCategoryForm(false)} className="p-1 hover:bg-slate-100 rounded-lg"><X className="w-5 h-5 text-slate-400" /></button>
-              </div>
-              <div className="p-5 space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">اسم التصنيف</label>
-                  <input type="text" value={categoryForm.name} onChange={(e) => setCategoryForm(f => ({ ...f, name: e.target.value }))} className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50" placeholder="مثال: عطر نسائي" />
+        {/* Category Form Modal */}
+        <AnimatePresence>
+          {showCategoryForm && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowCategoryForm(false)}>
+              <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl dark:border dark:border-slate-700">
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingCategory ? "تعديل التصنيف" : "إضافة تصنيف جديد"}</h3>
+                  <button onClick={() => setShowCategoryForm(false)} className="p-1 hover:bg-slate-100 rounded-lg"><X className="w-5 h-5 text-slate-400" /></button>
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">أيقونة التصنيف (اختياري)</label>
-                  {categoryForm.iconUrl && (
-                    <div className="mb-2 flex items-center gap-2">
-                      <img src={categoryForm.iconUrl} alt="" className="w-12 h-12 rounded-xl object-cover border border-slate-200" />
-                      <button type="button" onClick={() => setCategoryForm(f => ({ ...f, iconUrl: "" }))} className="text-xs text-red-500 hover:text-red-700 font-semibold">إزالة</button>
+                <div className="p-5 space-y-4">
+                  {/* Basic Info */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="col-span-1 md:col-span-1">
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">اسم التصنيف <span className="text-red-500">*</span></label>
+                      <input type="text" value={categoryForm.name} onChange={(e) => setCategoryForm(f => ({ ...f, name: e.target.value }))} className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50" placeholder="مثال: عطر نسائي" />
                     </div>
-                  )}
-                  <input type="file" accept="image/*" onChange={async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    try {
-                      const url = await api.uploadCategoryIcon(file);
-                      setCategoryForm(f => ({ ...f, iconUrl: url }));
-                    } catch (err) {
-                      setError("فشل رفع الأيقونة: " + (err.message || ""));
-                    }
-                  }} className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 file:mr-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gold-50 dark:file:bg-gold-900/40 file:text-gold-700 dark:file:text-gold-300" />
+                    <div className="col-span-1 md:col-span-1">
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">رابط التصنيف (Slug)</label>
+                      <input type="text" value={categoryForm.slug} onChange={(e) => setCategoryForm(f => ({ ...f, slug: e.target.value }))} className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50" placeholder="يتم توليده تلقائياً إذا تُرك فارغاً" />
+                    </div>
+                    <div className="col-span-1 md:col-span-2">
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">وصف التصنيف</label>
+                      <textarea rows="2" value={categoryForm.description} onChange={(e) => setCategoryForm(f => ({ ...f, description: e.target.value }))} className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 resize-none" placeholder="وصف قصير للتصنيف..." />
+                    </div>
+                    <div className="col-span-1 md:col-span-2 flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600">
+                      <div>
+                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 block">حالة التصنيف</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">تفعيل أو إخفاء التصنيف من المتجر</span>
+                      </div>
+                      <button type="button" role="switch" aria-checked={categoryForm.isActive} onClick={() => setCategoryForm(f => ({ ...f, isActive: !f.isActive }))} className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-300 focus:outline-none ${categoryForm.isActive ? 'bg-gold-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${categoryForm.isActive ? 'translate-x-6' : 'translate-x-1'}`} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Parent & Ordering */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">القسم الأب (اختياري)</label>
+                      <select
+                        value={categoryForm.parentId || ""}
+                        onChange={(e) => setCategoryForm(f => ({ ...f, parentId: e.target.value }))}
+                        className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+                      >
+                        <option value="">-- بدون قسم أب (قسم رئيسي) --</option>
+                        {Array.isArray(allCategories) && allCategories
+                          .filter(c => c.id !== editingCategory?.id)
+                          .map(c => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                          ))
+                        }
+                      </select>
+                      <span className="text-[10px] text-slate-400 mt-1 block">اختر القسم الأب لجعل هذا القسم فرعياً.</span>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">الترتيب</label>
+                      <input type="number" min="0" value={categoryForm.sortOrder} onChange={(e) => setCategoryForm(f => ({ ...f, sortOrder: e.target.value }))} className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50" />
+                    </div>
+                  </div>
+
+                  {/* Media */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">أيقونة التصنيف (صغيرة)</label>
+                      {categoryForm.iconUrl && (
+                        <div className="mb-2 flex items-center gap-2">
+                          <img src={categoryForm.iconUrl} alt="" className="w-10 h-10 rounded-lg object-cover border border-slate-200" />
+                          <button type="button" onClick={() => setCategoryForm(f => ({ ...f, iconUrl: "" }))} className="text-xs text-red-500 hover:text-red-700 font-semibold">إزالة</button>
+                        </div>
+                      )}
+                      <input type="file" accept="image/*" onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        try {
+                          const url = await api.uploadCategoryIcon(file);
+                          setCategoryForm(f => ({ ...f, iconUrl: url }));
+                        } catch (err) {
+                          setError("فشل رفع الأيقونة: " + (err.message || ""));
+                        }
+                      }} className="w-full text-xs text-slate-500 file:mr-2 file:rounded-md file:border-0 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:bg-gold-50 dark:file:bg-gold-900/40 file:text-gold-700 dark:file:text-gold-300" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">صورة التصنيف (كبيرة)</label>
+                      {categoryForm.imageUrl && (
+                        <div className="mb-2 flex items-center gap-2">
+                          <img src={categoryForm.imageUrl} alt="" className="w-16 h-10 rounded-lg object-cover border border-slate-200" />
+                          <button type="button" onClick={() => setCategoryForm(f => ({ ...f, imageUrl: "" }))} className="text-xs text-red-500 hover:text-red-700 font-semibold">إزالة</button>
+                        </div>
+                      )}
+                      <input type="file" accept="image/*" onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        try {
+                          const url = await api.uploadCategoryIcon(file); // Reusing upload for now
+                          setCategoryForm(f => ({ ...f, imageUrl: url }));
+                        } catch (err) {
+                          setError("فشل رفع الصورة: " + (err.message || ""));
+                        }
+                      }} className="w-full text-xs text-slate-500 file:mr-2 file:rounded-md file:border-0 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:bg-gold-50 dark:file:bg-gold-900/40 file:text-gold-700 dark:file:text-gold-300" />
+                    </div>
+                  </div>
+
+                  {/* SEO */}
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <details className="group">
+                      <summary className="text-sm font-bold text-slate-600 dark:text-slate-400 cursor-pointer hover:text-gold-500 transition-colors list-none flex items-center justify-between">
+                        إعدادات تحسين محركات البحث (SEO)
+                        <ChevronDown className="w-4 h-4 group-open:rotate-180 transition-transform" />
+                      </summary>
+                      <div className="mt-4 space-y-3">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-500 mb-1">عنوان الميتا (Meta Title)</label>
+                          <input type="text" value={categoryForm.metaTitle} onChange={(e) => setCategoryForm(f => ({ ...f, metaTitle: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-gold-500" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-500 mb-1">وصف الميتا (Meta Description)</label>
+                          <textarea rows="2" value={categoryForm.metaDescription} onChange={(e) => setCategoryForm(f => ({ ...f, metaDescription: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-gold-500 resize-none" />
+                        </div>
+                      </div>
+                    </details>
+                  </div>
+
+                  <div className="flex gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <button onClick={handleSaveCategory} className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-gold-600 text-white text-sm font-bold rounded-xl hover:bg-gold-500 transition-all">
+                      <Save className="w-4 h-4" /> {editingCategory ? "تحديث" : "إضافة"}
+                    </button>
+                    <button onClick={() => setShowCategoryForm(false)} className="px-5 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">إلغاء</button>
+                  </div>
                 </div>
-                <div className="flex gap-3 pt-2">
-                  <button onClick={handleSaveCategory} className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-gold-600 text-white text-sm font-bold rounded-xl hover:bg-gold-500 transition-all">
-                    <Save className="w-4 h-4" /> {editingCategory ? "تحديث" : "إضافة"}
-                  </button>
-                  <button onClick={() => setShowCategoryForm(false)} className="px-5 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">إلغاء</button>
-                </div>
-              </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          )}
+        </AnimatePresence>
+      </div>
     </ErrorBoundary>
   );
 };

@@ -75,7 +75,7 @@ const processChat = async (req, res) => {
         let rankedProducts = [];
         try {
             const products = await prisma.product.findMany({
-                where: { isHidden: false },
+                where: { status: 'Active' },
                 select: { id: true, title: true, description: true, price: true, category: { select: { name: true } } },
                 take: 200
             });

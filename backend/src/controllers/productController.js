@@ -19,6 +19,10 @@ class ProductController {
         specialOffers: req.query.specialOffers === 'true',
         search: req.query.search,
         categoryName: req.query.categoryName,
+        categoryId: req.query.categoryId,
+        brandId: req.query.brandId,
+        // Attribute filters: ?attr[slug]=value  (e.g. ?attr[gender]=Men)
+        attributes: req.query.attr || undefined,
       };
       
       const pagination = {
@@ -45,7 +49,7 @@ class ProductController {
         throw new Error('Product not found');
       }
 
-      if (product.isHidden) {
+      if (product.status !== 'Active') {
         const userId = req.user?.id;
         const isOwner = userId && product.sellerId === userId;
         const isAdmin = req.user?.role === 'Admin';
@@ -73,7 +77,7 @@ class ProductController {
         throw new Error('Product not found');
       }
 
-      if (product.isHidden) {
+      if (product.status !== 'Active') {
         const userId = req.user?.id;
         const isOwner = userId && product.sellerId === userId;
         const isAdmin = req.user?.role === 'Admin';
@@ -224,7 +228,114 @@ class ProductController {
       };
 
       const url = await this.productService.uploadImage(file);
-      res.json({ secure_url: url });
+      res.json({ secure_url: url, url });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Add an image to a product's gallery
+   * POST /api/products/:id/images
+   */
+  async addProductImage(req, res) {
+    try {
+      const { url, altText, isPrimary, sortOrder } = req.body;
+      if (!url) {
+        res.status(400);
+        throw new Error('Image URL is required');
+      }
+      // Verify ownership
+      if (req.user?.role !== 'Admin') {
+        const product = await this.productService.getProductById(req.params.id);
+        if (!product || product.sellerId !== req.user.id) {
+          res.status(403);
+          throw new Error('Forbidden');
+        }
+      }
+      const image = await this.productService.addProductImage(req.params.id, {
+        url, altText, isPrimary: isPrimary === true, sortOrder: sortOrder ?? 0,
+      });
+      res.status(201).json(image);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Get all images for a product
+   * GET /api/products/:id/images
+   */
+  async getProductImages(req, res) {
+    try {
+      const images = await this.productService.getProductImages(req.params.id);
+      res.json(images);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a product image
+   * DELETE /api/products/:id/images/:imageId
+   */
+  async deleteProductImage(req, res) {
+    try {
+      if (req.user?.role !== 'Admin') {
+        const product = await this.productService.getProductById(req.params.id);
+        if (!product || product.sellerId !== req.user.id) {
+          res.status(403);
+          throw new Error('Forbidden');
+        }
+      }
+      await this.productService.deleteProductImage(req.params.id, req.params.imageId);
+      res.status(204).send();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Set a specific image as the primary image for a product
+   * PATCH /api/products/:id/images/:imageId/primary
+   */
+  async setImagePrimary(req, res) {
+    try {
+      if (req.user?.role !== 'Admin') {
+        const product = await this.productService.getProductById(req.params.id);
+        if (!product || product.sellerId !== req.user.id) {
+          res.status(403);
+          throw new Error('Forbidden');
+        }
+      }
+      const updated = await this.productService.setImagePrimary(req.params.id, req.params.imageId);
+      res.json(updated);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Reorder images for a product
+   * PUT /api/products/:id/images/reorder
+   * Body: { orderedIds: ["uuid1", "uuid2", ...] }
+   */
+  async reorderImages(req, res) {
+    try {
+      if (req.user?.role !== 'Admin') {
+        const product = await this.productService.getProductById(req.params.id);
+        if (!product || product.sellerId !== req.user.id) {
+          res.status(403);
+          throw new Error('Forbidden');
+        }
+      }
+      const { orderedIds } = req.body;
+      if (!Array.isArray(orderedIds)) {
+        res.status(400);
+        throw new Error('orderedIds must be an array of image IDs');
+      }
+      const images = await this.productService.reorderImages(req.params.id, orderedIds);
+      res.json(images);
     } catch (error) {
       throw error;
     }

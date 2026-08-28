@@ -7,7 +7,7 @@ class ProductRepository {
    */
   async getProductsWithDetails() {
     return await prisma.product.findMany({
-      where: { isHidden: false },
+      where: { status: 'Active' },
       include: {
         category: {
           select: { name: true }
