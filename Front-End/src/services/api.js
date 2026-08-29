@@ -170,11 +170,19 @@ export async function refreshToken() {
   });
 }
 
-export async function register({ fullName, phoneNumber, password, city, role = 3 }) {
+export async function register({ fullName, phoneNumber, password, city, address, locationUrl, role = 3 }) {
   return request('/account/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fullName, phoneNumber, password, city, role }),
+    body: JSON.stringify({
+      fullName,
+      phoneNumber,
+      password,
+      city,
+      address: address?.trim() || null,
+      locationUrl: locationUrl?.trim() || null,
+      role,
+    }),
   });
 }
 

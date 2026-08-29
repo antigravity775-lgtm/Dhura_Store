@@ -20,10 +20,8 @@ const registerSchema = Joi.object({
     'string.empty': 'المدينة مطلوبة',
     'any.required': 'المدينة مطلوبة'
   }),
-  address: Joi.string().min(5).max(500).required().messages({
-    'string.empty': 'العنوان التفصيلي مطلوب',
+  address: Joi.string().min(5).max(500).allow('', null).optional().messages({
     'string.min': 'العنوان يجب أن يكون 5 أحرف على الأقل',
-    'any.required': 'العنوان التفصيلي مطلوب'
   }),
   locationUrl: Joi.string().uri().allow('', null).optional().messages({
     'string.uri': 'رابط خريطة Google غير صالح'

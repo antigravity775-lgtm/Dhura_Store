@@ -417,7 +417,8 @@ const AuthPage = () => {
                           {/* العنوان التفصيلي */}
                           <div>
                             <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
-                              العنوان التفصيلي
+                              العنوان التفصيلي{" "}
+                              <span className="text-white/20 normal-case font-normal">اختياري</span>
                             </label>
                             <div className="relative group">
                               <div className="absolute top-3.5 right-0 pr-4 flex items-center pointer-events-none">
@@ -427,7 +428,6 @@ const AuthPage = () => {
                                 name="address"
                                 value={form.address}
                                 onChange={handleChange}
-                                required
                                 rows={2}
                                 placeholder="الحي ، الشارع ، أمام مدرسة ..."
                                 className={`${inputClass} pr-12 resize-none`}

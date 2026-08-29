@@ -82,8 +82,8 @@ class AuthService {
         email,
         passwordHash,
         city,
-        address,
-        locationUrl: locationUrl || null,
+        address: address?.trim() || null,
+        locationUrl: locationUrl?.trim() || null,
         role: 'Buyer'
       }
     });
