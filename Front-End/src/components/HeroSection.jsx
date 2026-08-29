@@ -9,6 +9,7 @@ import { Sparkles } from 'lucide-react';
 import useSWR from 'swr';
 import * as api from '../services/api';
 import { useIsMobile, filterVisibleBanners } from './banners/bannerUtils';
+import { useBannerCarousel } from './banners/useBannerCarousel';
 
 const AUTO_PLAY_MS = 5500;
 
@@ -116,17 +117,16 @@ const HeroSection = React.memo(() => {
     [banners, isMobile]
   );
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const { index: currentIndex, goTo, hasMultiple, swipeHandlers } = useBannerCarousel({
+    itemCount: visibleBanners.length,
+    autoPlayMs: AUTO_PLAY_MS,
+  });
+
+  const banner = visibleBanners[currentIndex] ?? null;
+
   const [shouldAnimateHero, setShouldAnimateHero] = useState(
     () => sessionStorage.getItem('gisaah_intro_seen') === 'true'
   );
-
-  const banner = visibleBanners[currentIndex] ?? null;
-  const hasMultiple = visibleBanners.length > 1;
-
-  useEffect(() => {
-    setCurrentIndex(0);
-  }, [visibleBanners.length, isMobile]);
 
   useEffect(() => {
     if (!shouldAnimateHero) {
@@ -143,14 +143,6 @@ const HeroSection = React.memo(() => {
     markHeroTracked(banner.id);
     api.trackBannerEvent(banner.id, 'impression').catch(() => {});
   }, [banner?.id]);
-
-  useEffect(() => {
-    if (!hasMultiple) return undefined;
-    const timer = setInterval(() => {
-      setCurrentIndex((i) => (i + 1) % visibleBanners.length);
-    }, AUTO_PLAY_MS);
-    return () => clearInterval(timer);
-  }, [hasMultiple, visibleBanners.length]);
 
   const handleCtaClick = useCallback(() => {
     if (!banner) return;
@@ -185,10 +177,11 @@ const HeroSection = React.memo(() => {
 
   return (
     <section
-      className="relative z-0 w-full overflow-hidden min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] flex flex-col justify-end"
+      className="relative z-0 w-full overflow-hidden min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] flex flex-col justify-end touch-pan-y select-none cursor-grab active:cursor-grabbing"
       style={{ backgroundColor: bgColor !== 'transparent' ? bgColor : undefined }}
       aria-roledescription="carousel"
       aria-label="بانرات العروض الرئيسية"
+      {...swipeHandlers}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
@@ -242,20 +235,22 @@ const HeroSection = React.memo(() => {
 
       {hasMultiple && (
         <div
-          className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-2 py-1 rounded-full bg-black/30 backdrop-blur-sm pointer-events-none"
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-2 py-1 rounded-full bg-black/30 backdrop-blur-sm"
           role="tablist"
           aria-label="مؤشرات البانر"
         >
           {visibleBanners.map((b, i) => (
-            <span
+            <button
               key={b.id}
+              type="button"
               role="tab"
               aria-selected={i === currentIndex}
               aria-label={`البانر ${i + 1}`}
+              onClick={() => goTo(i)}
               className={`rounded-full transition-all duration-300 ${
                 i === currentIndex
                   ? 'w-5 h-1.5 bg-gold-400'
-                  : 'w-1.5 h-1.5 bg-white/50'
+                  : 'w-1.5 h-1.5 bg-white/50 hover:bg-white/80'
               }`}
             />
           ))}

@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BannerPreview from '../../pages/admin/banners/BannerPreview';
 import { markTracked, getTrackedSet, BANNER_IMPRESSION_KEY } from './bannerUtils';
+import { useBannerCarousel } from './useBannerCarousel';
 import * as api from '../../services/api';
 
 const DEFAULT_INTERVAL_MS = 5000;
@@ -15,13 +16,12 @@ export default function BannerCarousel({
   showDots = true,
   rounded = true,
 }) {
-  const [index, setIndex] = useState(0);
-  const banner = banners[index];
-  const hasMultiple = banners.length > 1;
+  const { index, goTo, hasMultiple, swipeHandlers } = useBannerCarousel({
+    itemCount: banners.length,
+    autoPlayMs,
+  });
 
-  useEffect(() => {
-    setIndex(0);
-  }, [banners.length, isMobile]);
+  const banner = banners[index];
 
   useEffect(() => {
     if (!banner) return;
@@ -31,14 +31,6 @@ export default function BannerCarousel({
     api.trackBannerEvent(banner.id, 'impression').catch(() => {});
   }, [banner?.id]);
 
-  useEffect(() => {
-    if (!hasMultiple) return undefined;
-    const timer = setInterval(() => {
-      setIndex((i) => (i + 1) % banners.length);
-    }, autoPlayMs);
-    return () => clearInterval(timer);
-  }, [hasMultiple, banners.length, autoPlayMs]);
-
   const handleCtaClick = useCallback(() => {
     if (!banner) return;
     api.trackBannerEvent(banner.id, 'click').catch(() => {});
@@ -46,7 +38,7 @@ export default function BannerCarousel({
 
   if (!banner) return null;
 
-  const wrapClass = `${className} relative`.trim();
+  const wrapClass = `${className} relative touch-pan-y select-none`.trim();
 
   const content = (
     <AnimatePresence mode="wait" initial={false}>
@@ -63,7 +55,7 @@ export default function BannerCarousel({
   );
 
   return (
-    <div className={wrapClass} aria-roledescription="carousel">
+    <div className={wrapClass} aria-roledescription="carousel" {...swipeHandlers}>
       {banner.ctaUrl ? (
         <a
           href={banner.ctaUrl}
@@ -71,6 +63,7 @@ export default function BannerCarousel({
           rel="noopener noreferrer"
           onClick={handleCtaClick}
           className={`block ${rounded ? 'rounded-2xl overflow-hidden' : ''}`}
+          draggable={false}
         >
           {content}
         </a>
@@ -79,13 +72,15 @@ export default function BannerCarousel({
       )}
 
       {hasMultiple && showDots && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/30 backdrop-blur-sm pointer-events-none">
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/30 backdrop-blur-sm">
           {banners.map((b, i) => (
-            <span
+            <button
               key={b.id}
+              type="button"
               aria-label={`البانر ${i + 1}`}
+              onClick={() => goTo(i)}
               className={`rounded-full transition-all ${
-                i === index ? 'w-4 h-1 bg-gold-400' : 'w-1 h-1 bg-white/60'
+                i === index ? 'w-4 h-1 bg-gold-400' : 'w-1 h-1 bg-white/60 hover:bg-white'
               }`}
             />
           ))}
