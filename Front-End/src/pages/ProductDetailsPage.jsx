@@ -103,6 +103,32 @@ function AccordionSection({ title, children, defaultOpen = false }) {
   );
 }
 
+/* ── Star Rating helper ── */
+function StarRating({ rating, reviewCount }) {
+  const numRating = Number(rating) || 0;
+  const full = Math.floor(numRating);
+  const half = numRating - full >= 0.5;
+  return (
+    <div className="flex items-center gap-1.5 mb-3">
+      <div className="flex items-center gap-0.5">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <Star
+            key={i}
+            className={`w-4 h-4 ${i <= full
+              ? 'text-agate-400 fill-agate-400'
+              : i === full + 1 && half
+                ? 'text-agate-400 fill-agate-200'
+                : 'text-slate-300 dark:text-slate-600 fill-current'
+              }`}
+          />
+        ))}
+      </div>
+      <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{numRating.toFixed(1)}</span>
+      <span className="text-xs text-slate-400 dark:text-slate-500">({Number(reviewCount).toLocaleString()} تقييم)</span>
+    </div>
+  );
+}
+
 const ProductDetailsPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -740,6 +766,11 @@ const ProductDetailsPage = () => {
             {addedToCart ? "تمت الإضافة" : "أضف للسلة"}
           </button>
         </div>
+
+        {/* ═══════ المنتجات ذات الصلة / Related Products ═══════ */}
+        {product.categoryName && (
+          <RelatedProducts categoryName={product.categoryName} currentId={id} />
+        )}
       </div>
     </Layout>
   );

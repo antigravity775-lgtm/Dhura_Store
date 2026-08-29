@@ -1,4 +1,4 @@
-/**
+﻿/**
  * CategoryCard — بطاقة القسم (مُعاد تصميمها)
  *
  * EN: Full-bleed image card. The category image fills the entire card.

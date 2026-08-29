@@ -4,6 +4,7 @@ import { getOptimizedImageUrl } from '../../utils/cloudinaryUrl';
 
 export interface Product {
   id: string | number;
+  slug?: string;
   title: string;
   image: string;
   price: number;

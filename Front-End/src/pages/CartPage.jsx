@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShoppingCart, Loader2, Check, MapPin, CreditCard, Banknote, AlertCircle, AlertTriangle } from 'lucide-react';

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Suspense } from 'react';
+﻿import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { MessageCircle, X, Send, Bot, User, Loader2 } from 'lucide-react';
 import { chatService } from '../../services/chatService';
 

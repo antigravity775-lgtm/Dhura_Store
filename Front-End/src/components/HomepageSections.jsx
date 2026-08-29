@@ -1,4 +1,4 @@
-/**
+﻿/**
  * HomepageSections — أقسام الصفحة الرئيسية
  *
  * EN: "Start Shopping" call-to-action section with two paths:

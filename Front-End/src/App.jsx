@@ -1,10 +1,11 @@
 import React, { Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { preload } from "swr";
 import * as api from "./services/api";
 import HomePage from "./pages/HomePage";
 import ScrollToTop from "./components/ScrollToTop";
+import SEO from "./components/SEO";
 
 // ─── Route-based code splitting ───
 // EN: Only HomePage is loaded eagerly (it's the landing page / LCP critical path).
@@ -82,6 +83,7 @@ const App = () => {
 
   return (
     <>
+      <SEO />
       <ScrollToTop />
       <Suspense fallback={<PageLoadingFallback />}>
         <Routes>

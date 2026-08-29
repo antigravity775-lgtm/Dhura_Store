@@ -91,4 +91,6 @@ export const IMAGE_WIDTHS = {
   THUMBNAIL: 150,      // Small thumbnail: ~75px × 2dpr = 150px
   CATEGORY_CARD: 400,  // Category full-bleed card: ~200px × 2dpr = 400px
   DETAIL: 800,         // Product detail page: ~400px × 2dpr = 800px
+  HERO: 828,           // Full-width hero: ~414px mobile × 2dpr = 828px
+  BANNER: 800,         // Promo / announcement banners
 };

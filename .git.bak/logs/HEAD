@@ -1,0 +1,130 @@
+0000000000000000000000000000000000000000 dbe00d7048c9b630d3af5664d75905a82b0de464 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774642331 +0300	commit (initial): First Initialization
+dbe00d7048c9b630d3af5664d75905a82b0de464 0000000000000000000000000000000000000000 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774642348 +0300	Branch: renamed refs/heads/master to refs/heads/main
+0000000000000000000000000000000000000000 dbe00d7048c9b630d3af5664d75905a82b0de464 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774642348 +0300	Branch: renamed refs/heads/master to refs/heads/main
+dbe00d7048c9b630d3af5664d75905a82b0de464 335a2e54dedbda6c1302d798f4b09a77b2cfad94 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774645494 +0300	commit: fix: Vercel deployment crash with Prisma and FS
+335a2e54dedbda6c1302d798f4b09a77b2cfad94 153a23d6a27fa1742d58728b5e68b16da4cc73a4 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774646478 +0300	commit: Fix the Backend
+153a23d6a27fa1742d58728b5e68b16da4cc73a4 a1974c68037f6dd522b91d423620f926752f6dc9 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774646919 +0300	commit: Fix the Backend
+a1974c68037f6dd522b91d423620f926752f6dc9 f1853fe4ee5fc4034dcac469871d7df217231366 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774647736 +0300	commit: Last Fix To the Backend
+f1853fe4ee5fc4034dcac469871d7df217231366 0ed0326de149ea9aab19fe31358b132fd8e746de Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774648241 +0300	commit: Add root health check route
+0ed0326de149ea9aab19fe31358b132fd8e746de 8b9bcd854dc26859e2bb58b0a1589e99991650d7 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774687327 +0300	commit: Speed Commit
+8b9bcd854dc26859e2bb58b0a1589e99991650d7 d774f1ee53f9e9e39d43fe493735cfdf6e702526 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774688382 +0300	commit: Dark Mode
+d774f1ee53f9e9e39d43fe493735cfdf6e702526 5ee44ee80f0a313bdfa02bfd20f2bd4f44950496 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774691802 +0300	commit: Fix fonts on dark mode
+5ee44ee80f0a313bdfa02bfd20f2bd4f44950496 6dbc4985a08ab2e1f6a8b3a4d25088e7770df7ec Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774692195 +0300	commit: The Seller Products Ready
+6dbc4985a08ab2e1f6a8b3a4d25088e7770df7ec 9db72c1de645ec01d5ca76799c795a26c01f3244 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774692464 +0300	commit: Fix the belt card
+9db72c1de645ec01d5ca76799c795a26c01f3244 616f39596a3dadf4d27c56e90d6aa6cbc510c4a3 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774696052 +0300	commit: The Logo And Layout Changes
+616f39596a3dadf4d27c56e90d6aa6cbc510c4a3 f149876030e7923a8d7b848a3253eb27480b9fcb Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774696741 +0300	commit: Fix Authorization Admin
+f149876030e7923a8d7b848a3253eb27480b9fcb 34b80f05284a05ace393e3aa5342ae950c704bce Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774699298 +0300	commit: The Info and Add Proprties On the Product
+34b80f05284a05ace393e3aa5342ae950c704bce 5316b9c0047d6bdcb67bab7d817a6426b269e07d Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774700152 +0300	commit: profile fix
+5316b9c0047d6bdcb67bab7d817a6426b269e07d a086f8a3280a114ff0d2b3e7cd09fbcbc3935369 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774701234 +0300	commit: fix(backend): fix profile update userId bug and configure frontend vite target proxy
+a086f8a3280a114ff0d2b3e7cd09fbcbc3935369 d0a37f3d7adbb81ca9ad6aaa6e3551af86879232 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774705008 +0300	commit: Change The Home Page
+d0a37f3d7adbb81ca9ad6aaa6e3551af86879232 716f5d2fe012045ef833854f4a0db9f8756264ab Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774795685 +0300	commit: The Grok Ai Widget Has Been Added secussfully
+716f5d2fe012045ef833854f4a0db9f8756264ab 6c95ae1698c9ee66a3cd4166cdd9b41197befde3 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774796689 +0300	commit: feat: Add Groq AI-powered ChatWidget
+6c95ae1698c9ee66a3cd4166cdd9b41197befde3 6663f1902d0bd524effcf7c8b5b2081987b69c7d Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774824825 +0300	commit: Migrate Chat widget to use Google Gemini with Markdown support
+6663f1902d0bd524effcf7c8b5b2081987b69c7d e2923caec22df36e0d4828e7fd202a83e020fb94 Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774827521 +0300	commit: Fix chat widget desktop scrolling layout, upgrade to gemini-2.5-flash, and add submit rate limiting
+e2923caec22df36e0d4828e7fd202a83e020fb94 ad679d645e56bc0c7796050fa980f6236334dcbe Abdulrahman-Algaadi <bdalrhmnaljdy395@gmail.com> 1774913065 +0300	commit: Enhaning the speed And Layout
+ad679d645e56bc0c7796050fa980f6236334dcbe 75dc286b3e51111cfaaaf1d9de9fb54d2ac36f4f Abdulrahman-Algaadi <bdalrhmnaljdy395@example.com> 1776166714 +0300	commit: Add Manage Orders
+75dc286b3e51111cfaaaf1d9de9fb54d2ac36f4f f00a053bf7726d8129cb1ddc3f6093377d0b9f2e Abdulrahman-Algaadi <bdalrhmnaljdy395@example.com> 1776166974 +0300	pull origin main --rebase (start): checkout f00a053bf7726d8129cb1ddc3f6093377d0b9f2e
+f00a053bf7726d8129cb1ddc3f6093377d0b9f2e d73f85e9bd9b0ed001e033da1d98acdf36e3f458 Abdulrahman-Algaadi <bdalrhmnaljdy395@example.com> 1776166975 +0300	pull origin main --rebase (pick): Add Manage Orders
+d73f85e9bd9b0ed001e033da1d98acdf36e3f458 d73f85e9bd9b0ed001e033da1d98acdf36e3f458 Abdulrahman-Algaadi <bdalrhmnaljdy395@example.com> 1776166975 +0300	pull origin main --rebase (finish): returning to refs/heads/main
+d73f85e9bd9b0ed001e033da1d98acdf36e3f458 3d21d3e2fa87ae989c04d50ceccd370fb22ed821 antigravity775-Igtm <antigravity775@gmail.com> 1776457590 +0300	commit: First Create
+3d21d3e2fa87ae989c04d50ceccd370fb22ed821 a1c6fb327b192979d680db3019d2f6f47a48e06f antigravity775-Igtm <antigravity775@gmail.com> 1776461554 +0300	commit: Fix server port conflict (5001) and verify DB connections
+a1c6fb327b192979d680db3019d2f6f47a48e06f 9895a039274bf133ebd36b7cc0e2bbcfe2df04fb antigravity775-Igtm <antigravity775@gmail.com> 1776462259 +0300	commit: Add discountPrice column to Product (migration)
+9895a039274bf133ebd36b7cc0e2bbcfe2df04fb c1e76b97a9ca82b33b6fbad1b5d041ec9e485cdf antigravity775-Igtm <antigravity775@gmail.com> 1776517746 +0300	commit: fix dark input visibility, update branding assets, and add admin-controlled moving shipping offer
+c1e76b97a9ca82b33b6fbad1b5d041ec9e485cdf 1de79f87173ce4f50daf8a8f78e1aef718fa676e antigravity775-Igtm <antigravity775@gmail.com> 1776518948 +0300	commit: Last Edit
+1de79f87173ce4f50daf8a8f78e1aef718fa676e b0900cd972dc62170590dc3664d30e79d85b926a antigravity775-Igtm <antigravity775@gmail.com> 1776611599 +0300	commit: Editing the footer
+b0900cd972dc62170590dc3664d30e79d85b926a 9e39e1dba02126acf9044fe5f0f1f8c5413611f0 antigravity775-Igtm <antigravity775@gmail.com> 1776864866 +0300	commit: Change Pics For The Website
+9e39e1dba02126acf9044fe5f0f1f8c5413611f0 65285b80e5298357828fef839f1172aac611f87b antigravity775-Igtm <antigravity775@gmail.com> 1776865467 +0300	commit: djjd
+65285b80e5298357828fef839f1172aac611f87b b8c7d368054a21b12f3e19405b8f418dc774be0d antigravity775-Igtm <antigravity775@gmail.com> 1776867511 +0300	commit: Remove Track The Order
+b8c7d368054a21b12f3e19405b8f418dc774be0d 833350c8840b71a1fae5ed2e7b5a1adfdbf8a959 antigravity775-Igtm <antigravity775@gmail.com> 1776870937 +0300	commit: feat: update logo display and WhatsApp contact links
+833350c8840b71a1fae5ed2e7b5a1adfdbf8a959 42dc434c597d0f210ce89e3b80a543239569463a antigravity775-Igtm <antigravity775@gmail.com> 1777206279 +0300	commit: Fix Disconted values And Hide the Banking Payment
+42dc434c597d0f210ce89e3b80a543239569463a cdd71168f3a0eb6df90ae5f71e469b391776038a antigravity775-Igtm <antigravity775@gmail.com> 1777212971 +0300	commit: Redirect To Whatsapp instead of orders
+cdd71168f3a0eb6df90ae5f71e469b391776038a 80c551b4584847668b659fcc1142e532cbac2cb2 antigravity775-Igtm <antigravity775@gmail.com> 1777585508 +0300	commit: Add layers of security
+80c551b4584847668b659fcc1142e532cbac2cb2 03f47714163be7e34f15087a01543bd3165cf9bc antigravity775-Igtm <antigravity775@gmail.com> 1777587968 +0300	commit: fix: resolve production product lookup and csrf cookie handling
+03f47714163be7e34f15087a01543bd3165cf9bc a0d705543448537ac13e02bd2c2a722ee12d5ae2 antigravity775-Igtm <antigravity775@gmail.com> 1777588735 +0300	commit: fix: enable cross-origin auth cookies and csrf-protected chat
+a0d705543448537ac13e02bd2c2a722ee12d5ae2 fec7ae24938bfba4093fec87efdf586df33490ce antigravity775-Igtm <antigravity775@gmail.com> 1777589160 +0300	commit: fix: support csrf token exchange across frontend/backend origins
+fec7ae24938bfba4093fec87efdf586df33490ce bad5f8c2c9f56ba0d711a2df3d21f71e482ffc68 antigravity775-Igtm <antigravity775@gmail.com> 1777589573 +0300	commit: fix: add resilient fallback when gemini chat request fails
+bad5f8c2c9f56ba0d711a2df3d21f71e482ffc68 fec7ae24938bfba4093fec87efdf586df33490ce antigravity775-Igtm <antigravity775@gmail.com> 1777590119 +0300	reset: moving to fec7ae24938bfba4093fec87efdf586df33490ce
+fec7ae24938bfba4093fec87efdf586df33490ce 6257ad788b6074e43e6629ed8d8acc8ce9b05a18 antigravity775-Igtm <antigravity775@gmail.com> 1777590597 +0300	commit: Triggering Vercel rebuild
+6257ad788b6074e43e6629ed8d8acc8ce9b05a18 379fb04d175a34135a04a2c243f7e7b827fb990e antigravity775-Igtm <antigravity775@gmail.com> 1777593358 +0300	commit: fix: helmet cross-origin policy + prisma serverless singleton
+379fb04d175a34135a04a2c243f7e7b827fb990e 6ae457233ba62aa79d7a53a39a9427bc1c391c32 antigravity775-Igtm <antigravity775@gmail.com> 1777632959 +0300	commit: Deleting crsf
+6ae457233ba62aa79d7a53a39a9427bc1c391c32 1973073adfc78e87fa8ceebed4477c3bbbeaa19c antigravity775-Igtm <antigravity775@gmail.com> 1777634063 +0300	commit: Fix CSRF issues, relax product ID validation, and remove edge cache for real-time updates
+1973073adfc78e87fa8ceebed4477c3bbbeaa19c 988c05ea20ab67b8ddf62b88212b5d140315f7e4 antigravity775-Igtm <antigravity775@gmail.com> 1777644363 +0300	commit: fix: improve error handling in ProductDetailsPage to differentiate between 404 and 500 errors
+988c05ea20ab67b8ddf62b88212b5d140315f7e4 028a09a2241b72a1c7ce797a0e354e82672ac631 antigravity775-Igtm <antigravity775@gmail.com> 1777645186 +0300	commit: fix: ignore favicon.ico requests to prevent 404 error logs
+028a09a2241b72a1c7ce797a0e354e82672ac631 9bcc8d654751c94c2e72b4db3fd37cef6da2aad7 antigravity775-Igtm <antigravity775@gmail.com> 1777647709 +0300	commit: Fix user cookie
+9bcc8d654751c94c2e72b4db3fd37cef6da2aad7 f8bf71da952124b2fd15c899d1fc05faaf707607 antigravity775-Igtm <antigravity775@gmail.com> 1777718188 +0300	commit: Fix: backend rate-limit proxy configuration
+f8bf71da952124b2fd15c899d1fc05faaf707607 eb6d32ef1205d9a15eb4bdc52cb012c3aa868bed antigravity775-Igtm <antigravity775@gmail.com> 1777719328 +0300	commit: fix: increase rate limit to 30, skip successful requests, fix Vercel cache headers, add CORS x-xsrf-token
+eb6d32ef1205d9a15eb4bdc52cb012c3aa868bed f1a783efb1a3ad1f0a37bcb1c7bd872118a909a1 antigravity775-Igtm <antigravity775@gmail.com> 1777719851 +0300	commit: fix: move no-cache headers out of rewrites (invalid Vercel config)
+f1a783efb1a3ad1f0a37bcb1c7bd872118a909a1 ea4d59c4da108d7f873ed22bcfdecc7b0cbf8131 antigravity775-Igtm <antigravity775@gmail.com> 1777720442 +0300	commit: fix: delete CSRF middleware, proxy API through frontend Vercel for same-origin cookies
+ea4d59c4da108d7f873ed22bcfdecc7b0cbf8131 95ecb13bbf616b6286c54908ae83ee8919496de8 antigravity775-Igtm <antigravity775@gmail.com> 1777879712 +0300	commit: Fix the Edit and delete of products
+95ecb13bbf616b6286c54908ae83ee8919496de8 806d7ceb24df438c9b7b35bedcbf2312efbceef1 antigravity775-Igtm <antigravity775@gmail.com> 1777880622 +0300	commit: add security on cors
+806d7ceb24df438c9b7b35bedcbf2312efbceef1 6752097797739444540068737e05da9ab1e9ef70 antigravity775-Igtm <antigravity775@gmail.com> 1777905855 +0300	commit: Fix the Add edit product
+6752097797739444540068737e05da9ab1e9ef70 b9fbd3d4369ecf12a1baca1f5291a30aa8610d70 antigravity775-Igtm <antigravity775@gmail.com> 1777927062 +0300	commit: change a text only
+b9fbd3d4369ecf12a1baca1f5291a30aa8610d70 02d12ee9ac9a549d1bab908d62530c9d63d43506 antigravity775-Igtm <antigravity775@gmail.com> 1777927400 +0300	commit: gg
+02d12ee9ac9a549d1bab908d62530c9d63d43506 5845064102b224a83b474ec54173eee878171de1 antigravity775-Igtm <antigravity775@gmail.com> 1777980457 +0300	commit: Fix Pic product
+5845064102b224a83b474ec54173eee878171de1 477eb99293e841c2d1e609c981e0d13e376994e6 antigravity775-Igtm <antigravity775@gmail.com> 1778604103 +0300	commit: Fix logo apperance
+477eb99293e841c2d1e609c981e0d13e376994e6 738953ef039b745e2b2b5411d990e723e667a624 antigravity775-Igtm <antigravity775@gmail.com> 1778606833 +0300	commit: fix: resolve logo visibility issue by using Vite imports and standardizing favicons
+738953ef039b745e2b2b5411d990e723e667a624 6f7bacc3ca7852f806ad940e23cd9650bded5d7b antigravity775-Igtm <antigravity775@gmail.com> 1778607329 +0300	commit: fix: resolve backend 500 errors for missing favicons and improve 404 handling
+6f7bacc3ca7852f806ad940e23cd9650bded5d7b 112893d648d80586d2dc5fb96a2c6b4fad625ac4 antigravity775-Igtm <antigravity775@gmail.com> 1778608051 +0300	commit: style: use 192x192 favicon for Google search compliance
+112893d648d80586d2dc5fb96a2c6b4fad625ac4 ca6f35c27611b3bc7af0a6531606204145547891 antigravity775-Igtm <antigravity775@gmail.com> 1778609870 +0300	commit: style: use square logo for Google Search compliance and add web manifest
+ca6f35c27611b3bc7af0a6531606204145547891 6ab3e5c9ea4c40751805a9d343175fa94ddd23e7 antigravity775-Igtm <antigravity775@gmail.com> 1778964662 +0300	commit: Changing The Icons
+6ab3e5c9ea4c40751805a9d343175fa94ddd23e7 c311a02a16579685dfef81573f8061e826bb34c0 antigravity775-Igtm <antigravity775@gmail.com> 1778965478 +0300	commit: Fix Transperant Logo
+c311a02a16579685dfef81573f8061e826bb34c0 47c1f8e59d8dbc1fdfc8af4d158d6bc448a3071c antigravity775-Igtm <antigravity775@gmail.com> 1778968647 +0300	commit: rebrand: update store name and branding from DHURA to TEEB (طِيب)
+47c1f8e59d8dbc1fdfc8af4d158d6bc448a3071c 3ef24444beefa88e37bd244e84cdbb9b34f54488 antigravity775-Igtm <antigravity775@gmail.com> 1779130759 +0300	commit: Edit the Chat Widget To Teeb
+3ef24444beefa88e37bd244e84cdbb9b34f54488 21744a507fd4d4688b70fd4740c236f79e921103 antigravity775-Igtm <antigravity775@gmail.com> 1779428050 +0300	commit: Colors to red
+21744a507fd4d4688b70fd4740c236f79e921103 e547af743c5cf7b5e438aef14d7c6c69215f39d2 antigravity775-Igtm <antigravity775@gmail.com> 1779428558 +0300	commit: Pic Size
+e547af743c5cf7b5e438aef14d7c6c69215f39d2 4fddd61718b6ea160fc9110a796d4ce2bdab79ec antigravity775-Igtm <antigravity775@gmail.com> 1779429282 +0300	commit: Pic size
+4fddd61718b6ea160fc9110a796d4ce2bdab79ec 74bad9b4eb6cec5645b14b9ee62d3ba9196876b0 antigravity775-Igtm <antigravity775@gmail.com> 1779429580 +0300	commit: g
+74bad9b4eb6cec5645b14b9ee62d3ba9196876b0 cc638e85df85fd9dc54736b91447e393302bb04a antigravity775-Igtm <antigravity775@gmail.com> 1779483797 +0300	commit: chore: add Google Analytics tracking snippet to index.html
+cc638e85df85fd9dc54736b91447e393302bb04a 10d1a099c29989d35c31df26eaa344a1a2f0165d antigravity775-Igtm <antigravity775@gmail.com> 1779553982 +0300	commit: Initial commit
+10d1a099c29989d35c31df26eaa344a1a2f0165d 0000000000000000000000000000000000000000 antigravity775-Igtm <antigravity775@gmail.com> 1779554040 +0300	Branch: renamed refs/heads/main to refs/heads/main
+10d1a099c29989d35c31df26eaa344a1a2f0165d 10d1a099c29989d35c31df26eaa344a1a2f0165d antigravity775-Igtm <antigravity775@gmail.com> 1779554040 +0300	Branch: renamed refs/heads/main to refs/heads/main
+10d1a099c29989d35c31df26eaa344a1a2f0165d 0000000000000000000000000000000000000000 antigravity775-Igtm <antigravity775@gmail.com> 1779554092 +0300	Branch: renamed refs/heads/main to refs/heads/main
+10d1a099c29989d35c31df26eaa344a1a2f0165d 10d1a099c29989d35c31df26eaa344a1a2f0165d antigravity775-Igtm <antigravity775@gmail.com> 1779554092 +0300	Branch: renamed refs/heads/main to refs/heads/main
+10d1a099c29989d35c31df26eaa344a1a2f0165d 0000000000000000000000000000000000000000 antigravity775-Igtm <antigravity775@gmail.com> 1779554122 +0300	Branch: renamed refs/heads/main to refs/heads/main
+10d1a099c29989d35c31df26eaa344a1a2f0165d 10d1a099c29989d35c31df26eaa344a1a2f0165d antigravity775-Igtm <antigravity775@gmail.com> 1779554122 +0300	Branch: renamed refs/heads/main to refs/heads/main
+10d1a099c29989d35c31df26eaa344a1a2f0165d a1f42c88dece57a311f2ee159f76d139414c1529 antigravity775-Igtm <antigravity775@gmail.com> 1779555569 +0300	commit: First Create
+a1f42c88dece57a311f2ee159f76d139414c1529 3027e042bc2a104f027f3d984cd5e5be340c42ce antigravity775-Igtm <antigravity775@gmail.com> 1779562189 +0300	commit: Edit Vercel files
+3027e042bc2a104f027f3d984cd5e5be340c42ce 29904724975025ed519a777255f77ddfdca74931 antigravity775-Igtm <antigravity775@gmail.com> 1780034238 +0300	commit: chore: remove developer credits page and footer link
+29904724975025ed519a777255f77ddfdca74931 462faaa93219df2d99fc5f9e4656703e032d3373 antigravity775-Igtm <antigravity775@gmail.com> 1780034757 +0300	commit: chore: remove hardcoded contact numbers and make contact links conditional
+462faaa93219df2d99fc5f9e4656703e032d3373 5317095b4c6aff2cc6be8c360a7a65138aabfaa5 antigravity775-Igtm <antigravity775@gmail.com> 1780035888 +0300	commit: chore: update Google Analytics measurement ID in index.html
+5317095b4c6aff2cc6be8c360a7a65138aabfaa5 e6380cbe3f464c3bf529ccf078d8c6e43e57dfca antigravity775-Igtm <antigravity775@gmail.com> 1780036795 +0300	commit (amend): chore: update Google Analytics measurement ID in index.html
+e6380cbe3f464c3bf529ccf078d8c6e43e57dfca 57da6894bbf0640b04aa37790d494c3ebd914fcf abodys21anti <abodys21anti@gmail.com> 1780036795 +0300	filter-branch: rewrite
+57da6894bbf0640b04aa37790d494c3ebd914fcf 361597285bd0243aaec183fd728ab808a0b02088 abodys21anti-create <abodys21anti@gmail.com> 1780039837 +0300	commit: feat: add Google sitemap and robots.txt sitemap reference
+361597285bd0243aaec183fd728ab808a0b02088 6f6f195fa399dc7c9ead42bd1cb8962a7cbafefd abodys21anti-create <abodys21anti@gmail.com> 1780085363 +0300	commit: Axcel added
+6f6f195fa399dc7c9ead42bd1cb8962a7cbafefd 4d2f68f4147d732169cb0b251043983628f0911a abodys21anti-create <abodys21anti@gmail.com> 1780086523 +0300	commit: last edit
+4d2f68f4147d732169cb0b251043983628f0911a c967d515e81080035217da963e31c3565c6c0b3d abodys21anti-create <abodys21anti@gmail.com> 1780086663 +0300	commit: update
+c967d515e81080035217da963e31c3565c6c0b3d 353debf4d3f582b4c221431b001be65f072c13a0 abodys21anti-create <abodys21anti@gmail.com> 1780087193 +0300	commit: THE
+353debf4d3f582b4c221431b001be65f072c13a0 ae598dfe0f72edda88ca642632d77bfd7ee0db27 abodys21anti-create <abodys21anti@gmail.com> 1780087455 +0300	commit: chore: trigger vercel redeploy
+ae598dfe0f72edda88ca642632d77bfd7ee0db27 71b5903a461464f23b857b1f257a5e4d21b30e5b abodys21anti-create <abodys21anti@gmail.com> 1780087755 +0300	commit: ff
+71b5903a461464f23b857b1f257a5e4d21b30e5b 67b585f309c2159931227030c7a6f615bea982cf abodys21anti-create <abodys21anti@gmail.com> 1780247228 +0300	commit: Update Front-End files and add SEO component
+67b585f309c2159931227030c7a6f615bea982cf cc32d3fa60d56db564fce6dc7bceff3389bbc648 abodys21anti-create <abodys21anti@gmail.com> 1780249308 +0300	commit: chore: update SEO, admin pages, Prisma schema, and system settings controller
+cc32d3fa60d56db564fce6dc7bceff3389bbc648 a87908882c76a9eada99bc72bc75c5012b6bba17 abodys21anti-create <abodys21anti@gmail.com> 1780250005 +0300	commit: chore: update AuthPage, account controller, and account validation
+a87908882c76a9eada99bc72bc75c5012b6bba17 2c78a876853793b58581548e3fe717a63cbee599 abodys21anti-create <abodys21anti@gmail.com> 1780253386 +0300	commit: Detail change the log in with phone numbers
+2c78a876853793b58581548e3fe717a63cbee599 55fd38b351c2dbcf32acd1f41ce9a5d2b6c1dbff abodys21anti-create <abodys21anti@gmail.com> 1780751618 +0300	commit: Update frontend and backend changes
+55fd38b351c2dbcf32acd1f41ce9a5d2b6c1dbff e6380cbe3f464c3bf529ccf078d8c6e43e57dfca abodys21anti-create <abodys21anti@gmail.com> 1780751712 +0300	rebase (abort): returning to refs/heads/main
+e6380cbe3f464c3bf529ccf078d8c6e43e57dfca e6380cbe3f464c3bf529ccf078d8c6e43e57dfca abodys21anti-create <abodys21anti@gmail.com> 1780751712 +0300	rebase (abort): returning to refs/heads/main
+e6380cbe3f464c3bf529ccf078d8c6e43e57dfca 1c144501f1d0ead6edd17a3648d453ba17da9f06 abodys21anti-create <abodys21anti@gmail.com> 1780751747 +0300	pull --rebase origin main (start): checkout 1c144501f1d0ead6edd17a3648d453ba17da9f06
+1c144501f1d0ead6edd17a3648d453ba17da9f06 1c144501f1d0ead6edd17a3648d453ba17da9f06 abodys21anti-create <abodys21anti@gmail.com> 1780751747 +0300	pull --rebase origin main (finish): returning to refs/heads/main
+1c144501f1d0ead6edd17a3648d453ba17da9f06 55fd38b351c2dbcf32acd1f41ce9a5d2b6c1dbff abodys21anti-create <abodys21anti@gmail.com> 1780758919 +0300	checkout: moving from main to recovery-55fd38b
+55fd38b351c2dbcf32acd1f41ce9a5d2b6c1dbff 1c144501f1d0ead6edd17a3648d453ba17da9f06 abodys21anti-create <abodys21anti@gmail.com> 1780762380 +0300	checkout: moving from recovery-55fd38b to main
+1c144501f1d0ead6edd17a3648d453ba17da9f06 6e778ce4af02d6453b98da7ac5056d9a93d573f9 abodys21anti-create <abodys21anti@gmail.com> 1780861010 +0300	commit: Save current workspace changes
+6e778ce4af02d6453b98da7ac5056d9a93d573f9 bca16ea7c73fda31eb5a2386e4e9cb44507bcb87 abodys21anti-create <abodys21anti@gmail.com> 1780861298 +0300	pull --rebase origin main (start): checkout bca16ea7c73fda31eb5a2386e4e9cb44507bcb87
+bca16ea7c73fda31eb5a2386e4e9cb44507bcb87 bbd634ee9bd90ea0045ed312424bd2f03ef86e04 abodys21anti-create <abodys21anti@gmail.com> 1780861298 +0300	pull --rebase origin main (pick): Save current workspace changes
+bbd634ee9bd90ea0045ed312424bd2f03ef86e04 bbd634ee9bd90ea0045ed312424bd2f03ef86e04 abodys21anti-create <abodys21anti@gmail.com> 1780861298 +0300	pull --rebase origin main (finish): returning to refs/heads/main
+bbd634ee9bd90ea0045ed312424bd2f03ef86e04 a02117843f826d8ccbd3788313d2d187a65e50b9 abodys21anti-create <abodys21anti@gmail.com> 1780864546 +0300	commit: Fix SEO
+a02117843f826d8ccbd3788313d2d187a65e50b9 34b52411747263f62e8b5f481ce47513066e62f8 abodys21anti-create <abodys21anti@gmail.com> 1780898384 +0300	commit: Fix some Layout
+34b52411747263f62e8b5f481ce47513066e62f8 a720da841ebcd0f031c5d675bd1c5d19f08c63a9 abodys21anti-create <abodys21anti@gmail.com> 1780899331 +0300	commit: Infinite Scrolling in the Catagory pags
+a720da841ebcd0f031c5d675bd1c5d19f08c63a9 4c725e4a1b34fc4ab5cd845dccdab0019c14d167 abodys21anti-create <abodys21anti@gmail.com> 1781037357 +0300	commit: Add The Toggle In admin dashboard Deactivate
+4c725e4a1b34fc4ab5cd845dccdab0019c14d167 5314a81bd515f486833f8539fefef7608b03a47c abodys21anti-create <abodys21anti@gmail.com> 1781038438 +0300	commit: Fix the togggle
+5314a81bd515f486833f8539fefef7608b03a47c a720da841ebcd0f031c5d675bd1c5d19f08c63a9 abodys21anti-create <abodys21anti@gmail.com> 1781041764 +0300	reset: moving to a720da841ebcd0f031c5d675bd1c5d19f08c63a9
+a720da841ebcd0f031c5d675bd1c5d19f08c63a9 a720da841ebcd0f031c5d675bd1c5d19f08c63a9 abodys21anti-create <abodys21anti@gmail.com> 1781041814 +0300	reset: moving to a720da841ebcd0f031c5d675bd1c5d19f08c63a9
+a720da841ebcd0f031c5d675bd1c5d19f08c63a9 2e9b28533682a935f74bd991ac3ddf1f2a57fa75 abodys21anti-create <abodys21anti@gmail.com> 1781042787 +0300	commit: hide the toggle of the Night mode
+2e9b28533682a935f74bd991ac3ddf1f2a57fa75 2df9f3665761b3191b578534a4a1f3ff93d74890 abodys21anti-create <abodys21anti@gmail.com> 1781115496 +0300	commit: Fix the Cors
+2df9f3665761b3191b578534a4a1f3ff93d74890 97ce0ce3f0f9607fd8d31d658022ea0b65dcd86c abodys21anti-create <abodys21anti@gmail.com> 1781192312 +0300	commit: Add Backup Options
+97ce0ce3f0f9607fd8d31d658022ea0b65dcd86c b3adc557659c83b52a2ae2554ddf67ac18bb8333 abodys21anti-create <abodys21anti@gmail.com> 1781375140 +0300	commit: Add Tiktok URL
+b3adc557659c83b52a2ae2554ddf67ac18bb8333 1433ce0358e38dae8b894b41c49b154ae468e66e abodys21anti-create <abodys21anti@gmail.com> 1781376001 +0300	commit: Left Whatsapp FAB
+1433ce0358e38dae8b894b41c49b154ae468e66e 7f5f6cd85799e7e19bd10484a71f4d052a477e3a abodys21anti-create <abodys21anti@gmail.com> 1781446587 +0300	commit: Securities And Add Refresh Tokens
+7f5f6cd85799e7e19bd10484a71f4d052a477e3a 8903e09cba3e2952fca4a04f6cc2142dd5cccdc8 abodys21anti-create <abodys21anti@gmail.com> 1782477079 +0300	commit: Make The Website Better
+8903e09cba3e2952fca4a04f6cc2142dd5cccdc8 33a3dcc17c9b1224cd449e7fd771934ac267ec76 abodys21anti-create <abodys21anti@gmail.com> 1782480149 +0300	commit (merge): Merge and update repository github URL
+33a3dcc17c9b1224cd449e7fd771934ac267ec76 d89d2cabfb375b8439850dc066f3eed1b0f31e1c abodys21anti-create <abodys21anti@gmail.com> 1782480304 +0300	commit: New Stuff
+d89d2cabfb375b8439850dc066f3eed1b0f31e1c 3e9cc50541c318522ed1afbdfd6450f4dfedbedf abodys21anti-create <abodys21anti@gmail.com> 1782481079 +0300	commit: Empty commit
