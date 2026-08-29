@@ -233,6 +233,11 @@ const CartPage = () => {
                         {item.title}
                       </h3>
                     </Link>
+                    {item.description && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mt-1">
+                        {item.description}
+                      </p>
+                    )}
                     <p className="text-gold-600 dark:text-gold-400 font-bold text-sm sm:text-base mt-1">
                       {formatPrice(item.price, item.currency)}
                     </p>

@@ -106,16 +106,11 @@ const FavoritesPage = () => {
                           </div>
 
                           {/* Description */}
-                          {product.description && (
-                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-1">
-                              {product.description}
+                          {(product.description || product.categoryName) && (
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mt-1">
+                              {product.description || product.categoryName}
                             </p>
                           )}
-
-                          {/* Condition */}
-                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                            {api.ConditionEn?.[product.condition] || product.categoryName || ''}
-                          </p>
                         </div>
 
                         <div className="mt-3 flex items-end justify-between gap-2">

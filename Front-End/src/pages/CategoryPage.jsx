@@ -30,6 +30,7 @@ function mapToProduct(p) {
     id: p.id,
     slug: p.slug || p.id,
     title: p.title,
+    description: p.description || null,
     image: getOptimizedImageUrl(rawImage, IMAGE_WIDTHS.GRID_CARD),
     price: p.price,
     currency: p.currency,
@@ -151,7 +152,7 @@ const CategoryPage = () => {
   const handleQuickAdd = useCallback((p) => {
     const original = activeProducts.find((prod) => String(prod.id) === String(p.id));
     if (original) addToCart(original, 1);
-    else addToCart({ id: p.id, title: p.title, price: p.price, currency: p.currency || 'USD', mainImageUrl: p.image, imageUrl: p.image }, 1);
+    else addToCart({ id: p.id, title: p.title, description: p.description || null, price: p.price, currency: p.currency || 'USD', mainImageUrl: p.image, imageUrl: p.image }, 1);
   }, [activeProducts, addToCart]);
 
   const handleFavoriteToggle = useCallback((p) => {

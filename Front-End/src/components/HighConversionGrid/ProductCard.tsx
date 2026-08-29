@@ -12,6 +12,7 @@ export interface Product {
   rating: number;
   reviewCount: number;
   badge?: 'Sale' | 'Local' | null;
+  description?: string | null;
   isFavorite?: boolean;
   isPromoted?: boolean;
   discountPrice?: number;
@@ -66,7 +67,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
     );
   }
 
-  const { title, image, price, currencySymbol = 'ريال', originalPrice, badge, isPromoted, discountPrice, promotionLabel } = product;
+  const { title, image, price, currencySymbol = 'ريال', originalPrice, badge, description, isPromoted, discountPrice, promotionLabel } = product;
   const numPrice = Number(price) || 0;
   const numDiscountPrice = (discountPrice !== undefined && discountPrice !== null && String(discountPrice) !== '') ? Number(discountPrice) : null;
   const numOriginalPrice = (originalPrice !== undefined && originalPrice !== null) ? Number(originalPrice) : null;
@@ -146,6 +147,12 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({
         >
           {title}
         </h3>
+
+        {description && (
+          <p className={`text-slate-500 dark:text-slate-400 line-clamp-2 leading-snug ${compact ? 'text-[9px] mb-1' : 'text-[10px] sm:text-xs mb-1'}`}>
+            {description}
+          </p>
+        )}
 
         <div className="mt-auto flex items-end justify-between gap-1 pt-1">
           <div className="flex flex-col min-w-0">

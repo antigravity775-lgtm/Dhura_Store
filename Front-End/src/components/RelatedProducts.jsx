@@ -17,6 +17,7 @@ function mapToProduct(p) {
     id: p.id,
     slug: p.slug || p.id,
     title: p.title,
+    description: p.description || null,
     image: getOptimizedImageUrl(rawImage, IMAGE_WIDTHS.GRID_CARD),
     price: p.price,
     currency: p.currency,

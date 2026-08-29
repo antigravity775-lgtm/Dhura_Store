@@ -42,7 +42,9 @@ export const CartProvider = ({ children }) => {
         ...prev,
         {
           productId: product.id,
+          slug: product.slug || null,
           title: product.title,
+          description: product.description || null,
           price: product.discountPrice ?? product.price,
           currency: product.currency,
           imageUrl: product.imageUrl || product.mainImageUrl,
