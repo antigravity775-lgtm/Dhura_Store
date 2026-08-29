@@ -350,7 +350,7 @@ const HomePage = () => {
                 subtitle={`${section.products.length} منتج`}
                 viewAllHref={
                   section.slug
-                    ? `/category/${section.slug}`
+                    ? `/category/${encodeURIComponent(section.slug || section.name)}`
                     : `/category/${encodeURIComponent(section.name)}`
                 }
                 products={mapWithFavorites(section.products)}

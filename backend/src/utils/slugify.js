@@ -83,4 +83,37 @@ async function generateUniqueSlug(title, prisma, excludeId = null) {
   }
 }
 
-module.exports = { slugify, generateUniqueSlug };
+/**
+ * Category slugs use the display name directly (e.g. "عساف").
+ */
+function categorySlugFromName(name) {
+  return String(name || '').trim();
+}
+
+async function generateUniqueCategorySlug(name, prisma, excludeId = null) {
+  const baseSlug = categorySlugFromName(name);
+  if (!baseSlug) return 'category';
+
+  const whereClause = { slug: baseSlug };
+  if (excludeId) whereClause.id = { not: excludeId };
+
+  const existing = await prisma.category.findFirst({ where: whereClause, select: { id: true } });
+  if (!existing) return baseSlug;
+
+  let counter = 2;
+  while (true) {
+    const candidate = `${baseSlug}-${counter}`;
+    const candidateWhere = { slug: candidate };
+    if (excludeId) candidateWhere.id = { not: excludeId };
+
+    const collision = await prisma.category.findFirst({
+      where: candidateWhere,
+      select: { id: true },
+    });
+
+    if (!collision) return candidate;
+    counter++;
+  }
+}
+
+module.exports = { slugify, generateUniqueSlug, categorySlugFromName, generateUniqueCategorySlug };

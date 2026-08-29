@@ -1,6 +1,7 @@
 const prisma = require('../prismaClient');
 const { ValidationError } = require('../middleware/errorMiddleware');
 const { uploadBuffer } = require('../utils/cloudinaryClient');
+const { generateUniqueCategorySlug } = require('../utils/slugify');
 
 
 class CategoryController {
@@ -70,8 +71,11 @@ class CategoryController {
    */
   async getCategoryBySlug(req, res) {
     try {
-      const category = await prisma.category.findUnique({
-        where: { slug: req.params.slug },
+      const slug = decodeURIComponent(req.params.slug || '').trim();
+      const category = await prisma.category.findFirst({
+        where: {
+          OR: [{ slug }, { name: slug }],
+        },
         include: {
           children: true,
           parent: true
@@ -149,21 +153,15 @@ class CategoryController {
       const { name, iconUrl, imageUrl, description, parentId, isActive, sortOrder, metaTitle, metaDescription } = req.body;
       if (!name) throw new ValidationError('Category name is required');
 
-      // Generate deterministic slug: normalized-name + 8-char id suffix
-      const id = require('crypto').randomUUID();
+      // Slug mirrors the category display name for SEO-friendly URLs.
       let slug = req.body.slug;
       if (!slug) {
-        const slugBase = name
-          .toLowerCase()
-          .replace(/[^a-z0-9\u0600-\u06ff]+/gi, '-')
-          .replace(/^-+|-+$/g, '')
-          .replace(/-{2,}/g, '-');
-        slug = `${slugBase}-${id.replace(/-/g, '').slice(0, 8)}`;
+        slug = await generateUniqueCategorySlug(name, prisma);
       }
 
       const category = await prisma.category.create({
         data: {
-          id,
+          id: require('crypto').randomUUID(),
           name,
           slug,
           iconUrl: iconUrl || null,
@@ -220,14 +218,8 @@ class CategoryController {
       }
 
       let slug = req.body.slug !== undefined ? req.body.slug : existing.slug;
-      // Re-generate slug if name changed and no explicit slug provided
       if (req.body.name && req.body.name !== existing.name && req.body.slug === undefined) {
-        const slugBase = req.body.name
-          .toLowerCase()
-          .replace(/[^a-z0-9\u0600-\u06ff]+/gi, '-')
-          .replace(/^-+|-+$/g, '')
-          .replace(/-{2,}/g, '-');
-        slug = `${slugBase}-${req.params.id.replace(/-/g, '').slice(0, 8)}`;
+        slug = await generateUniqueCategorySlug(req.body.name, prisma, req.params.id);
       }
 
       const updated = await prisma.category.update({

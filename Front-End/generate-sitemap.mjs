@@ -12,6 +12,24 @@ const API_URL = process.env.SITEMAP_API_URL || 'https://gisaah-store.vercel.app/
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function isCanonicalSlug(slug) {
+  const value = String(slug || '').trim();
+  return value.length > 0 && !UUID_REGEX.test(value);
+}
+
+function productLoc(product) {
+  if (!isCanonicalSlug(product.slug)) return null;
+  return `${BASE_URL}/product/${encodeURIComponent(product.slug.trim())}`;
+}
+
+function categoryLoc(category) {
+  const name = String(category.name || category.nameEn || '').trim();
+  if (!name) return null;
+  return `${BASE_URL}/category/${encodeURIComponent(name)}`;
+}
+
 async function fetchProducts() {
   try {
     const res = await fetch(`${API_URL}/products?pageSize=1000`);
@@ -20,7 +38,7 @@ async function fetchProducts() {
     if (!text) return [];
     const data = JSON.parse(text);
     const items = Array.isArray(data) ? data : data.items || data.products || [];
-    return items.filter(p => !p.isHidden);
+    return items.filter((p) => p.status !== 'Hidden' && p.status !== 'Draft' && !p.isHidden);
   } catch (error) {
     console.error('Error fetching products:', error);
     return [];
@@ -82,13 +100,15 @@ async function generateSitemap() {
 `;
   }
 
-  // 2. Dynamic Categories
+  // 2. Dynamic Categories — slug URLs only
   const categories = await fetchCategories();
+  let categoryCount = 0;
   for (const category of categories) {
-    const name = category.name || category.nameEn || category.id;
-    if (!name) continue;
+    const loc = categoryLoc(category);
+    if (!loc) continue;
+    categoryCount += 1;
     sitemapXml += `  <url>
-    <loc>${BASE_URL}/category/${encodeURIComponent(name)}</loc>
+    <loc>${loc}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -96,13 +116,14 @@ async function generateSitemap() {
 `;
   }
 
-  // 3. Dynamic Products — use slug URL (fall back to id for legacy products)
+  // 3. Dynamic Products — slug URLs only
   const products = await fetchProducts();
+  let productCount = 0;
   for (const product of products) {
-    const slug = product.slug || product.id;
-    if (!slug) continue;
+    const productUrl = productLoc(product);
+    if (!productUrl) continue;
+    productCount += 1;
     const updatedAt = product.updatedAt ? formatDate(new Date(product.updatedAt)) : today;
-    const productUrl = `${BASE_URL}/product/${encodeURIComponent(slug)}`;
 
     sitemapXml += `  <url>
     <loc>${productUrl}</loc>
@@ -131,7 +152,7 @@ async function generateSitemap() {
   }
 
   fs.writeFileSync(path.join(PUBLIC_DIR, 'sitemap.xml'), sitemapXml);
-  console.log(`✅ Sitemap generated: ${staticPages.length} static + ${categories.length} categories + ${products.length} products = ${staticPages.length + categories.length + products.length} URLs`);
+  console.log(`✅ Sitemap generated: ${staticPages.length} static + ${categoryCount} categories + ${productCount} products = ${staticPages.length + categoryCount + productCount} URLs`);
 
   // Generate robots.txt
   const robotsTxt = `User-agent: *

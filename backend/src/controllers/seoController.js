@@ -65,6 +65,24 @@ function escapeXml(str) {
     .replace(/'/g, '&apos;');
 }
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function isCanonicalSlug(slug) {
+  const value = String(slug || '').trim();
+  return value.length > 0 && !UUID_REGEX.test(value);
+}
+
+function productLoc(product) {
+  if (!isCanonicalSlug(product.slug)) return null;
+  return `${BASE_URL}/product/${encodeURIComponent(product.slug.trim())}`;
+}
+
+function categoryLoc(category) {
+  const name = String(category.name || '').trim();
+  if (!name) return null;
+  return `${BASE_URL}/category/${encodeURIComponent(name)}`;
+}
+
 async function fetchProducts() {
   return prisma.product.findMany({
     where: { status: 'Active' },
@@ -75,7 +93,8 @@ async function fetchProducts() {
 
 async function fetchCategories() {
   return prisma.category.findMany({
-    select: { id: true, name: true, updatedAt: true },
+    where: { isActive: true },
+    select: { name: true, updatedAt: true },
   });
 }
 
@@ -110,8 +129,10 @@ async function getSitemap(req, res) {
 
   // Categories
   for (const cat of categories) {
+    const loc = categoryLoc(cat);
+    if (!loc) continue;
     xml += urlEntry({
-      loc: `${BASE_URL}/category/${encodeURIComponent(cat.name)}`,
+      loc,
       lastmod: formatDate(cat.updatedAt),
       changefreq: 'weekly',
       priority: 0.8,
@@ -120,9 +141,10 @@ async function getSitemap(req, res) {
 
   // Products
   for (const product of products) {
-    const slug = product.slug || product.id;
+    const loc = productLoc(product);
+    if (!loc) continue;
     xml += urlEntry({
-      loc: `${BASE_URL}/product/${encodeURIComponent(slug)}`,
+      loc,
       lastmod: formatDate(product.updatedAt),
       changefreq: 'weekly',
       priority: 0.8,
@@ -178,9 +200,10 @@ async function getSitemapProducts(req, res) {
   xml += `        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n`;
 
   for (const product of products) {
-    const slug = product.slug || product.id;
+    const loc = productLoc(product);
+    if (!loc) continue;
     xml += urlEntry({
-      loc: `${BASE_URL}/product/${encodeURIComponent(slug)}`,
+      loc,
       lastmod: formatDate(product.updatedAt),
       changefreq: 'weekly',
       priority: 0.8,
@@ -210,8 +233,10 @@ async function getSitemapCategories(req, res) {
   xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
   for (const cat of categories) {
+    const loc = categoryLoc(cat);
+    if (!loc) continue;
     xml += urlEntry({
-      loc: `${BASE_URL}/category/${encodeURIComponent(cat.name)}`,
+      loc,
       lastmod: formatDate(cat.updatedAt),
       changefreq: 'weekly',
       priority: 0.8,
@@ -295,15 +320,15 @@ async function getRss(req, res) {
 `;
 
   for (const product of products) {
-    const slug = product.slug || product.id;
-    const productUrl = `${BASE_URL}/product/${encodeURIComponent(slug)}`;
+    const loc = productLoc(product);
+    if (!loc) continue;
     const pubDate = new Date(product.createdAt).toUTCString();
     const description = (product.description || '').substring(0, 300);
 
     xml += `    <item>
       <title>${escapeXml(product.title)}</title>
-      <link>${productUrl}</link>
-      <guid isPermaLink="true">${productUrl}</guid>
+      <link>${loc}</link>
+      <guid isPermaLink="true">${loc}</guid>
       <description>${escapeXml(description)}</description>
       <pubDate>${pubDate}</pubDate>
 `;
@@ -329,7 +354,6 @@ async function redirectProductByUuid(req, res) {
   const { uuid } = req.params;
 
   // Validate UUID format
-  const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   if (!UUID_REGEX.test(uuid)) {
     return res.status(400).json({ error: 'Invalid UUID format' });
   }

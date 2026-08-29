@@ -316,7 +316,7 @@ const ProductDetailsPage = () => {
   const breadcrumbItems = [
     { name: "الرئيسية", url: "/" },
     { name: "الفئات", url: "/categories" },
-    ...(product.categoryName ? [{ name: product.categoryName, url: `/category/${categorySlug}` }] : []),
+    ...(product.categoryName ? [{ name: product.categoryName, url: `/category/${encodeURIComponent(categorySlug)}` }] : []),
     { name: product.title },
   ];
 

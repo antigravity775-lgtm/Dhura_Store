@@ -46,7 +46,7 @@ function mapToProduct(p) {
 
 const CompactCategoryPill = ({ cat, isActive }) => (
   <Link
-    to={`/category/${cat.slug || cat.id}`}
+    to={`/category/${encodeURIComponent(cat.slug || cat.name)}`}
     className={`flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
       isActive
         ? 'bg-gold-600 border-gold-600 text-white shadow-sm'
@@ -179,7 +179,7 @@ const CategoryPage = () => {
           items={[
             { name: 'الرئيسية', url: '/' },
             { name: 'الفئات', url: '/categories' },
-            ...(categoryData?.parent ? [{ name: categoryData.parent.name, url: `/category/${categoryData.parent.slug || categoryData.parent.id}` }] : []),
+            ...(categoryData?.parent ? [{ name: categoryData.parent.name, url: `/category/${encodeURIComponent(categoryData.parent.slug || categoryData.parent.name)}` }] : []),
             { name: categoryName },
           ]}
         />
