@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -53,8 +53,11 @@ const Layout = React.memo(({ children }) => {
   const { pathname } = useLocation();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDesktopSearchOpen, setIsDesktopSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const desktopSearchRef = useRef(null);
+  const desktopSearchInputRef = useRef(null);
   const [storeInfo, setStoreInfo] = useState(() => {
     try {
       const cached = localStorage.getItem('teeb_store_info');
@@ -102,11 +105,39 @@ const Layout = React.memo(({ children }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!isDesktopSearchOpen) return undefined;
+    const handleClickOutside = (event) => {
+      if (desktopSearchRef.current && !desktopSearchRef.current.contains(event.target)) {
+        setIsDesktopSearchOpen(false);
+      }
+    };
+    const handleEscape = (event) => {
+      if (event.key === "Escape") setIsDesktopSearchOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isDesktopSearchOpen]);
+
+  useEffect(() => {
+    if (isDesktopSearchOpen) {
+      desktopSearchInputRef.current?.focus();
+    }
+  }, [isDesktopSearchOpen]);
+
   const handleLogout = useCallback(() => {
     logout();
     navigate("/");
     setIsMobileMenuOpen(false);
   }, [logout, navigate]);
+
+  useEffect(() => {
+    setIsDesktopSearchOpen(false);
+  }, [pathname]);
 
   const handleSearch = useCallback(
     (e) => {
@@ -117,9 +148,13 @@ const Layout = React.memo(({ children }) => {
         navigate("/products");
       }
       setIsMobileMenuOpen(false);
+      setIsDesktopSearchOpen(false);
     },
     [searchQuery, navigate],
   );
+
+  const desktopSearchInputClass =
+    "block w-full pr-11 pl-4 py-2.5 border border-gray-200 dark:border-gold-800 rounded-full bg-gray-50/80 dark:bg-gold-950/60 text-slate-900 dark:text-gold-50 placeholder-gray-400 dark:placeholder-gold-600 focus:outline-none focus:bg-white dark:focus:bg-gold-950/80 focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-sm text-right";
 
   const isHomePage = pathname === '/';
   const headerOverHero = isHomePage && !scrolled && introStage === 'done';
@@ -208,11 +243,10 @@ const Layout = React.memo(({ children }) => {
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16 relative">
+          <div className={`grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 md:gap-x-3 h-14 sm:h-16 ${introStage === "center" ? "invisible" : ""}`}>
 
-            {/* 1. START / RIGHT SIDE (Search + Mobile Menu) */}
-            <div className={`flex items-center gap-2 sm:gap-4 flex-1 transition-opacity duration-700 ${introStage === 'center' ? 'opacity-0' : 'opacity-100'}`}>
-              {/* زر القائمة - الجوال / Mobile Menu Button */}
+            {/* 1. START / RIGHT SIDE */}
+            <div className="flex items-center gap-2 min-w-0 justify-self-start">
               <button
                 className="md:hidden p-2 text-gray-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:bg-gray-100 dark:focus:bg-slate-800 rounded-xl transition-colors"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -221,8 +255,8 @@ const Layout = React.memo(({ children }) => {
                 {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
 
-              {/* شريط البحث - سطح المكتب / Desktop Search */}
-              <div className="hidden md:block w-full max-w-sm">
+              {/* Full search — wide desktop only */}
+              <div className="hidden xl:block w-full max-w-xs 2xl:max-w-sm min-w-0">
                 <form onSubmit={handleSearch} className="relative w-full group">
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                     <Search className="h-5 w-5 text-gray-400 dark:text-slate-500 group-focus-within:text-gold-500 transition-colors" />
@@ -231,37 +265,80 @@ const Layout = React.memo(({ children }) => {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="block w-full pr-11 pl-4 py-2.5 border border-gray-200 dark:border-gold-800 rounded-full bg-gray-50/80 dark:bg-gold-950/60 text-slate-900 dark:text-gold-50 placeholder-gray-400 dark:placeholder-gold-600 focus:outline-none focus:bg-white dark:focus:bg-gold-950/80 focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-sm text-right"
+                    className={desktopSearchInputClass}
                     placeholder="ابحث عن المنتجات..."
                   />
                 </form>
               </div>
+
+              {/* Expandable search pill — tablet / small laptop */}
+              <div ref={desktopSearchRef} className="hidden md:block xl:hidden relative">
+                <button
+                  type="button"
+                  onClick={() => setIsDesktopSearchOpen((open) => !open)}
+                  aria-label="بحث عن المنتجات"
+                  aria-expanded={isDesktopSearchOpen}
+                  className={`p-2.5 rounded-xl border transition-all ${
+                    isDesktopSearchOpen
+                      ? "border-gold-400 bg-gold-50 dark:bg-gold-900/30 text-gold-600 dark:text-gold-300 shadow-sm"
+                      : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-gold-300 hover:text-gold-600 dark:hover:text-gold-300 hover:bg-gold-50/60 dark:hover:bg-gold-900/20"
+                  }`}
+                >
+                  <Search className="h-5 w-5" />
+                </button>
+
+                <AnimatePresence>
+                  {isDesktopSearchOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.96 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-[calc(100%+0.5rem)] right-0 z-[60] w-[min(24rem,calc(100vw-2rem))]"
+                    >
+                      <form
+                        onSubmit={handleSearch}
+                        className="relative rounded-2xl border border-gold-200/80 dark:border-gold-800/80 bg-white dark:bg-slate-900 shadow-xl shadow-gold-500/10 p-1.5"
+                      >
+                        <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                          <Search className="h-5 w-5 text-gold-500" />
+                        </div>
+                        <input
+                          ref={desktopSearchInputRef}
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className={desktopSearchInputClass}
+                          placeholder="ابحث عن العطور والمنتجات..."
+                        />
+                      </form>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
-            {/* 2. CENTER / LOGO (Absolutely positioned) */}
+            {/* 2. CENTER / LOGO */}
             <Link
               to="/"
-              className="flex-shrink-0 flex items-center gap-3 cursor-pointer group select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+              className="flex-shrink-0 flex items-center justify-self-center cursor-pointer group select-none z-10 px-1"
             >
-              {/* The Actual Travelling Logo */}
               {introStage !== "center" && (
-                <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4" dir="ltr">
-
-                  {/* English Text (Left) */}
+                <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-4" dir="ltr">
                   <motion.div
                     layoutId="teeb-brand-text-en"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
+                    className="hidden xl:block"
                   >
-                    <span className="whitespace-nowrap font-serif leading-none text-xs sm:text-sm md:text-2xl tracking-wider md:tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm">
+                    <span className="whitespace-nowrap font-serif leading-none text-2xl tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm">
                       TEEB
                     </span>
                   </motion.div>
 
-                  {/* Icon (Center) */}
                   <motion.div
                     layoutId="teeb-brand-icon"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
-                    className="relative w-7 h-7 sm:w-8 sm:h-8 md:w-14 md:h-14 rounded-md md:rounded-xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-gold-400/50"
+                    className="relative w-9 h-9 sm:w-10 sm:h-10 xl:w-14 xl:h-14 rounded-lg xl:rounded-xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-gold-400/50"
                   >
                     <img
                       src={logo}
@@ -271,25 +348,24 @@ const Layout = React.memo(({ children }) => {
                       fetchpriority="high"
                       className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
                     />
-                    <div className="absolute top-0 right-0 w-2 h-2 bg-gold-400 rounded-full border border-white animate-pulse hidden md:block"></div>
+                    <div className="absolute top-0 right-0 w-2 h-2 bg-gold-400 rounded-full border border-white animate-pulse hidden xl:block" />
                   </motion.div>
 
-                  {/* Arabic Text (Right) */}
                   <motion.div
                     layoutId="teeb-brand-text-ar"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
+                    className="hidden xl:block"
                   >
-                    <span className="whitespace-nowrap font-serif leading-none text-base sm:text-lg md:text-[2.25rem] text-slate-900 dark:text-white font-bold drop-shadow-sm relative -top-px md:-top-1">
+                    <span className="whitespace-nowrap font-serif leading-none text-lg lg:text-xl xl:text-[2.25rem] text-slate-900 dark:text-white font-bold drop-shadow-sm relative -top-px xl:-top-1">
                       طــيـــــب
                     </span>
                   </motion.div>
-
                 </div>
               )}
             </Link>
 
             {/* 3. END / LEFT SIDE (Actions) */}
-            <div className={`flex items-center justify-end gap-2 sm:gap-3 flex-1 transition-opacity duration-700 ${introStage === 'center' ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="flex items-center justify-end gap-1.5 sm:gap-2 min-w-0 justify-self-end">
               {/* EN: Dark Mode Toggle Button — accessible in both desktop and mobile
                   AR: زر تبديل الوضع الداكن — متاح في سطح المكتب والجوال */}
               <button
@@ -311,21 +387,22 @@ const Layout = React.memo(({ children }) => {
               {isAdmin && (
                 <Link
                   to="/admin"
-                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-purple-200 dark:border-purple-700 rounded-xl text-sm font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 hover:border-purple-300 dark:hover:border-purple-600 hover:shadow-sm transition-all"
+                  title="لوحة المسؤول"
+                  className="hidden sm:flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 border border-purple-200 dark:border-purple-700 rounded-xl text-sm font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 hover:border-purple-300 dark:hover:border-purple-600 hover:shadow-sm transition-all"
                 >
-                  <Crown className="w-4 h-4" />
-                  لوحة المسؤول
+                  <Crown className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden xl:inline whitespace-nowrap">لوحة المسؤول</span>
                 </Link>
               )}
 
-              {/* طلباتي / My Orders */}
               {isAuthenticated && (
                 <Link
                   to="/my-orders"
-                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gold-50 dark:hover:bg-gold-900/30 hover:border-gold-300 dark:hover:border-gold-700 hover:text-gold-700 dark:hover:text-gold-300 hover:shadow-sm transition-all"
+                  title="طلباتي"
+                  className="hidden sm:flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gold-50 dark:hover:bg-gold-900/30 hover:border-gold-300 dark:hover:border-gold-700 hover:text-gold-700 dark:hover:text-gold-300 hover:shadow-sm transition-all"
                 >
-                  <Package className="w-4 h-4" />
-                  طلباتي
+                  <Package className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden xl:inline whitespace-nowrap">طلباتي</span>
                 </Link>
               )}
 
@@ -358,17 +435,18 @@ const Layout = React.memo(({ children }) => {
 
               {/* تسجيل الدخول / الملف الشخصي */}
               {isAuthenticated ? (
-                <div className="hidden sm:flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-1.5 xl:gap-2">
                   <Link
                     to="/profile"
-                    className="flex items-center gap-2 px-3 py-2 bg-gold-50 dark:bg-gold-900/40 rounded-xl border border-gold-100 dark:border-gold-800 hover:bg-gold-100 dark:hover:bg-gold-900/60 transition-colors"
+                    title={user?.fullName || "الملف الشخصي"}
+                    className="flex items-center gap-2 px-2 xl:px-3 py-2 bg-gold-50 dark:bg-gold-900/40 rounded-xl border border-gold-100 dark:border-gold-800 hover:bg-gold-100 dark:hover:bg-gold-900/60 transition-colors"
                   >
-                    <div className="w-7 h-7 rounded-full bg-gold-500 flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-7 h-7 rounded-full bg-gold-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                       {user?.fullName?.charAt(0) || (
                         <User className="w-4 h-4" />
                       )}
                     </div>
-                    <span className="text-sm font-semibold text-gold-900 dark:text-gold-200 max-w-[100px] truncate">
+                    <span className="hidden xl:inline text-sm font-semibold text-gold-900 dark:text-gold-200 max-w-[100px] truncate">
                       {user?.fullName || "المستخدم"}
                     </span>
                   </Link>
@@ -383,10 +461,11 @@ const Layout = React.memo(({ children }) => {
               ) : (
                 <Link
                   to="/auth"
-                  className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 bg-gold-500 text-white rounded-xl text-sm font-bold hover:bg-gold-400 transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+                  title="تسجيل الدخول"
+                  className="hidden sm:flex items-center gap-1.5 px-3 xl:px-4 py-2.5 bg-gold-500 text-white rounded-xl text-sm font-bold hover:bg-gold-400 transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
                 >
-                  <LogIn className="w-4 h-4" />
-                  تسجيل الدخول
+                  <LogIn className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden xl:inline whitespace-nowrap">تسجيل الدخول</span>
                 </Link>
               )}
 
@@ -491,8 +570,8 @@ const Layout = React.memo(({ children }) => {
             </div>
           )}
 
-          {/* Desktop main navigation */}
-          <nav className="hidden md:flex items-center justify-center gap-1 pb-2.5 border-t border-slate-100/80 dark:border-slate-800/80 pt-2" aria-label="التنقل الرئيسي">
+          {/* Desktop main navigation + tablet search belt */}
+          <nav className="hidden md:flex flex-wrap items-center justify-center gap-1.5 pb-2.5 border-t border-slate-100/80 dark:border-slate-800/80 pt-2" aria-label="التنقل الرئيسي">
             {desktopNavLinks.map(({ to, label }) => {
               const isActive = to === '/'
                 ? pathname === '/'
@@ -504,7 +583,7 @@ const Layout = React.memo(({ children }) => {
                 <Link
                   key={to}
                   to={to}
-                  className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-colors ${
+                  className={`px-3 lg:px-4 py-1.5 text-sm font-semibold rounded-lg transition-colors ${
                     isActive
                       ? 'text-gold-700 dark:text-gold-400 bg-gold-50 dark:bg-gold-900/30'
                       : 'text-slate-600 dark:text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
@@ -514,6 +593,21 @@ const Layout = React.memo(({ children }) => {
                 </Link>
               );
             })}
+
+            <div className="hidden md:flex xl:hidden flex-1 min-w-[12rem] max-w-md mr-2 lg:mr-4">
+              <form onSubmit={handleSearch} className="relative w-full group">
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <Search className="h-4 w-4 text-gray-400 dark:text-slate-500 group-focus-within:text-gold-500 transition-colors" />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full pr-10 pl-3 py-2 border border-gray-200 dark:border-gold-800 rounded-full bg-gray-50/80 dark:bg-gold-950/60 text-slate-900 dark:text-gold-50 placeholder-gray-400 dark:placeholder-gold-600 focus:outline-none focus:bg-white dark:focus:bg-gold-950/80 focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 transition-all shadow-sm text-sm text-right"
+                  placeholder="ابحث..."
+                />
+              </form>
+            </div>
           </nav>
         </div>
       </header>
