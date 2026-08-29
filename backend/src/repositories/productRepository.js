@@ -11,41 +11,10 @@ class ProductRepository {
       include: {
         category: {
           select: { name: true }
-        },
-        seller: {
-          select: { 
-            fullName: true, 
-            city: true, 
-            isVerified: true 
-          }
-        }
       }
     });
   }
 
-  /**
-   * Get products by seller ID
-   * @param {string} sellerId - Seller ID
-   * @returns {Promise<Array>} List of products
-   */
-  async getProductsBySellerId(sellerId) {
-    return await prisma.product.findMany({
-      where: { sellerId },
-      include: {
-        category: {
-          select: { name: true }
-        },
-        seller: {
-          select: { 
-            fullName: true, 
-            city: true, 
-            isVerified: true 
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-  }
 
   /**
    * Get all products with details
@@ -56,14 +25,6 @@ class ProductRepository {
       include: {
         category: {
           select: { name: true }
-        },
-        seller: {
-          select: { 
-            fullName: true, 
-            city: true, 
-            isVerified: true 
-          }
-        }
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -80,14 +41,6 @@ class ProductRepository {
       include: {
         category: {
           select: { name: true }
-        },
-        seller: {
-          select: { 
-            fullName: true, 
-            city: true, 
-            isVerified: true 
-          }
-        }
       }
     });
   }

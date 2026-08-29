@@ -42,6 +42,8 @@ class AuthService {
       email: user.email,
       role: user.role,
       city: user.city,
+      address: user.address,
+      locationUrl: user.locationUrl,
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
       expiresIn: tokenPair.expiresIn
@@ -55,7 +57,7 @@ class AuthService {
    * @returns {Promise<Object>} Auth response with user info and tokens
    */
   async register(userData, metadata = {}) {
-    const { fullName, phoneNumber, password, city } = userData;
+    const { fullName, phoneNumber, password, city, address, locationUrl } = userData;
     const email = `${phoneNumber}@gisaah.com`;
 
     const existingUser = await prisma.user.findFirst({
@@ -80,6 +82,8 @@ class AuthService {
         email,
         passwordHash,
         city,
+        address,
+        locationUrl: locationUrl || null,
         role: 'Buyer'
       }
     });
@@ -192,6 +196,8 @@ class AuthService {
         email: true,
         role: true,
         city: true,
+        address: true,
+        locationUrl: true,
         isVerified: true,
         isBlocked: true,
         createdAt: true,
@@ -224,6 +230,8 @@ class AuthService {
         email: true,
         role: true,
         city: true,
+        address: true,
+        locationUrl: true,
         isVerified: true,
         isBlocked: true,
         createdAt: true,

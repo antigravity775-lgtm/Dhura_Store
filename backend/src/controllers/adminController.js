@@ -14,13 +14,11 @@ class AdminController {
     try {
       const [
         totalUsers,
-        totalSellers,
         totalProducts,
         totalOrders,
         pendingOrders
       ] = await Promise.all([
         prisma.user.count(),
-        prisma.user.count({ where: { role: 'Seller' } }),
         prisma.product.count({ where: { status: 'Active' } }),
         prisma.order.count(),
         prisma.order.count({ where: { status: 'Pending' } })
@@ -28,7 +26,7 @@ class AdminController {
 
       res.json({
         totalUsers,
-        totalSellers,
+        totalSellers: 0,
         totalProducts,
         totalOrders,
         pendingOrders
@@ -52,6 +50,7 @@ class AdminController {
           email: true,
           role: true,
           city: true,
+          address: true,
           isVerified: true,
           isBlocked: true,
           createdAt: true,
@@ -101,7 +100,7 @@ class AdminController {
     try {
       const { newRole } = req.body;
 
-      const validRoles = ['Admin', 'Seller', 'Buyer'];
+      const validRoles = ['Admin', 'Buyer'];
       if (!newRole || !validRoles.includes(newRole)) {
         throw new BadRequestError('Invalid role');
       }
@@ -188,7 +187,7 @@ class AdminController {
         orderBy: { createdAt: 'desc' },
         include: {
           category: { select: { id: true, name: true } },
-          seller: { select: { id: true, fullName: true } },
+
           images: { orderBy: { sortOrder: 'asc' }, take: 1 }
         }
       };
@@ -203,7 +202,7 @@ class AdminController {
       const mapped = products.map(p => ({
         ...p,
         categoryName: p.category?.name || null,
-        sellerName: p.seller?.fullName || null,
+        sellerName: null,
         imageUrl: p.images?.[0]?.url ?? null
       }));
       res.json(mapped);

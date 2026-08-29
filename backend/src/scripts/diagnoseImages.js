@@ -1,59 +1,64 @@
-/**
- * diagnoseImages.js
- * Run: node src/scripts/diagnoseImages.js
- * Lists products missing images and shows the ديفا product detail.
- */
+const axios = require('axios');
+const cloudinary = require('cloudinary').v2;
 const { PrismaClient } = require('@prisma/client');
+require('dotenv').config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 const prisma = new PrismaClient();
 
-async function main() {
-  // 1) Search for دیفا / ديفا
-  const diva = await prisma.product.findMany({
-    where: { title: { contains: 'ديفا', mode: 'insensitive' } },
-    include: { images: { orderBy: { sortOrder: 'asc' } } },
+async function uploadBuffer(buffer, folder = 'products') {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: 'image', format: 'jpg', quality: 'auto' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
   });
+}
 
-  console.log('\n===== Search: ديفا =====');
-  if (diva.length === 0) {
-    console.log('No product found with title containing "ديفا"');
-  } else {
-    for (const p of diva) {
-      console.log(`\nProduct: ${p.title}`);
-      console.log(`  ID:     ${p.id}`);
-      console.log(`  Slug:   ${p.slug}`);
-      console.log(`  Status: ${p.status}`);
-      console.log(`  Images (${p.images.length}):`);
-      p.images.forEach((img, i) => {
-        console.log(`    [${i}] isPrimary=${img.isPrimary} sortOrder=${img.sortOrder}`);
-        console.log(`        url=${img.url}`);
-      });
-    }
+async function fixBrokenImage(id, url) {
+  try {
+    console.log('Downloading from cache:', url);
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    const buffer = Buffer.from(response.data);
+    console.log('Downloaded bytes:', buffer.length);
+    
+    console.log('Uploading to Cloudinary...');
+    const newUrl = await uploadBuffer(buffer, 'products');
+    console.log('New URL:', newUrl);
+    
+    await prisma.productImage.update({
+      where: { id },
+      data: { url: newUrl }
+    });
+    console.log('Database updated successfully!');
+  } catch (err) {
+    console.error('Error fixing image', url, err.message);
   }
+}
 
-  // 2) Products with NO images at all
-  const noImages = await prisma.product.findMany({
-    where: {
-      status: 'Active',
-      images: { none: {} },
-    },
-    select: { id: true, title: true, slug: true },
-    take: 20,
+async function main() {
+  const diva = await prisma.product.findFirst({
+    where: { title: { contains: 'ديفا' } },
+    include: { images: true }
   });
-
-  console.log(`\n===== Active products with 0 images: ${noImages.length} =====`);
-  noImages.forEach(p => console.log(`  - ${p.title} (${p.slug})`));
-
-  // 3) Products where isPrimary is set on NONE of their images
-  const allWithImages = await prisma.product.findMany({
-    where: { status: 'Active', images: { some: {} } },
-    include: { images: { select: { isPrimary: true } } },
-    select: { id: true, title: true, images: true },
-  });
-  const noPrimary = allWithImages.filter(p => !p.images.some(img => img.isPrimary));
-  console.log(`\n===== Active products with images but NO isPrimary=true: ${noPrimary.length} =====`);
-  noPrimary.forEach(p => console.log(`  - ${p.title} (${p.images.length} images, none primary)`));
-
+  
+  if (diva) {
+    for (const img of diva.images) {
+      await fixBrokenImage(img.id, img.url);
+    }
+  } else {
+    console.log("No product found");
+  }
   await prisma.$disconnect();
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main().catch(console.error);

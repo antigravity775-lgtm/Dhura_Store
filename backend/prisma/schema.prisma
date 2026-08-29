@@ -51,7 +51,6 @@ datasource db {
 
 enum Role {
   Admin
-  Seller
   Buyer
 }
 
@@ -166,13 +165,14 @@ model User {
   passwordHash String
   role         Role      @default(Buyer)
   city         String?
+  address      String?
+  locationUrl  String?
   isVerified   Boolean   @default(false)
   isBlocked    Boolean   @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
   orders        Order[]        @relation("BuyerOrders")
-  products      Product[]      @relation("SellerProducts")
   cartItems     CartItem[]
   favorites     Favorite[]
   auditLogs     AuditLog[]
@@ -402,12 +402,10 @@ model Product {
 
   // Foreign keys
   categoryId String  @db.Uuid
-  sellerId   String  @db.Uuid
   brandId    String? @db.Uuid
 
   // Relations
   category   Category @relation("CategoryProducts", fields: [categoryId], references: [id])
-  seller     User     @relation("SellerProducts", fields: [sellerId], references: [id])
   brand      Brand?   @relation(fields: [brandId], references: [id], onDelete: SetNull)
 
   // Product sub-entities (all cascade-delete with the product)
@@ -428,8 +426,6 @@ model Product {
   @@index([slug])
   // Homepage: active promoted products, newest first
   @@index([status, isPromoted, createdAt(sort: Desc)])
-  // Seller dashboard: seller's products, newest first
-  @@index([sellerId, createdAt(sort: Desc)])
   // Category page: products in a category by status, then price
   @@index([categoryId, status, price])
   // Brand page: products by brand and status

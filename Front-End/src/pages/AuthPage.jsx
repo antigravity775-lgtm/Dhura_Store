@@ -77,6 +77,8 @@ const AuthPage = () => {
     name: "",
     phoneNumber: "",
     city: "",
+    address: "",
+    locationUrl: "",
     role: 3,
   });
 
@@ -141,7 +143,8 @@ const AuthPage = () => {
           phoneNumber: form.phoneNumber.trim(),
           password: form.password,
           city: form.city,
-          role: parseInt(form.role, 10),
+          address: form.address,
+          locationUrl: form.locationUrl || null,
         });
       }
       navigate("/", { replace: true });
@@ -411,31 +414,52 @@ const AuthPage = () => {
                             </div>
                           </div>
 
+                          {/* العنوان التفصيلي */}
                           <div>
-                            <label className="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
-                              نوع الحساب
+                            <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                              العنوان التفصيلي
                             </label>
-                            <div className="grid grid-cols-2 gap-2">
-                              {[
-                                { value: 3, label: "مشتري", icon: User },
-                                { value: 2, label: "بائع", icon: Store },
-                              ].map(({ value, label, icon: Icon }) => (
-                                <button
-                                  key={value}
-                                  type="button"
-                                  onClick={() => setForm((f) => ({ ...f, role: value }))}
-                                  className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-bold transition-all ${
-                                    form.role === value
-                                      ? "bg-gold-500/15 border-gold-400/50 text-gold-300"
-                                      : "bg-white/[0.03] border-white/10 text-white/50 hover:border-white/20"
-                                  }`}
-                                >
-                                  <Icon className="w-4 h-4" />
-                                  {label}
-                                </button>
-                              ))}
+                            <div className="relative group">
+                              <div className="absolute top-3.5 right-0 pr-4 flex items-center pointer-events-none">
+                                <MapPin className="w-5 h-5 text-white/25 group-focus-within:text-gold-400/80 transition-colors" />
+                              </div>
+                              <textarea
+                                name="address"
+                                value={form.address}
+                                onChange={handleChange}
+                                required
+                                rows={2}
+                                placeholder="الحي ، الشارع ، أمام مدرسة ..."
+                                className={`${inputClass} pr-12 resize-none`}
+                              />
                             </div>
                           </div>
+
+                          {/* رابط خريطة Google - اختياري */}
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                              رابط خريطة Google{" "}
+                              <span className="text-white/20 normal-case font-normal">اختياري</span>
+                            </label>
+                            <div className="relative group">
+                              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                <svg className="w-5 h-5 text-white/25 group-focus-within:text-gold-400/80 transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                              </div>
+                              <input
+                                type="url"
+                                name="locationUrl"
+                                value={form.locationUrl}
+                                onChange={handleChange}
+                                dir="ltr"
+                                placeholder="https://maps.google.com/..."
+                                className={`${inputClass} pr-12 text-left`}
+                              />
+                            </div>
+                            <p className="text-[10px] text-white/20 mt-1">افتح خريطة Google وشارك موقعك لتسهيل التوصيل</p>
+                          </div>
+
                         </>
                       )}
 

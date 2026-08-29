@@ -45,7 +45,7 @@ const desktopNavLinks = [
   { to: "/products?promoted=true", label: "العروض" },
 ];
 const Layout = React.memo(({ children }) => {
-  const { user, isAuthenticated, isSeller, isAdmin, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { cartCount } = useCart();
   const { favoritesCount } = useFavorites();
   const { isDark, toggleTheme } = useTheme();
@@ -318,19 +318,8 @@ const Layout = React.memo(({ children }) => {
                 </Link>
               )}
 
-              {/* لوحة البائع / Seller Panel */}
-              {isSeller && !isAdmin && (
-                <Link
-                  to="/seller"
-                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gold-50 dark:hover:bg-gold-900/30 hover:border-gold-300 dark:hover:border-gold-700 hover:text-gold-700 dark:hover:text-gold-300 hover:shadow-sm transition-all"
-                >
-                  <Store className="w-4 h-4" />
-                  لوحة البائع
-                </Link>
-              )}
-
               {/* طلباتي / My Orders */}
-              {isAuthenticated && (!isSeller || isAdmin) && (
+              {isAuthenticated && (
                 <Link
                   to="/my-orders"
                   className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gold-50 dark:hover:bg-gold-900/30 hover:border-gold-300 dark:hover:border-gold-700 hover:text-gold-700 dark:hover:text-gold-300 hover:shadow-sm transition-all"
@@ -476,19 +465,14 @@ const Layout = React.memo(({ children }) => {
                   <Settings className="w-5 h-5 text-slate-400" /> الإعدادات
                 </Link>
 
-                {/* Admin/Seller Dashboards (Keep for specific users) */}
-                {(isAdmin || isSeller) && (
-                  <div className="h-px bg-gray-100 dark:bg-slate-800 my-1 mx-2"></div>
-                )}
+                {/* Admin Dashboard */}
                 {isAdmin && (
-                  <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl transition-colors">
-                    <Crown className="w-5 h-5" /> لوحة المسؤول
-                  </Link>
-                )}
-                {isSeller && !isAdmin && (
-                  <Link to="/seller" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
-                    <Store className="w-5 h-5" /> لوحة البائع
-                  </Link>
+                  <>
+                    <div className="h-px bg-gray-100 dark:bg-slate-800 my-1 mx-2"></div>
+                    <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl transition-colors">
+                      <Crown className="w-5 h-5" /> لوحة المسؤول
+                    </Link>
+                  </>
                 )}
 
                 {/* Auth actions */}

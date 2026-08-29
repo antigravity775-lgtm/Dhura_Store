@@ -22,11 +22,18 @@ export const AuthProvider = ({ children }) => {
         phoneNumber: profile.phoneNumber,
         email: profile.email,
         city: profile.city,
+        address: profile.address,
+        locationUrl: profile.locationUrl,
         role: profile.role,
       });
-    } catch {
-      // API call failed (e.g., 401 Unauthorized), so user is not logged in.
-      setUser(null);
+    } catch (err) {
+      // Only log the user out on explicit authentication failures (401/403).
+      // Network errors, 500s, or Prisma errors must NOT clear a valid session.
+      const status = err?.status ?? err?.response?.status;
+      if (status === 401 || status === 403) {
+        setUser(null);
+      }
+      // For any other error, keep existing user state intact.
     } finally {
       setLoading(false);
     }
@@ -38,20 +45,17 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (phoneNumber, password) => {
     const result = await api.login(phoneNumber, password);
-    // Set user immediately from login result — don't depend on getProfile()
-    // because the HttpOnly cookie may not be forwarded on the very next
-    // cross-origin request in some browser/Vercel configurations.
     setUser({
       id: result.userId,
       fullName: result.fullName,
       email: result.email,
       role: result.role,
       city: result.city,
+      address: result.address,
+      locationUrl: result.locationUrl,
     });
     localStorage.setItem('user_name', result.fullName);
     localStorage.setItem('user_id', result.userId);
-    // Sync full profile in background to refresh any extra fields
-    checkAuthStatus().catch(() => {});
     return result;
   };
 
@@ -63,10 +67,11 @@ export const AuthProvider = ({ children }) => {
       email: result.email,
       role: result.role,
       city: result.city,
+      address: result.address,
+      locationUrl: result.locationUrl,
     });
     localStorage.setItem('user_name', result.fullName);
     localStorage.setItem('user_id', result.userId);
-    checkAuthStatus().catch(() => {});
     return result;
   };
 
@@ -82,13 +87,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAuthenticated = !!user;
-  const isSeller = user?.role === 'Seller' || user?.role === 'Admin';
   const isBuyer = user?.role === 'Buyer' || user?.role === 'Admin';
   const isAdmin = user?.role === 'Admin';
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, isAuthenticated, isSeller, isBuyer, isAdmin, checkAuthStatus }}
+      value={{ user, loading, login, register, logout, isAuthenticated, isBuyer, isAdmin, checkAuthStatus }}
     >
       {children}
     </AuthContext.Provider>

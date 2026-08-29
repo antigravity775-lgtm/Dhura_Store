@@ -247,7 +247,7 @@ async function getRobots(req, res) {
 Allow: /
 
 Disallow: /admin
-Disallow: /seller
+
 Disallow: /profile
 Disallow: /my-orders
 Disallow: /cart

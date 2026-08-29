@@ -10,10 +10,10 @@ import * as api from '../services/api';
 const cities = ['صنعاء', 'عدن', 'تعز', 'إب', 'المكلا', 'الحديدة', 'ذمار', 'حجة', 'صعدة', 'مأرب'];
 
 const ProfilePage = () => {
-  const { user, isAuthenticated, loading: authLoading, loadUserFromToken } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, checkAuthStatus } = useAuth();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ fullName: '', email: '', city: '' });
+  const [form, setForm] = useState({ fullName: '', email: '', city: '', address: '', locationUrl: '' });
   const [preferredCurrency, setPreferredCurrency] = useState(() => {
     return localStorage.getItem('preferred_currency') || 'YER';
   });
@@ -45,6 +45,8 @@ const ProfilePage = () => {
             fullName: profile.fullName || '',
             email: profile.email || '',
             city: profile.city || '',
+            address: profile.address || '',
+            locationUrl: profile.locationUrl || '',
           });
         }
       } catch {
@@ -54,6 +56,8 @@ const ProfilePage = () => {
             fullName: user.fullName || '',
             email: user.email || '',
             city: user.city || '',
+            address: user.address || '',
+            locationUrl: user.locationUrl || '',
           });
         }
       }
@@ -87,8 +91,10 @@ const ProfilePage = () => {
         fullName: form.fullName,
         email: form.email || '',
         city: form.city,
+        address: form.address || '',
+        locationUrl: form.locationUrl || null,
       });
-      await loadUserFromToken();
+      await checkAuthStatus();
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -231,7 +237,55 @@ const ProfilePage = () => {
                   </select>
                 </div>
               </div>
-            </div>
+
+              {/* العنوان التفصيلي */}
+              <div>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">العنوان التفصيلي</label>
+                <div className="relative">
+                  <div className="absolute top-3.5 right-0 pr-4 flex items-center pointer-events-none">
+                    <MapPin className="w-5 h-5 text-slate-400" />
+                  </div>
+                  <textarea
+                    name="address"
+                    value={form.address}
+                    onChange={handleChange}
+                    rows={2}
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 focus:bg-white dark:focus:bg-slate-700 transition-all resize-none"
+                    placeholder="الحي، الشارع، أمام مدرسة ..."
+                  />
+                </div>
+              </div>
+
+              {/* رابط خريطة Google - اختياري */}
+              <div>
+                <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">
+                  رابط خريطة Google
+                  <span className="text-slate-400 text-xs font-normal mr-2">(اختياري)</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <svg className="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                  </div>
+                  <input
+                    type="url"
+                    name="locationUrl"
+                    value={form.locationUrl}
+                    onChange={handleChange}
+                    dir="ltr"
+                    placeholder="https://maps.google.com/..."
+                    className="w-full pr-12 pl-4 py-3.5 rounded-xl bg-bone dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm text-left focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-400 focus:bg-white dark:focus:bg-slate-700 transition-all"
+                  />
+                </div>
+                {form.locationUrl && (
+                  <a href={form.locationUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-gold-500 hover:text-gold-400 mt-1.5 inline-flex items-center gap-1">
+                    عرض الموقع على الخريطة ←
+                  </a>
+                )}
+              </div>
+
+            </div>{/* end space-y-6 personal info section */}
 
             {/* خط فاصل */}
             <div className="border-t border-slate-100 dark:border-slate-700"></div>
@@ -281,9 +335,9 @@ const ProfilePage = () => {
               <div>
                 <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">نوع الحساب</label>
                 <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                  <span className={`w-2.5 h-2.5 rounded-full ${user?.role === 'Seller' ? 'bg-gold-400' : 'bg-green-400'}`}></span>
+                  <span className={`w-2.5 h-2.5 rounded-full ${user?.role === 'Admin' ? 'bg-purple-400' : 'bg-green-400'}`}></span>
                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    {user?.role === 'Seller' ? 'بائع' : user?.role === 'Admin' ? 'مدير' : 'مشتري'}
+                    {user?.role === 'Admin' ? 'مسؤول' : 'مشتري'}
                   </span>
                 </div>
               </div>

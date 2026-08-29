@@ -246,7 +246,6 @@ class ProductService {
         },
         include: {
           category: { select: { name: true } },
-          seller: { select: { fullName: true, city: true, isVerified: true } },
           images: { orderBy: { sortOrder: 'asc' } },
           brand: { select: { name: true, slug: true, logoUrl: true } },
         },
@@ -262,15 +261,11 @@ class ProductService {
   }
 
   async getProducts(filters, pagination) {
-    const { city, maxPriceUsd, condition, specialOffers, search, categoryName, categoryId, brandId, attributes: attrFilters } = filters;
+    const { maxPriceUsd, condition, specialOffers, search, categoryName, categoryId, brandId, attributes: attrFilters } = filters;
     const { pageNumber = 1, pageSize = 10 } = pagination;
 
     // Use status instead of deprecated isHidden
     const where = { status: 'Active' };
-
-    if (city) {
-      where.seller = { city: { mode: 'insensitive', equals: city } };
-    }
 
     const conditionMap = { 1: 'New', 2: 'Used', 3: 'Refurbished' };
     if (condition !== undefined) {
@@ -333,7 +328,7 @@ class ProductService {
       where,
       include: {
         category: { select: { name: true } },
-        seller: { select: { fullName: true, city: true, isVerified: true } },
+
         // Fetch first image by sortOrder — avoids blank cards when isPrimary is unset
         images: { orderBy: { sortOrder: 'asc' }, take: 1 },
         brand: { select: { name: true, slug: true } },
@@ -361,7 +356,6 @@ class ProductService {
       where: { id },
       include: {
         category: { select: { name: true, slug: true } },
-        seller: { select: { fullName: true, city: true, isVerified: true } },
         images: { orderBy: { sortOrder: 'asc' } },
         brand: { select: { name: true, slug: true, logoUrl: true } },
         attributes: {
@@ -404,7 +398,7 @@ class ProductService {
             parent: { select: { name: true, slug: true } },
           },
         },
-        seller: { select: { fullName: true, city: true, isVerified: true } },
+
         images: { orderBy: { sortOrder: 'asc' } },
         brand: { select: { name: true, slug: true, logoUrl: true } },
         attributes: {
@@ -441,7 +435,7 @@ class ProductService {
   }
 
   async updateProduct(id, updateData) {
-    const { id: _, createdAt: __, sellerId: ___, variants, ...dataToUpdate } = updateData;
+    const { id: _, createdAt: __, variants, ...dataToUpdate } = updateData;
 
     if (dataToUpdate.title) {
       dataToUpdate.slug = await generateUniqueSlug(dataToUpdate.title, prisma, id);
@@ -501,8 +495,15 @@ class ProductService {
 
       if (rawImgs.length > 0 || explicitClear) {
         const existingImages = await prisma.productImage.findMany({ where: { productId: id }, select: { url: true } });
+        
+        // Find which images were actually removed by the user
+        const newImageUrls = new Set(rawImgs.map(img => img.url));
+        const imagesToDeleteFromCloud = existingImages.filter(img => !newImageUrls.has(img.url));
+
         await prisma.productImage.deleteMany({ where: { productId: id } });
-        Promise.all(existingImages.map(img => deleteByUrl(img.url))).catch(err =>
+        
+        // Only delete from Cloudinary the images that are no longer in the product gallery
+        Promise.all(imagesToDeleteFromCloud.map(img => deleteByUrl(img.url))).catch(err =>
           console.error('[Cloudinary] Batch delete on product update failed:', err.message)
         );
         if (rawImgs.length > 0) {
@@ -636,10 +637,9 @@ class ProductService {
         where: { id },
         data: dataToUpdate,
         include: {
-          category: { select: { name: true } },
-          seller: { select: { fullName: true, city: true, isVerified: true } },
+          category: { select: { name: true, slug: true } },
+          brand: { select: { name: true, slug: true, logoUrl: true } },
           images: { orderBy: { sortOrder: 'asc' } },
-          brand: { select: { name: true, slug: true } },
           variants: true,
         },
       });
@@ -673,24 +673,7 @@ class ProductService {
     });
   }
 
-  async getMyProducts(sellerId) {
-    const products = await prisma.product.findMany({
-      where: { sellerId },
-      include: {
-        category: { select: { name: true } },
-        seller: { select: { fullName: true, city: true, isVerified: true } },
-        // Fetch first image by sortOrder — avoids blank cards when isPrimary is unset
-        images: { orderBy: { sortOrder: 'asc' }, take: 1 },
-        brand: { select: { name: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-    return products.map(p => ({
-      ...p,
-      categoryName: p.category?.name || null,
-      imageUrl: p.images?.[0]?.url ?? p.mainImageUrl ?? null,
-    }));
-  }
+
 
   async addProductImage(productId, { url, altText, isPrimary = false, sortOrder }) {
     if (isPrimary) {

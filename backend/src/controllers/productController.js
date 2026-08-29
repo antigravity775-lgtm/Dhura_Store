@@ -50,10 +50,8 @@ class ProductController {
       }
 
       if (product.status !== 'Active') {
-        const userId = req.user?.id;
-        const isOwner = userId && product.sellerId === userId;
         const isAdmin = req.user?.role === 'Admin';
-        if (!isOwner && !isAdmin) {
+        if (!isAdmin) {
           res.status(404);
           throw new Error('Product not found');
         }
@@ -78,10 +76,8 @@ class ProductController {
       }
 
       if (product.status !== 'Active') {
-        const userId = req.user?.id;
-        const isOwner = userId && product.sellerId === userId;
         const isAdmin = req.user?.role === 'Admin';
-        if (!isOwner && !isAdmin) {
+        if (!isAdmin) {
           res.status(404);
           throw new Error('Product not found');
         }
@@ -99,13 +95,8 @@ class ProductController {
    */
   async createProduct(req, res) {
     try {
-      // Inject sellerId from user token if not provided or if not admin
-      if (req.user?.role !== 'Admin' || !req.body.sellerId) {
-        req.body.sellerId = req.user?.id;
-      }
-
       // Validate required fields
-      const requiredFields = ['title', 'description', 'price', 'currency', 'condition', 'stockQuantity', 'categoryId', 'sellerId'];
+      const requiredFields = ['title', 'description', 'price', 'currency', 'condition', 'stockQuantity', 'categoryId'];
       for (const field of requiredFields) {
         if (!req.body[field]) {
           throw new ValidationError(`${field} is required`);
@@ -133,11 +124,8 @@ class ProductController {
 
       // Verify ownership
       if (req.user?.role !== 'Admin') {
-        const product = await this.productService.getProductById(req.params.id);
-        if (!product || product.sellerId !== req.user.id) {
-          res.status(403);
-          throw new Error('Forbidden: You can only modify your own products');
-        }
+        res.status(403);
+        throw new Error('Forbidden: Admin only');
       }
 
       const updated = await this.productService.updateProduct(req.params.id, req.body);
@@ -155,11 +143,8 @@ class ProductController {
     try {
       // Verify ownership
       if (req.user?.role !== 'Admin') {
-        const product = await this.productService.getProductById(req.params.id);
-        if (!product || product.sellerId !== req.user.id) {
-          res.status(403);
-          throw new Error('Forbidden: You can only delete your own products');
-        }
+        res.status(403);
+        throw new Error('Forbidden: Admin only');
       }
 
       await this.productService.deleteProduct(req.params.id);
@@ -177,11 +162,8 @@ class ProductController {
     try {
       // Verify ownership
       if (req.user?.role !== 'Admin') {
-        const product = await this.productService.getProductById(req.params.id);
-        if (!product || product.sellerId !== req.user.id) {
-          res.status(403);
-          throw new Error('Forbidden: You can only modify your own products');
-        }
+        res.status(403);
+        throw new Error('Forbidden: Admin only');
       }
 
       await this.productService.toggleVisibility(req.params.id);
@@ -191,24 +173,7 @@ class ProductController {
     }
   }
 
-  /**
-   * Get seller's products
-   * GET /api/products/my-products
-   */
-  async getMyProducts(req, res) {
-    try {
-      let sellerId = req.user.id;
 
-      if (req.user.role === 'Admin' && req.query.sellerId) {
-        sellerId = req.query.sellerId;
-      }
-
-      const products = await this.productService.getMyProducts(sellerId);
-      res.json(products);
-    } catch (error) {
-      throw error;
-    }
-  }
 
   /**
    * Upload product image
@@ -247,11 +212,8 @@ class ProductController {
       }
       // Verify ownership
       if (req.user?.role !== 'Admin') {
-        const product = await this.productService.getProductById(req.params.id);
-        if (!product || product.sellerId !== req.user.id) {
-          res.status(403);
-          throw new Error('Forbidden');
-        }
+        res.status(403);
+        throw new Error('Forbidden');
       }
       const image = await this.productService.addProductImage(req.params.id, {
         url, altText, isPrimary: isPrimary === true, sortOrder: sortOrder ?? 0,
@@ -282,11 +244,8 @@ class ProductController {
   async deleteProductImage(req, res) {
     try {
       if (req.user?.role !== 'Admin') {
-        const product = await this.productService.getProductById(req.params.id);
-        if (!product || product.sellerId !== req.user.id) {
-          res.status(403);
-          throw new Error('Forbidden');
-        }
+        res.status(403);
+        throw new Error('Forbidden');
       }
       await this.productService.deleteProductImage(req.params.id, req.params.imageId);
       res.status(204).send();
@@ -302,11 +261,8 @@ class ProductController {
   async setImagePrimary(req, res) {
     try {
       if (req.user?.role !== 'Admin') {
-        const product = await this.productService.getProductById(req.params.id);
-        if (!product || product.sellerId !== req.user.id) {
-          res.status(403);
-          throw new Error('Forbidden');
-        }
+        res.status(403);
+        throw new Error('Forbidden');
       }
       const updated = await this.productService.setImagePrimary(req.params.id, req.params.imageId);
       res.json(updated);
@@ -323,11 +279,8 @@ class ProductController {
   async reorderImages(req, res) {
     try {
       if (req.user?.role !== 'Admin') {
-        const product = await this.productService.getProductById(req.params.id);
-        if (!product || product.sellerId !== req.user.id) {
-          res.status(403);
-          throw new Error('Forbidden');
-        }
+        res.status(403);
+        throw new Error('Forbidden');
       }
       const { orderedIds } = req.body;
       if (!Array.isArray(orderedIds)) {

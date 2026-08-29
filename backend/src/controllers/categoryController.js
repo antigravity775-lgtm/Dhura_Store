@@ -104,7 +104,7 @@ class CategoryController {
       const products = await prisma.product.findMany({
         where: { categoryId, status: 'Active' },
         include: {
-          seller: { select: { id: true, fullName: true, city: true, isVerified: true } },
+
           images: { orderBy: { sortOrder: 'asc' }, take: 1 },
           brand: { select: { name: true } },
         },

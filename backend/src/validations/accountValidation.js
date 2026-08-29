@@ -16,7 +16,18 @@ const registerSchema = Joi.object({
     'string.min': 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
     'any.required': 'كلمة المرور مطلوبة'
   }),
-  city: Joi.string().allow('', null).optional()
+  city: Joi.string().required().messages({
+    'string.empty': 'المدينة مطلوبة',
+    'any.required': 'المدينة مطلوبة'
+  }),
+  address: Joi.string().min(5).max(500).required().messages({
+    'string.empty': 'العنوان التفصيلي مطلوب',
+    'string.min': 'العنوان يجب أن يكون 5 أحرف على الأقل',
+    'any.required': 'العنوان التفصيلي مطلوب'
+  }),
+  locationUrl: Joi.string().uri().allow('', null).optional().messages({
+    'string.uri': 'رابط خريطة Google غير صالح'
+  })
 });
 
 const loginSchema = Joi.object({
@@ -29,6 +40,8 @@ const updateProfileSchema = Joi.object({
   email: Joi.string().email().optional(),
   phoneNumber: Joi.string().allow('', null).optional(),
   city: Joi.string().allow('', null).optional(),
+  address: Joi.string().min(5).max(500).allow('', null).optional(),
+  locationUrl: Joi.string().uri().allow('', null).optional(),
   userId: Joi.string().optional()
 });
 

@@ -201,46 +201,7 @@ class OrderController {
     }
   }
 
-  /**
-   * Get seller's sales
-   * GET /api/orders/sales
-   */
-  async getSales(req, res) {
-    try {
-      const userId = req.user?.id;
-      if (!userId) throw new UnauthorizedError('Unauthorized');
 
-      // Find orders that contain products sold by this seller
-      const orders = await prisma.order.findMany({
-        where: {
-          orderItems: {
-            some: {
-              product: { sellerId: userId }
-            }
-          }
-        },
-        include: {
-          buyer: { select: { id: true, fullName: true, phoneNumber: true } },
-          orderItems: {
-            where: {
-              product: { sellerId: userId }
-            },
-            include: {
-              product: {
-                select: { id: true, title: true, slug: true, currency: true, condition: true, status: true,
-                  images: { where: { isPrimary: true }, take: 1 } }
-              }
-            }
-          }
-        },
-        orderBy: { orderDate: 'desc' }
-      });
-
-      res.json(orders);
-    } catch (error) {
-      throw error;
-    }
-  }
 
   /**
    * Get all orders (Admin only)

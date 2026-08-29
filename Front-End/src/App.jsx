@@ -14,7 +14,6 @@ import ScrollToTop from "./components/ScrollToTop";
 const ProductDetailsPage = React.lazy(
   () => import("./pages/ProductDetailsPage"),
 );
-const SellerDashboard = React.lazy(() => import("./pages/SellerDashboard"));
 const AdminDashboard = React.lazy(() => import("./pages/AdminDashboard"));
 const AuthPage = React.lazy(() => import("./pages/AuthPage"));
 const CartPage = React.lazy(() => import("./pages/CartPage"));
@@ -109,14 +108,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/seller"
-            element={
-              <ProtectedRoute allowedRoles={["Seller", "Admin"]}>
-                <SellerDashboard />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="/my-orders"
             element={

@@ -41,6 +41,9 @@ const AdminUsersTab = ({ users, usersLoading, handleBlockUser, handleChangeRole,
       'الاسم': user.fullName,
       'رقم الهاتف': user.phoneNumber,
       'البريد الإلكتروني': user.email,
+      'المدينة': user.city || '',
+      'العنوان التفصيلي': user.address || '',
+      'رابط الخريطة': user.locationUrl || '',
       'الدور': user.role,
       'تاريخ التسجيل': new Date(user.createdAt).toLocaleDateString("ar-EG"),
       'الحالة': user.isBlocked ? 'محظور' : 'نشط',
@@ -55,15 +58,14 @@ const AdminUsersTab = ({ users, usersLoading, handleBlockUser, handleChangeRole,
   const getRoleBadge = (role) => {
     const styles = {
       Admin: "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800",
-      Seller: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
       Buyer: "bg-bone text-slate-600 border-slate-200 dark:bg-slate-800/80 dark:text-slate-300 dark:border-slate-700",
     };
-    const labels = { Admin: "مسؤول", Seller: "بائع", Buyer: "مشتري" };
+    const labels = { Admin: "مسؤول", Buyer: "مشتري" };
     return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${styles[role] || styles.Buyer}`}>{labels[role] || role}</span>;
   };
 
-  const roleOptions = ['Buyer', 'Seller', 'Admin'];
-  const roleLabels = { Buyer: 'مشتري', Seller: 'بائع', Admin: 'مسؤول' };
+  const roleOptions = ['Buyer', 'Admin'];
+  const roleLabels = { Buyer: 'مشتري', Admin: 'مسؤول' };
 
   return (
     <div>

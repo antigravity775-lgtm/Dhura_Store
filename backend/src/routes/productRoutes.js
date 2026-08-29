@@ -13,24 +13,23 @@ const { idParamSchema } = require('../validations/commonValidation');
 router.get('/', asyncHandler(productController.getProducts.bind(productController)));
 
 // Protected routes (require authentication)
-router.post('/', protect, authorize('Seller', 'Admin'), validate(createProductSchema), asyncHandler(productController.createProduct.bind(productController)));
-router.post('/upload-image', protect, authorize('Seller', 'Admin'), uploadLimiter, imageUpload.single('file'), asyncHandler(productController.uploadImage.bind(productController)));
-router.get('/my-products', protect, authorize('Seller', 'Admin'), asyncHandler(productController.getMyProducts.bind(productController)));
+router.post('/', protect, authorize('Admin'), validate(createProductSchema), asyncHandler(productController.createProduct.bind(productController)));
+router.post('/upload-image', protect, authorize('Admin'), uploadLimiter, imageUpload.single('file'), asyncHandler(productController.uploadImage.bind(productController)));
 
 // SEO slug route — MUST come before :id wildcard
 router.get('/by-slug/:slug', optionalProtect, asyncHandler(productController.getProductBySlug.bind(productController)));
 
 // :id wildcard MUST come AFTER literal routes like /my-products
 router.get('/:id', optionalProtect, validate(idParamSchema, 'params'), asyncHandler(productController.getProductById.bind(productController)));
-router.put('/:id', protect, authorize('Seller', 'Admin'), validate(idParamSchema, 'params'), validate(updateProductSchema), asyncHandler(productController.updateProduct.bind(productController)));
-router.delete('/:id', protect, authorize('Seller', 'Admin'), validate(idParamSchema, 'params'), asyncHandler(productController.deleteProduct.bind(productController)));
-router.patch('/:id/toggle-visibility', protect, authorize('Seller', 'Admin'), validate(idParamSchema, 'params'), asyncHandler(productController.toggleVisibility.bind(productController)));
+router.put('/:id', protect, authorize('Admin'), validate(idParamSchema, 'params'), validate(updateProductSchema), asyncHandler(productController.updateProduct.bind(productController)));
+router.delete('/:id', protect, authorize('Admin'), validate(idParamSchema, 'params'), asyncHandler(productController.deleteProduct.bind(productController)));
+router.patch('/:id/toggle-visibility', protect, authorize('Admin'), validate(idParamSchema, 'params'), asyncHandler(productController.toggleVisibility.bind(productController)));
 
 // Product image gallery management
 router.get('/:id/images', asyncHandler(productController.getProductImages.bind(productController)));
-router.post('/:id/images', protect, authorize('Seller', 'Admin'), asyncHandler(productController.addProductImage.bind(productController)));
-router.put('/:id/images/reorder', protect, authorize('Seller', 'Admin'), asyncHandler(productController.reorderImages.bind(productController)));
-router.patch('/:id/images/:imageId/primary', protect, authorize('Seller', 'Admin'), asyncHandler(productController.setImagePrimary.bind(productController)));
-router.delete('/:id/images/:imageId', protect, authorize('Seller', 'Admin'), asyncHandler(productController.deleteProductImage.bind(productController)));
+router.post('/:id/images', protect, authorize('Admin'), asyncHandler(productController.addProductImage.bind(productController)));
+router.put('/:id/images/reorder', protect, authorize('Admin'), asyncHandler(productController.reorderImages.bind(productController)));
+router.patch('/:id/images/:imageId/primary', protect, authorize('Admin'), asyncHandler(productController.setImagePrimary.bind(productController)));
+router.delete('/:id/images/:imageId', protect, authorize('Admin'), asyncHandler(productController.deleteProductImage.bind(productController)));
 
 module.exports = router;

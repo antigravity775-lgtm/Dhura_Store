@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const changeRoleSchema = Joi.object({
-  newRole: Joi.string().valid('Admin', 'Seller', 'Buyer').required()
+  newRole: Joi.string().valid('Admin', 'Buyer').required()
 });
 
 const updateOrderStatusSchema = Joi.object({
