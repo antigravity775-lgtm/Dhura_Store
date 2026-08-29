@@ -166,10 +166,10 @@ const Footer = ({ storeInfo }) => {
             <Link to="/" className="inline-flex items-center gap-2.5 mb-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/50 rounded-lg">
               <img
                 src={logo}
-                alt="شعار GISAAH"
+                alt="شعار TEEB"
                 width="36"
                 height="36"
-                className="w-9 h-9 rounded-lg bg-white object-cover object-center scale-[1.12] border border-gold-200/80 dark:border-gold-800/60 shadow-sm"
+                className="w-9 h-9 rounded-lg object-contain border border-gold-200/80 dark:border-gold-800/60 shadow-sm"
                 loading="lazy"
               />
               <span className="font-extrabold text-slate-900 dark:text-white text-base tracking-tight">

@@ -193,8 +193,8 @@ const AuthPage = () => {
 
           <div className="relative z-10">
             <Link to="/" className="inline-flex items-center gap-3 group">
-              <div className="w-12 h-12 rounded-2xl bg-white overflow-hidden ring-2 ring-gold-400/40 shadow-lg shadow-gold-500/20">
-                <img src={logo} alt="TEEB" className="w-full h-full object-cover scale-[1.14]" />
+              <div className="w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-gold-400/40 shadow-lg shadow-gold-500/20">
+                <img src={logo} alt="TEEB" className="w-full h-full object-contain" />
               </div>
               <span className="text-2xl font-black tracking-tight">TEEB</span>
             </Link>
@@ -267,8 +267,8 @@ const AuthPage = () => {
             {/* Mobile logo */}
             <div className="lg:hidden text-center mb-8">
               <Link to="/" className="inline-flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-2xl bg-white overflow-hidden ring-2 ring-gold-400/50 shadow-xl shadow-gold-500/20">
-                  <img src={logo} alt="TEEB" className="w-full h-full object-cover scale-[1.14]" />
+                <div className="w-16 h-16 rounded-2xl overflow-hidden ring-2 ring-gold-400/50 shadow-xl shadow-gold-500/20">
+                  <img src={logo} alt="TEEB" className="w-full h-full object-contain" />
                 </div>
                 <span className="text-2xl font-black">TEEB</span>
                 <p className="text-sm text-slate-400">

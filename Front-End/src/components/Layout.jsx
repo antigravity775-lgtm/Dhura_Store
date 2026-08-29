@@ -38,6 +38,11 @@ import { useLocation } from "react-router-dom";
 
 const logo = "/Logo_192.png";
 
+const brandEnClass =
+  "whitespace-nowrap font-serif leading-none tracking-wider lg:tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm";
+const brandArClass =
+  "whitespace-nowrap font-serif leading-none tracking-wider lg:tracking-widest text-slate-900 dark:text-white font-bold drop-shadow-sm";
+
 const desktopNavLinks = [
   { to: "/", label: "الرئيسية" },
   { to: "/products", label: "المنتجات" },
@@ -173,7 +178,7 @@ const Layout = React.memo(({ children }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                <span className="whitespace-nowrap font-serif leading-none text-2xl sm:text-3xl md:text-5xl tracking-widest text-slate-900 dark:text-white drop-shadow-sm font-medium">
+                <span className={`${brandEnClass} text-2xl sm:text-3xl md:text-5xl`}>
                   TEEB
                 </span>
               </motion.div>
@@ -187,12 +192,12 @@ const Layout = React.memo(({ children }) => {
                   opacity: { duration: 0.15, delay: 0.1 },
                   scale: { type: "spring", damping: 14, stiffness: 110, delay: 0.15 }
                 }}
-                className="relative w-16 h-16 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-[0.8rem] md:rounded-2xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-2 ring-gold-400/50"
+                className="relative w-16 h-16 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-[0.8rem] md:rounded-2xl overflow-hidden shadow-2xl ring-2 ring-gold-400/30"
               >
                 <img
                   src={logo}
                   alt="شعار TEEB"
-                  className="w-full h-full object-cover object-center scale-[1.16]"
+                  className="w-full h-full object-contain"
                 />
               </motion.div>
 
@@ -203,7 +208,7 @@ const Layout = React.memo(({ children }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                <span className="whitespace-nowrap font-serif leading-none text-[2rem] sm:text-[2.75rem] md:text-[4.5rem] text-slate-900 dark:text-white drop-shadow-sm font-bold relative -top-0.5 md:-top-2">
+                <span className={`${brandArClass} text-2xl sm:text-3xl md:text-5xl`}>
                   طــيـــــب
                 </span>
               </motion.div>
@@ -279,7 +284,7 @@ const Layout = React.memo(({ children }) => {
                     layoutId="teeb-brand-text-en"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
                   >
-                    <span className="whitespace-nowrap font-serif leading-none text-xs sm:text-sm md:text-lg lg:text-2xl tracking-wider lg:tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm">
+                    <span className={`${brandEnClass} text-xs sm:text-sm md:text-lg lg:text-2xl`}>
                       TEEB
                     </span>
                   </motion.div>
@@ -287,7 +292,7 @@ const Layout = React.memo(({ children }) => {
                   <motion.div
                     layoutId="teeb-brand-icon"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
-                    className="relative w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-14 lg:h-14 rounded-md lg:rounded-xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-gold-400/50"
+                    className="relative w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-14 lg:h-14 rounded-md lg:rounded-xl overflow-hidden shadow-md ring-1 ring-gold-400/30"
                   >
                     <img
                       src={logo}
@@ -295,7 +300,7 @@ const Layout = React.memo(({ children }) => {
                       width="56"
                       height="56"
                       fetchpriority="high"
-                      className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
+                      className="w-full h-full object-contain transition-transform group-hover:scale-105 duration-300"
                     />
                     <div className="absolute top-0 right-0 w-2 h-2 bg-gold-400 rounded-full border border-white animate-pulse hidden lg:block" />
                   </motion.div>
@@ -304,7 +309,7 @@ const Layout = React.memo(({ children }) => {
                     layoutId="teeb-brand-text-ar"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
                   >
-                    <span className="whitespace-nowrap font-serif leading-none text-base sm:text-lg md:text-xl lg:text-[2.25rem] text-slate-900 dark:text-white font-bold drop-shadow-sm relative -top-px lg:-top-1">
+                    <span className={`${brandArClass} text-xs sm:text-sm md:text-lg lg:text-2xl`}>
                       طــيـــــب
                     </span>
                   </motion.div>
