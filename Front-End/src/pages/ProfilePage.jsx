@@ -283,7 +283,7 @@ const ProfilePage = () => {
             <div className="flex-1 min-w-0 text-white">
               <div className="inline-flex items-center gap-2 rounded-full border border-gold-500/30 bg-gold-500/10 px-3 py-1 mb-3">
                 <Sparkles className="w-3.5 h-3.5 text-gold-400" />
-                <span className="text-xs font-bold text-gold-300">عضو GISAAH</span>
+                <span className="text-xs font-bold text-gold-300">عضو TEEB</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight truncate">
                 {form.fullName || user?.fullName || 'حسابي'}

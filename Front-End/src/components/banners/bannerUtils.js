@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-export const BANNER_IMPRESSION_KEY = 'gisaah_banner_impressions';
-export const POPUP_DISMISS_KEY = 'gisaah_popup_dismissed';
+export const BANNER_IMPRESSION_KEY = 'teeb_banner_impressions';
+export const POPUP_DISMISS_KEY = 'teeb_popup_dismissed';
 
 export function useIsMobile(breakpoint = 767) {
   const [isMobile, setIsMobile] = useState(() => {

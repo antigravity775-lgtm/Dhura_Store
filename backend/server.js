@@ -58,8 +58,8 @@ const envAllowedOrigins = (process.env.ALLOWED_ORIGIN
   .map(normalizeOrigin)
   .filter(Boolean);
 const productionOrigins = [
-  'https://gisaah.com',
-  'https://www.gisaah.com'
+  'https://6eeb.com',
+  'https://www.6eeb.com'
 ];
 const allowedOrigins = Array.from(new Set([
   ...localDevOrigins,

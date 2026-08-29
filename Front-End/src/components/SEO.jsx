@@ -18,10 +18,10 @@ import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
 import * as api from '../services/api';
 
-const SITE_NAME = 'GISAAH | قصة';
-const BASE_URL = 'https://www.gisaah.com';
+const SITE_NAME = 'TEEB | طيب';
+const BASE_URL = 'https://www.6eeb.com';
 const DEFAULT_IMAGE = `${BASE_URL}/og-share.png`;
-const DEFAULT_DESCRIPTION = 'في زمن الكوبي خليك مع قصة — عطور أصلية ١٠٠٪ بأسعار أقل من الموقع الرسمي مع توصيل سريع.';
+const DEFAULT_DESCRIPTION = 'في زمن الكوبي خليك مع طيب — عطور أصلية ١٠٠٪ بأسعار أقل من الموقع الرسمي مع توصيل سريع.';
 
 const SEO = ({
   title,

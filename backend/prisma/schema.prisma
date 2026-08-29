@@ -1,5 +1,5 @@
 // =============================================================================
-// GISAAH E-COMMERCE — PRISMA SCHEMA
+// TEEB E-COMMERCE — PRISMA SCHEMA
 // Database: PostgreSQL | ORM: Prisma | Architecture: Multi-seller Marketplace
 //
 // UPGRADE LOG:
@@ -236,7 +236,7 @@ model Category {
 /// Defines which filterable/searchable attributes are relevant to a category,
 /// and at which level (product vs variant) they apply.
 ///
-/// For the Gisaah perfume catalog, a "Perfumes" category would define:
+/// For the Teeb perfume catalog, a "Perfumes" category would define:
 ///   scope=PRODUCT: Gender, Concentration, Fragrance Family, Top Notes, Middle Notes, Base Notes
 ///   scope=VARIANT: Volume (30ml / 50ml / 100ml)
 ///

@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "migrate:images": "node prisma/scripts/migrate-images-safe.mjs",
+    "migrate:images:cleanup": "node prisma/scripts/migrate-images-safe.mjs --apply-schema-cleanup",
+    "migrate:data": "node prisma/scripts/phase2-data-migration.mjs",
     "vercel-build": "prisma generate",
     "postinstall": "prisma generate"
   },

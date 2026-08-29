@@ -25,8 +25,8 @@ const ContactPage = () => {
   return (
     <Layout>
       <SEO
-        title="اتصل بنا — متجر قصة للعطور"
-        description="تواصل مع متجر قصة عبر الواتساب أو الهاتف أو الانستغرام. نحن هنا للإجابة على جميع استفساراتك."
+        title="اتصل بنا — متجر طيب للعطور"
+        description="تواصل مع متجر طيب عبر الواتساب أو الهاتف أو الانستغرام. نحن هنا للإجابة على جميع استفساراتك."
       />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">

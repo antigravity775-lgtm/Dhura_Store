@@ -1,5 +1,5 @@
 /**
- * GISAAH — Phase 3: DB-Level Enforcement Constraints
+ * TEEB — Phase 3: DB-Level Enforcement Constraints
  * ====================================================
  * Applies enforcement that Prisma cannot express natively:
  *
@@ -22,7 +22,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log("=".repeat(60));
-  console.log("GISAAH — Phase 3: Applying DB Constraints");
+  console.log("TEEB — Phase 3: Applying DB Constraints");
   console.log("=".repeat(60));
 
   // ── Constraint 1: Review rating 1–5 ──────────────────────────────────────

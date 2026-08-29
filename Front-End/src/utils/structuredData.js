@@ -9,7 +9,7 @@
  *     كل دالة ترجع كائن جاهز للتسلسل كـ JSON وحقنه عبر <script>.
  */
 
-const BASE_URL = 'https://www.gisaah.com';
+const BASE_URL = 'https://www.6eeb.com';
 
 /**
  * Currency code mapping from internal enum to ISO 4217
@@ -60,7 +60,7 @@ export function buildProductSchema(product) {
     sku: product.id,
     brand: {
       '@type': 'Brand',
-      name: product.categoryName || 'GISAAH',
+      name: product.categoryName || 'TEEB',
     },
     offers: {
       '@type': 'Offer',
@@ -70,7 +70,7 @@ export function buildProductSchema(product) {
       availability,
       seller: {
         '@type': 'Organization',
-        name: 'GISAAH | قصة',
+        name: 'TEEB | طيب',
       },
       itemCondition: product.condition === 'Used' || product.condition === 2
         ? 'https://schema.org/UsedCondition'
@@ -117,7 +117,7 @@ export function buildOrganizationSchema(storeInfo = {}) {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'GISAAH | قصة',
+    name: 'TEEB | طيب',
     url: BASE_URL,
     logo: `${BASE_URL}/Logo.png`,
     image: `${BASE_URL}/og-share.png`,
@@ -153,7 +153,7 @@ export function buildWebSiteSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'GISAAH | قصة',
+    name: 'TEEB | طيب',
     url: BASE_URL,
     potentialAction: {
       '@type': 'SearchAction',
@@ -196,7 +196,7 @@ export function buildFAQSchema(faqs) {
  * @param {string} listName - Name of the list (e.g., category name)
  * @returns {Object} JSON-LD ItemList schema
  */
-export function buildItemListSchema(products, listName = 'منتجات متجر قصة') {
+export function buildItemListSchema(products, listName = 'منتجات متجر طيب') {
   if (!products || products.length === 0) return null;
 
   return {

@@ -10,27 +10,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Gisaah Gold Palette
+        // Teeb Rose Palette (matches 6eeb.com agate scale)
         gold: {
-          50: '#FBF8F1',
-          100: '#F7F0E2',
-          200: '#F0E2C5',
-          300: '#E8D4A8',
-          400: '#B8860B', // Night Mode Gisaah Gold
-          500: '#DAA520', // Light Mode Gisaah Gold
-          600: '#DAA520', // Light Mode Gisaah Gold
-          700: '#B8860B', // Night Mode Gisaah Gold
-          800: '#916A09',
-          900: '#6D5007',
-          950: '#362803',
+          50: '#FAF0F2',
+          100: '#F2D7DD',
+          200: '#E6B2BE',
+          300: '#D6899A',
+          400: '#C25D73', // Night Mode Teeb Rose
+          500: '#A63B54', // Light Mode Teeb Rose
+          600: '#A63B54', // Light Mode Teeb Rose
+          700: '#C25D73', // Night Mode Teeb Rose
+          800: '#631423',
+          900: '#4D101A',
+          950: '#210609',
         },
-        // Gisaah Neutral Overrides
+        // Teeb Neutral Overrides
         slate: {
-          900: '#232323', // Gisaah Text (LIGHT)
+          900: '#232323', // Teeb Text (LIGHT)
           950: '#0F0F0F', // Screen Background (NIGHT)
         },
         gray: {
-          900: '#232323', // Gisaah Text (LIGHT)
+          900: '#232323', // Teeb Text (LIGHT)
           950: '#0F0F0F', // Screen Background (NIGHT)
         },
         // Bone Palette (Background/Light) - Centers on #F8F6EF

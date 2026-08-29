@@ -58,7 +58,7 @@ class AuthService {
    */
   async register(userData, metadata = {}) {
     const { fullName, phoneNumber, password, city, address, locationUrl } = userData;
-    const email = `${phoneNumber}@gisaah.com`;
+    const email = `${phoneNumber}@6eeb.com`;
 
     const existingUser = await prisma.user.findFirst({
       where: {

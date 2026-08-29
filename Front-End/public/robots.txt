@@ -31,8 +31,8 @@ Disallow: /cart
 Disallow: /auth
 
 # Sitemaps
-Sitemap: https://www.gisaah.com/sitemap.xml
-Sitemap: https://www.gisaah.com/api/seo/sitemap-index.xml
+Sitemap: https://www.6eeb.com/sitemap.xml
+Sitemap: https://www.6eeb.com/api/seo/sitemap-index.xml
 
 # Host directive (Yandex)
-Host: https://www.gisaah.com
+Host: https://www.6eeb.com

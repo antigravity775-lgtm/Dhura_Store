@@ -27,7 +27,7 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
 };
 
-const SESSION_KEY = 'gisaah_hero_impression';
+const SESSION_KEY = 'teeb_hero_impression';
 
 function getHeroTrackedSet() {
   try { return new Set(JSON.parse(sessionStorage.getItem(SESSION_KEY) || '[]')); }
@@ -125,14 +125,14 @@ const HeroSection = React.memo(() => {
   const banner = visibleBanners[currentIndex] ?? null;
 
   const [shouldAnimateHero, setShouldAnimateHero] = useState(
-    () => sessionStorage.getItem('gisaah_intro_seen') === 'true'
+    () => sessionStorage.getItem('teeb_intro_seen') === 'true'
   );
 
   useEffect(() => {
     if (!shouldAnimateHero) {
       const handleMoving = () => setShouldAnimateHero(true);
-      window.addEventListener('gisaahLogoMoving', handleMoving);
-      return () => window.removeEventListener('gisaahLogoMoving', handleMoving);
+      window.addEventListener('teebLogoMoving', handleMoving);
+      return () => window.removeEventListener('teebLogoMoving', handleMoving);
     }
   }, [shouldAnimateHero]);
 

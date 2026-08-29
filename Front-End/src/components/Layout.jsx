@@ -57,30 +57,30 @@ const Layout = React.memo(({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [storeInfo, setStoreInfo] = useState(() => {
     try {
-      const cached = localStorage.getItem('gisaah_store_info');
+      const cached = localStorage.getItem('teeb_store_info');
       if (cached) return JSON.parse(cached);
     } catch { return null; }
     return null;
   });
 
-  // Gisaah Logo Intro Animation State
+  // Teeb Logo Intro Animation State
   // "center" -> "moving" -> "done"
   const [introStage, setIntroStage] = useState(() => {
-    return sessionStorage.getItem("gisaah_intro_seen") ? "done" : "center";
+    return sessionStorage.getItem("teeb_intro_seen") ? "done" : "center";
   });
 
   useEffect(() => {
     if (introStage === "center") {
       const t = setTimeout(() => {
         setIntroStage("moving");
-        window.dispatchEvent(new Event("gisaahLogoMoving"));
+        window.dispatchEvent(new Event("teebLogoMoving"));
       }, 800);
       return () => clearTimeout(t);
     }
     if (introStage === "moving") {
       const t = setTimeout(() => {
         setIntroStage("done");
-        sessionStorage.setItem("gisaah_intro_seen", "true");
+        sessionStorage.setItem("teeb_intro_seen", "true");
       }, 550); // 800ms + 550ms = 1350ms
       return () => clearTimeout(t);
     }
@@ -94,7 +94,7 @@ const Layout = React.memo(({ children }) => {
     api
       .getStoreInfo()
       .then((data) => {
-        try { localStorage.setItem('gisaah_store_info', JSON.stringify(data)); } catch { }
+        try { localStorage.setItem('teeb_store_info', JSON.stringify(data)); } catch { }
         setStoreInfo(data);
       })
       .catch((err) => console.error("Failed to load store info:", err));
@@ -152,43 +152,43 @@ const Layout = React.memo(({ children }) => {
 
               {/* English Text (Left) */}
               <motion.div
-                layoutId="gisaah-brand-text-en"
+                layoutId="teeb-brand-text-en"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
                 <span className="whitespace-nowrap font-serif leading-none text-2xl sm:text-3xl md:text-5xl tracking-widest text-slate-900 dark:text-white drop-shadow-sm font-medium">
-                  GISAAH
+                  TEEB
                 </span>
               </motion.div>
 
               {/* Icon (Center) */}
               <motion.div
-                layoutId="gisaah-brand-icon"
+                layoutId="teeb-brand-icon"
                 initial={{ opacity: 0, scale: 0.78 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{
                   opacity: { duration: 0.15, delay: 0.1 },
                   scale: { type: "spring", damping: 14, stiffness: 110, delay: 0.15 }
                 }}
-                className="relative w-16 h-16 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-[0.8rem] md:rounded-2xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-2 ring-yellow-400/50"
+                className="relative w-16 h-16 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-[0.8rem] md:rounded-2xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-2xl ring-2 ring-gold-400/50"
               >
                 <img
                   src={logo}
-                  alt="شعار GISAAH"
+                  alt="شعار TEEB"
                   className="w-full h-full object-cover object-center scale-[1.16]"
                 />
               </motion.div>
 
               {/* Arabic Text (Right) */}
               <motion.div
-                layoutId="gisaah-brand-text-ar"
+                layoutId="teeb-brand-text-ar"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
                 <span className="whitespace-nowrap font-serif leading-none text-[2rem] sm:text-[2.75rem] md:text-[4.5rem] text-slate-900 dark:text-white drop-shadow-sm font-bold relative -top-0.5 md:-top-2">
-                  قــصـــــة
+                  طــيـــــب
                 </span>
               </motion.div>
 
@@ -249,38 +249,38 @@ const Layout = React.memo(({ children }) => {
 
                   {/* English Text (Left) */}
                   <motion.div
-                    layoutId="gisaah-brand-text-en"
+                    layoutId="teeb-brand-text-en"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
                   >
                     <span className="whitespace-nowrap font-serif leading-none text-xs sm:text-sm md:text-2xl tracking-wider md:tracking-widest text-slate-900 dark:text-white font-medium drop-shadow-sm">
-                      GISAAH
+                      TEEB
                     </span>
                   </motion.div>
 
                   {/* Icon (Center) */}
                   <motion.div
-                    layoutId="gisaah-brand-icon"
+                    layoutId="teeb-brand-icon"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
-                    className="relative w-7 h-7 sm:w-8 sm:h-8 md:w-14 md:h-14 rounded-md md:rounded-xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-yellow-400/50"
+                    className="relative w-7 h-7 sm:w-8 sm:h-8 md:w-14 md:h-14 rounded-md md:rounded-xl bg-white flex items-center justify-center p-0 overflow-hidden shadow-md ring-1 ring-gold-400/50"
                   >
                     <img
                       src={logo}
-                      alt="شعار GISAAH"
+                      alt="شعار TEEB"
                       width="56"
                       height="56"
                       fetchpriority="high"
                       className="w-full h-full object-cover object-center scale-[1.16] transition-transform group-hover:scale-[1.22] duration-300"
                     />
-                    <div className="absolute top-0 right-0 w-2 h-2 bg-yellow-400 rounded-full border border-white animate-pulse hidden md:block"></div>
+                    <div className="absolute top-0 right-0 w-2 h-2 bg-gold-400 rounded-full border border-white animate-pulse hidden md:block"></div>
                   </motion.div>
 
                   {/* Arabic Text (Right) */}
                   <motion.div
-                    layoutId="gisaah-brand-text-ar"
+                    layoutId="teeb-brand-text-ar"
                     transition={{ type: "spring", damping: 24, stiffness: 140 }}
                   >
                     <span className="whitespace-nowrap font-serif leading-none text-base sm:text-lg md:text-[2.25rem] text-slate-900 dark:text-white font-bold drop-shadow-sm relative -top-px md:-top-1">
-                      قــصـــــة
+                      طــيـــــب
                     </span>
                   </motion.div>
 

@@ -4,9 +4,9 @@ import SEO from '../components/SEO';
 import * as api from '../services/api';
 import { buildOrganizationSchema } from '../utils/structuredData';
 
-const DEFAULT_ABOUT = `متجر قصة هو المتجر الالكتروني الاول في اليمن لبيع العطور الاصلية فقط باسعار اقل من الموقع الرسمي ويوفر خدمة التوصيل باقل من 24 ساعة ويوفر خدمة عينات العطور لتجربة عطرية مميزة لا شبيه لها ☺️✨
+const DEFAULT_ABOUT = `متجر طيب هو المتجر الالكتروني الاول في اليمن لبيع العطور الاصلية فقط باسعار اقل من الموقع الرسمي ويوفر خدمة التوصيل باقل من 24 ساعة ويوفر خدمة عينات العطور لتجربة عطرية مميزة لا شبيه لها ☺️✨
 
-في عالم الكوبي - خليك مع قصة ✨`;
+في عالم الكوبي - خليك مع طيب ✨`;
 
 const AboutPage = () => {
   // null = still loading  |  string = data received (from DB or fallback)
@@ -28,8 +28,8 @@ const AboutPage = () => {
   return (
     <Layout>
       <SEO
-        title="من نحن — قصة للعطور الأصلية"
-        description="متجر قصة هو المتجر الإلكتروني الأول في اليمن لبيع العطور الأصلية بأسعار أقل من الموقع الرسمي مع توصيل سريع خلال ٢٤ ساعة."
+        title="من نحن — طيب للعطور الأصلية"
+        description="متجر طيب هو المتجر الإلكتروني الأول في اليمن لبيع العطور الأصلية بأسعار أقل من الموقع الرسمي مع توصيل سريع خلال ٢٤ ساعة."
         jsonLd={[buildOrganizationSchema()]}
       />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

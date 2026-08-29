@@ -38,7 +38,7 @@ const AdminStoreInfoTab = ({ storeInfo, setStoreInfo, handleUpdateStoreInfo, sto
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `gisaah_backup_${new Date().toISOString().split('T')[0]}.json.gz`;
+      a.download = `teeb_backup_${new Date().toISOString().split('T')[0]}.json.gz`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -209,7 +209,7 @@ const AdminStoreInfoTab = ({ storeInfo, setStoreInfo, handleUpdateStoreInfo, sto
                 value={storeInfo.seoTitle}
                 onChange={(e) => setStoreInfo({ ...storeInfo, seoTitle: e.target.value })}
                 className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-gold-500/50 text-slate-900 dark:text-white"
-                placeholder="مثال: قصة | Gisaah"
+                placeholder="مثال: طيب | Teeb"
               />
             </div>
             <div className="md:col-span-2">

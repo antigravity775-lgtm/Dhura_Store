@@ -17,7 +17,7 @@
 
 const prisma = require('../prismaClient');
 
-const BASE_URL = 'https://www.gisaah.com';
+const BASE_URL = 'https://www.6eeb.com';
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
 
 // Simple in-memory cache
@@ -311,9 +311,9 @@ async function getRss(req, res) {
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>GISAAH | قصة — أحدث العطور</title>
+    <title>TEEB | طيب — أحدث العطور</title>
     <link>${BASE_URL}</link>
-    <description>أحدث العطور الفاخرة الأصلية في متجر قصة</description>
+    <description>أحدث العطور الفاخرة الأصلية في متجر طيب</description>
     <language>ar</language>
     <lastBuildDate>${now}</lastBuildDate>
     <atom:link href="${BASE_URL}/api/seo/rss.xml" rel="self" type="application/rss+xml"/>

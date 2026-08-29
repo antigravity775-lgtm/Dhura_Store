@@ -377,7 +377,7 @@ const AdminDashboard = () => {
             <div className="p-5 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 bg-white rounded-2xl flex items-center justify-center shadow-md shadow-gold-500/10 overflow-hidden border border-gold-200/50 ring-2 ring-gold-500/10">
-                  <img src={logo} alt="GISAAH" className="w-full h-full object-cover scale-[1.12]" />
+                  <img src={logo} alt="TEEB" className="w-full h-full object-cover scale-[1.12]" />
                 </div>
                 <div className="min-w-0">
                   <h1 className="font-black text-slate-900 dark:text-white text-base leading-tight">لوحة المسؤول</h1>
@@ -415,7 +415,7 @@ const AdminDashboard = () => {
               <div className="px-4 py-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-9 h-9 rounded-xl overflow-hidden border border-gold-200/50 flex-shrink-0">
-                    <img src={logo} alt="GISAAH" className="w-full h-full object-cover scale-[1.12]" />
+                    <img src={logo} alt="TEEB" className="w-full h-full object-cover scale-[1.12]" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-black text-slate-900 dark:text-white truncate">
@@ -434,7 +434,7 @@ const AdminDashboard = () => {
             {/* Desktop page header */}
             <header className="hidden lg:block border-b border-slate-200/60 dark:border-slate-800/80 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
               <div className="px-6 lg:px-8 py-5">
-                <p className="text-xs font-semibold text-gold-600 dark:text-gold-400 mb-1">GISAAH Admin</p>
+                <p className="text-xs font-semibold text-gold-600 dark:text-gold-400 mb-1">TEEB Admin</p>
                 <h2 className="text-2xl font-black text-slate-900 dark:text-white">
                   {activeTabMeta?.label || 'لوحة التحكم'}
                 </h2>

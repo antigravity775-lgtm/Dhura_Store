@@ -1,5 +1,5 @@
 /**
- * GISAAH — Phase 2 Data Migration Script
+ * TEEB — Phase 2 Data Migration Script
  * ========================================
  * Run ONCE after the DDL migration (upgrade_catalog_v2) has been applied.
  *
@@ -69,15 +69,33 @@ async function migrateCategorySlugs() {
 // Step 2 — Migrate mainImageUrl → ProductImage
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function migrateProductImages() {
-  console.log("\n🖼️  Step 2: Migrating mainImageUrl → ProductImage...");
+async function columnExists(table, column) {
+  const rows = await prisma.$queryRaw`
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = ${table}
+      AND column_name = ${column}
+    LIMIT 1
+  `;
+  return rows.length > 0;
+}
 
-  const products = await prisma.product.findMany({
-    where: {
-      mainImageUrl: { not: null },
-    },
-    select: { id: true, mainImageUrl: true },
-  });
+async function migrateProductImages() {
+  console.log("\n🖼️  Step 2: Migrating mainImageUrl → ProductImage[]...");
+
+  const hasLegacyColumn = await columnExists("Product", "mainImageUrl");
+  if (!hasLegacyColumn) {
+    console.log("   ℹ️  Product.mainImageUrl column not found — images already on ProductImage[]. Skipping.");
+    return;
+  }
+
+  const products = await prisma.$queryRaw`
+    SELECT id, "mainImageUrl"
+    FROM "Product"
+    WHERE "mainImageUrl" IS NOT NULL
+      AND TRIM("mainImageUrl") <> ''
+  `;
 
   let created = 0;
   let skipped = 0;
@@ -113,17 +131,29 @@ async function migrateProductImages() {
 async function migrateProductStatus() {
   console.log("\n🏷️  Step 3: Setting Product.status from isHidden...");
 
-  const archived = await prisma.product.updateMany({
-    where: { isHidden: true, status: "Draft" },
-    data: { status: "Archived" },
-  });
+  const hasLegacyColumn = await columnExists("Product", "isHidden");
+  if (!hasLegacyColumn) {
+    console.log("   ℹ️  Product.isHidden column not found — status already migrated. Skipping.");
+    return;
+  }
 
-  const active = await prisma.product.updateMany({
-    where: { isHidden: false, status: "Draft" },
-    data: { status: "Active" },
-  });
+  await prisma.$executeRawUnsafe(`
+    UPDATE "Product" SET status = 'Archived'
+    WHERE "isHidden" = true AND status = 'Draft'
+  `);
+  await prisma.$executeRawUnsafe(`
+    UPDATE "Product" SET status = 'Active'
+    WHERE "isHidden" = false AND status = 'Draft'
+  `);
 
-  console.log(`   ✅ Archived: ${archived.count} | Activated: ${active.count}`);
+  const archived = await prisma.$queryRaw`
+    SELECT COUNT(*)::int AS c FROM "Product" WHERE status = 'Archived'
+  `;
+  const active = await prisma.$queryRaw`
+    SELECT COUNT(*)::int AS c FROM "Product" WHERE status = 'Active'
+  `;
+
+  console.log(`   ✅ Archived: ${archived[0].c} | Active: ${active[0].c}`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -151,22 +181,27 @@ async function migrateOrderItemSnapshots() {
   for (const item of orderItems) {
     const product = await prisma.product.findUnique({
       where: { id: item.productId },
-      select: { title: true, sku: true, mainImageUrl: true },
+      select: { title: true, sku: true },
     });
 
     if (!product) continue;
 
-    // Prefer ProductImage over deprecated mainImageUrl (Fix 6)
     const primaryImage = await prisma.productImage.findFirst({
       where: { productId: item.productId, isPrimary: true },
       select: { url: true },
     });
 
+    const fallbackImage = primaryImage?.url ?? (await prisma.productImage.findFirst({
+      where: { productId: item.productId },
+      orderBy: { sortOrder: 'asc' },
+      select: { url: true },
+    }))?.url ?? null;
+
     await prisma.orderItem.update({
       where: { id: item.id },
       data: {
         productTitle: product.title,
-        productImageUrl: primaryImage?.url ?? product.mainImageUrl ?? null,
+        productImageUrl: fallbackImage,
         productSku: product.sku ?? null,
       },
     });
@@ -194,14 +229,13 @@ async function validate() {
       count: await prisma.product.count({ where: { status: "Draft" } }),
     },
     {
-      name: "Products missing primary ProductImage (had mainImageUrl)",
+      name: "Products missing primary ProductImage",
       count: await prisma.$queryRaw`
         SELECT COUNT(*)::int AS c FROM "Product" p
-        WHERE p."mainImageUrl" IS NOT NULL
-          AND NOT EXISTS (
-            SELECT 1 FROM "ProductImage" pi
-            WHERE pi."productId" = p.id AND pi."isPrimary" = true
-          )
+        WHERE NOT EXISTS (
+          SELECT 1 FROM "ProductImage" pi
+          WHERE pi."productId" = p.id AND pi."isPrimary" = true
+        )
       `.then((r) => Number(r[0].c)),
     },
     {
@@ -233,7 +267,7 @@ async function validate() {
 
 async function main() {
   console.log("=".repeat(60));
-  console.log("GISAAH — Phase 2 Data Migration");
+  console.log("TEEB — Phase 2 Data Migration");
   console.log("=".repeat(60));
 
   try {

@@ -328,7 +328,7 @@ class AdminController {
       // 2. Build the backup object with metadata
       const backupData = {
         metadata: {
-          appName: 'Gisaah_Store',
+          appName: 'Teeb_Store',
           version: '1.0',
           generatedAt: new Date().toISOString(),
           generatedBy: req.user?.id || 'Unknown Admin',
@@ -363,7 +363,7 @@ class AdminController {
       const jsonString = JSON.stringify(backupData);
       
       const dateStr = new Date().toISOString().split('T')[0];
-      res.setHeader('Content-Disposition', `attachment; filename="gisaah_backup_${dateStr}.json.gz"`);
+      res.setHeader('Content-Disposition', `attachment; filename="teeb_backup_${dateStr}.json.gz"`);
       res.setHeader('Content-Type', 'application/gzip');
 
       const gzip = zlib.createGzip();
@@ -409,8 +409,8 @@ class AdminController {
         throw new BadRequestError('هيكل ملف النسخ الاحتياطي غير صالح');
       }
       
-      // Allow if appName is exactly 'Gisaah_Store', or if it's missing but version is 1.0 (for backups generated right before the update)
-      if (metadata.appName && metadata.appName !== 'Gisaah_Store') {
+      // Allow if appName is exactly 'Teeb_Store', or if it's missing but version is 1.0 (for backups generated right before the update)
+      if (metadata.appName && metadata.appName !== 'Teeb_Store') {
         throw new BadRequestError('هذا الملف لا يخص هذا التطبيق (تطبيق غير متطابق)');
       }
       
@@ -445,7 +445,7 @@ class AdminController {
 
         const preRestoreData = {
           metadata: {
-            appName: 'Gisaah_Store',
+            appName: 'Teeb_Store',
             version: '1.0',
             generatedAt: new Date().toISOString(),
             generatedBy: 'SYSTEM_PRE_RESTORE',

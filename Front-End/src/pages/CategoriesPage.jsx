@@ -31,7 +31,7 @@ const CategoriesPage = () => {
 
   return (
     <Layout>
-      <SEO title="جميع الفئات" description="تصفح جميع فئات المنتجات في متجر قصة" />
+      <SEO title="جميع الفئات" description="تصفح جميع فئات المنتجات في متجر طيب" />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-5 pb-24 md:pb-10">
         <header className="mb-4 sm:mb-5">
@@ -39,7 +39,7 @@ const CategoriesPage = () => {
             جميع الفئات
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-            اكتشف ما يناسبك من جميع أقسام متجر قصة
+            اكتشف ما يناسبك من جميع أقسام متجر طيب
           </p>
           {!isLoading && categories.length > 0 && (
             <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">

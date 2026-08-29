@@ -176,8 +176,8 @@
     background: theme('colors.gold.600');
   }
 
-  /* EN: Dark mode scrollbar — Gisaah Gold
-     AR: شريط تمرير الوضع الداكن — ذهبي قصة */
+  /* EN: Dark mode scrollbar — Teeb Rose
+     AR: شريط تمرير الوضع الداكن — وردي طيب */
   .dark ::-webkit-scrollbar-track {
     background: #0F0F0F;
   }

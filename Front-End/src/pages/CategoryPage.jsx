@@ -167,7 +167,7 @@ const CategoryPage = () => {
   };
 
   const seoTitle = categoryData?.metaTitle || `منتجات ${categoryName}`;
-  const seoDescription = categoryData?.metaDescription || `تصفح منتجات قسم ${categoryName} في متجر قصة — تسوق بسهولة وبأفضل الأسعار.`;
+  const seoDescription = categoryData?.metaDescription || `تصفح منتجات قسم ${categoryName} في متجر طيب — تسوق بسهولة وبأفضل الأسعار.`;
 
   return (
     <Layout>

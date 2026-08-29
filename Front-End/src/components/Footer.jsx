@@ -173,7 +173,7 @@ const Footer = ({ storeInfo }) => {
                 loading="lazy"
               />
               <span className="font-extrabold text-slate-900 dark:text-white text-base tracking-tight">
-                GISAAH <span className="text-gold-600 dark:text-gold-400 font-bold">قصة</span>
+                TEEB <span className="text-gold-600 dark:text-gold-400 font-bold">طيب</span>
               </span>
             </Link>
             <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400 line-clamp-3">
@@ -229,7 +229,7 @@ const Footer = ({ storeInfo }) => {
 
         <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
           <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center sm:text-right">
-            &copy; {currentYear} GISAAH قصة. جميع الحقوق محفوظة.
+            &copy; {currentYear} TEEB طيب. جميع الحقوق محفوظة.
           </p>
           <div className="flex items-center justify-center sm:justify-end gap-4 text-[11px]">
             <Link

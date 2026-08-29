@@ -180,7 +180,7 @@ const HomePage = () => {
 
   const [shippingOfferText, setShippingOfferText] = React.useState(() => {
     try {
-      const cached = localStorage.getItem('gisaah_store_info');
+      const cached = localStorage.getItem('teeb_store_info');
       if (cached) return JSON.parse(cached).shippingOfferText || '';
     } catch { return ''; }
     return '';
@@ -202,7 +202,7 @@ const HomePage = () => {
     let mounted = true;
     api.getStoreInfo()
       .then((info) => {
-        try { localStorage.setItem('gisaah_store_info', JSON.stringify(info)); } catch {}
+        try { localStorage.setItem('teeb_store_info', JSON.stringify(info)); } catch {}
         if (mounted) setShippingOfferText(info?.shippingOfferText || '');
       })
       .catch(() => {

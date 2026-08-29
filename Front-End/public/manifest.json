@@ -1,11 +1,11 @@
 {
-  "name": "GISAAH | قصة",
-  "short_name": "GISAAH",
-  "description": "متجر العطور الفاخرة - في زمن الكوبي خليك مع قصة",
+  "name": "TEEB | طيب",
+  "short_name": "TEEB",
+  "description": "متجر العطور الفاخرة - في زمن الكوبي خليك مع طيب",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#c9a84c",
+  "theme_color": "#A63B54",
   "icons": [
     {
       "src": "/favicon.png",

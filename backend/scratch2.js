@@ -22,7 +22,7 @@ async function test() {
 
     const preRestoreData = {
       metadata: {
-        appName: 'Gisaah_Store',
+        appName: 'Teeb_Store',
         version: '1.0',
         generatedAt: new Date().toISOString(),
         generatedBy: 'SYSTEM_PRE_RESTORE',

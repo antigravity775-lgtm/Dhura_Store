@@ -129,7 +129,7 @@ const BrandPage = () => {
     <Layout>
       <SEO 
         title={brand.name} 
-        description={brand.description || `تصفح أحدث منتجات ${brand.name} في متجر قصة.`}
+        description={brand.description || `تصفح أحدث منتجات ${brand.name} في متجر طيب.`}
         image={brand.logoUrl}
       />
       

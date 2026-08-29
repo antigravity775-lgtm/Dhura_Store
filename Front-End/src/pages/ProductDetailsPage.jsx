@@ -221,7 +221,7 @@ const ProductDetailsPage = () => {
 
   const handleShare = async () => {
     const shareData = {
-      title: product?.title || "متجر قصة",
+      title: product?.title || "متجر طيب",
       text: `شاهد هذا المنتج: ${product?.title}`,
       url: window.location.href,
     };
@@ -607,7 +607,7 @@ const ProductDetailsPage = () => {
     <Layout>
       <SEO
         title={product.title}
-        description={product.description?.substring(0, 160) || `تسوق ${product.title} على متجر قصة.`}
+        description={product.description?.substring(0, 160) || `تسوق ${product.title} على متجر طيب.`}
         image={galleryImages[0]}
         type="product"
         canonicalPath={`/product/${product.slug}`}

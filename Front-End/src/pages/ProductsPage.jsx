@@ -175,7 +175,7 @@ const ProductsPage = () => {
 
   return (
     <Layout>
-      <SEO title="جميع المنتجات" description="تصفح جميع العطور الفاخرة المتاحة في متجر قصة." />
+      <SEO title="جميع المنتجات" description="تصفح جميع العطور الفاخرة المتاحة في متجر طيب." />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pb-16">
 
         {/* ── Page Header ── */}

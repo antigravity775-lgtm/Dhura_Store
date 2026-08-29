@@ -73,23 +73,23 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://gisaah-store.vercel.app/api/:path*"
+      "destination": "https://dhura-store.vercel.app/api/:path*"
     },
     {
       "source": "/sitemap.xml",
-      "destination": "https://gisaah-store.vercel.app/api/seo/sitemap.xml"
+      "destination": "https://dhura-store.vercel.app/api/seo/sitemap.xml"
     },
     {
       "source": "/sitemap-index.xml",
-      "destination": "https://gisaah-store.vercel.app/api/seo/sitemap-index.xml"
+      "destination": "https://dhura-store.vercel.app/api/seo/sitemap-index.xml"
     },
     {
       "source": "/robots.txt",
-      "destination": "https://gisaah-store.vercel.app/api/seo/robots.txt"
+      "destination": "https://dhura-store.vercel.app/api/seo/robots.txt"
     },
     {
       "source": "/product/:uuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
-      "destination": "https://gisaah-store.vercel.app/api/seo/redirect/product/:uuid"
+      "destination": "https://dhura-store.vercel.app/api/seo/redirect/product/:uuid"
     },
     {
       "source": "/((?!.*\\.[a-zA-Z0-9]+$).*)",
