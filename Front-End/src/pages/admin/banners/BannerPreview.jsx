@@ -7,7 +7,7 @@
 import React from 'react';
 
 const PLACEMENT_RATIOS = {
-  hero: 'aspect-[16/9] sm:aspect-[21/9] lg:aspect-[3/1] min-h-[220px]',
+  hero: 'aspect-[16/9] sm:aspect-[21/9] lg:aspect-[3/1] min-h-[320px]',
   promo_home: 'aspect-[2/1] sm:aspect-[4/1]',
   announcement: 'min-h-[40px]',
   category: 'aspect-[2/1] sm:aspect-[3/1]',

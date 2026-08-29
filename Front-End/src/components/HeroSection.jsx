@@ -5,7 +5,7 @@
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import useSWR from 'swr';
 import * as api from '../services/api';
 import { useIsMobile, filterVisibleBanners } from './banners/bannerUtils';
@@ -108,7 +108,7 @@ const HeroSection = React.memo(() => {
   const { data: banners, isLoading } = useSWR(
     'banners-hero',
     () => api.getBanners('hero'),
-    { revalidateOnFocus: false, dedupingInterval: 60000 }
+    { revalidateOnFocus: false, dedupingInterval: 10000 }
   );
 
   const visibleBanners = useMemo(
@@ -117,7 +117,6 @@ const HeroSection = React.memo(() => {
   );
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [shouldAnimateHero, setShouldAnimateHero] = useState(
     () => sessionStorage.getItem('gisaah_intro_seen') === 'true'
   );
@@ -146,21 +145,12 @@ const HeroSection = React.memo(() => {
   }, [banner?.id]);
 
   useEffect(() => {
-    if (paused || !hasMultiple) return undefined;
+    if (!hasMultiple) return undefined;
     const timer = setInterval(() => {
       setCurrentIndex((i) => (i + 1) % visibleBanners.length);
     }, AUTO_PLAY_MS);
     return () => clearInterval(timer);
-  }, [paused, hasMultiple, visibleBanners.length]);
-
-  const goTo = useCallback((index) => {
-    if (!visibleBanners.length) return;
-    const next = ((index % visibleBanners.length) + visibleBanners.length) % visibleBanners.length;
-    setCurrentIndex(next);
-  }, [visibleBanners.length]);
-
-  const goNext = useCallback(() => goTo(currentIndex + 1), [currentIndex, goTo]);
-  const goPrev = useCallback(() => goTo(currentIndex - 1), [currentIndex, goTo]);
+  }, [hasMultiple, visibleBanners.length]);
 
   const handleCtaClick = useCallback(() => {
     if (!banner) return;
@@ -174,7 +164,7 @@ const HeroSection = React.memo(() => {
 
   if (isLoading) {
     return (
-      <section className="relative w-full overflow-hidden min-h-[220px] sm:min-h-[260px] lg:min-h-[300px] bg-slate-200 dark:bg-slate-900 animate-pulse" aria-hidden="true">
+      <section className="relative w-full overflow-hidden min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] bg-slate-200 dark:bg-slate-900 animate-pulse" aria-hidden="true">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 h-full flex items-center">
           <div className="w-full max-w-lg space-y-4">
             <div className="h-6 bg-slate-300 dark:bg-slate-800 rounded-full w-1/3" />
@@ -195,12 +185,8 @@ const HeroSection = React.memo(() => {
 
   return (
     <section
-      className="relative z-0 w-full overflow-hidden min-h-[220px] sm:min-h-[260px] lg:min-h-[300px] flex flex-col justify-end group"
+      className="relative z-0 w-full overflow-hidden min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] flex flex-col justify-end"
       style={{ backgroundColor: bgColor !== 'transparent' ? bgColor : undefined }}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
       aria-roledescription="carousel"
       aria-label="بانرات العروض الرئيسية"
     >
@@ -255,46 +241,25 @@ const HeroSection = React.memo(() => {
       </div>
 
       {hasMultiple && (
-        <>
-          <button
-            type="button"
-            onClick={goPrev}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/35 hover:bg-black/50 text-white flex items-center justify-center backdrop-blur-sm border border-white/20 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
-            aria-label="البانر السابق"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-          <button
-            type="button"
-            onClick={goNext}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/35 hover:bg-black/50 text-white flex items-center justify-center backdrop-blur-sm border border-white/20 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
-            aria-label="البانر التالي"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-
-          <div
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5"
-            role="tablist"
-            aria-label="مؤشرات البانر"
-          >
-            {visibleBanners.map((b, i) => (
-              <button
-                key={b.id}
-                type="button"
-                role="tab"
-                aria-selected={i === currentIndex}
-                aria-label={`البانر ${i + 1}`}
-                onClick={() => goTo(i)}
-                className={`rounded-full transition-all duration-300 ${
-                  i === currentIndex
-                    ? 'w-5 h-1.5 bg-gold-400'
-                    : 'w-1.5 h-1.5 bg-white/50 hover:bg-white/80'
-                }`}
-              />
-            ))}
-          </div>
-        </>
+        <div
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-2 py-1 rounded-full bg-black/30 backdrop-blur-sm pointer-events-none"
+          role="tablist"
+          aria-label="مؤشرات البانر"
+        >
+          {visibleBanners.map((b, i) => (
+            <span
+              key={b.id}
+              role="tab"
+              aria-selected={i === currentIndex}
+              aria-label={`البانر ${i + 1}`}
+              className={`rounded-full transition-all duration-300 ${
+                i === currentIndex
+                  ? 'w-5 h-1.5 bg-gold-400'
+                  : 'w-1.5 h-1.5 bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
       )}
 
       <div className="absolute bottom-0 inset-x-0 h-6 bg-gradient-to-t from-bone dark:from-slate-950 to-transparent pointer-events-none z-10" />

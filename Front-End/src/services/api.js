@@ -658,7 +658,11 @@ export const RoleMap = { 1: 'Admin', 2: 'Seller', 3: 'Buyer' };
 export async function getBanners(placement) {
   const params = new URLSearchParams();
   if (placement) params.set('placement', placement);
-  return request(`/banners${params.toString() ? `?${params}` : ''}`, { headers: jsonHeaders() });
+  const data = await request(`/banners${params.toString() ? `?${params}` : ''}`, { headers: jsonHeaders() });
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.items)) return data.items;
+  if (data && Array.isArray(data.banners)) return data.banners;
+  return data ? [data] : [];
 }
 
 /** Track impression or click event (public). */

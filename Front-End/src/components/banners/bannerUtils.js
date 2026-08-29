@@ -52,7 +52,30 @@ export function markPopupDismissed(id) {
   } catch { /* ignore */ }
 }
 
+export function asBannerBool(value, fallback = true) {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value !== 0;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === 'true' || normalized === '1') return true;
+    if (normalized === 'false' || normalized === '0') return false;
+  }
+  return fallback;
+}
+
+export function normalizeBannerList(data) {
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.items)) return data.items;
+  if (data && Array.isArray(data.banners)) return data.banners;
+  return data ? [data] : [];
+}
+
 export function filterVisibleBanners(banners, isMobile) {
-  if (!banners?.length) return [];
-  return banners.filter((b) => (isMobile ? b.showOnMobile : b.showOnDesktop));
+  const list = normalizeBannerList(banners);
+  if (!list.length) return [];
+  return list.filter((b) => {
+    const showDesktop = asBannerBool(b.showOnDesktop, true);
+    const showMobile = asBannerBool(b.showOnMobile, true);
+    return isMobile ? showMobile : showDesktop;
+  });
 }

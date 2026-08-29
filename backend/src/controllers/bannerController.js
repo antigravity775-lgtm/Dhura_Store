@@ -27,34 +27,38 @@ class BannerController {
       const { placement } = req.query;
       const now = new Date();
 
-      const where = {
-        OR: [
-          { status: 'active' },
-          {
-            status: 'scheduled',
-            scheduledAt: { lte: now },
-          },
-        ],
-        AND: [
-          {
-            OR: [
-              { expiresAt: null },
-              { expiresAt: { gt: now } },
-            ],
-          },
-        ],
-      };
+      const andClauses = [
+        {
+          OR: [
+            { status: 'active' },
+            {
+              status: 'scheduled',
+              scheduledAt: { lte: now },
+            },
+          ],
+        },
+        {
+          OR: [
+            { expiresAt: null },
+            { expiresAt: { gt: now } },
+          ],
+        },
+      ];
 
       if (placement) {
-        where.placement = placement;
+        andClauses.push({ placement });
       }
 
       const banners = await prisma.banner.findMany({
-        where,
-        orderBy: { priority: 'asc' },
+        where: { AND: andClauses },
+        orderBy: [{ priority: 'asc' }, { createdAt: 'asc' }],
       });
 
-      res.json(banners);
+      const visible = banners
+        .map((banner) => ({ ...banner, status: resolveStatus(banner) }))
+        .filter((banner) => banner.status === 'active');
+
+      res.json(visible);
     } catch (error) {
       throw error;
     }

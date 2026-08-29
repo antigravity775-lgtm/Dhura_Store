@@ -28,7 +28,7 @@ const PLACEMENT_DEFAULTS = {
   category: { className: 'w-full my-4 sm:my-5', autoPlayMs: 5500 },
   footer: { className: 'w-full my-4', autoPlayMs: 6000 },
   product: { className: 'w-full my-6', autoPlayMs: 5500 },
-  sidebar: { className: 'w-full', autoPlayMs: 6000, showArrows: false },
+  sidebar: { className: 'w-full', autoPlayMs: 6000 },
 };
 
 export default function BannerRenderer({ placement, className: classNameProp, overlay = false }) {
@@ -39,7 +39,7 @@ export default function BannerRenderer({ placement, className: classNameProp, ov
   const { data: banners, isLoading } = useSWR(
     `banners-${placement}`,
     () => api.getBanners(placement),
-    { revalidateOnFocus: false, dedupingInterval: 60000 }
+    { revalidateOnFocus: false, dedupingInterval: 10000 }
   );
 
   const visibleBanners = useMemo(
@@ -210,7 +210,6 @@ export default function BannerRenderer({ placement, className: classNameProp, ov
         placement={placement}
         isMobile={isMobile}
         autoPlayMs={defaults.autoPlayMs}
-        showArrows={defaults.showArrows !== false}
         rounded={placement !== 'footer'}
       />
     </motion.div>

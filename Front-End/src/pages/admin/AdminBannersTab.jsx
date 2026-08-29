@@ -45,7 +45,7 @@ const EMPTY_FORM = {
   title: '', subtitle: '', description: '', ctaText: '', ctaUrl: '',
   imageUrl: '', mobileImageUrl: '', bgColor: '#1A0A0A',
   textAlign: 'right', overlayOpacity: 30,
-  placement: 'promo_home', status: 'draft',
+  placement: 'promo_home', status: 'active',
   showOnDesktop: true, showOnMobile: true,
   priority: 0, scheduledAt: '', expiresAt: '',
 };
@@ -134,7 +134,7 @@ const inputCls = 'w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border
 const selectCls = inputCls + ' cursor-pointer';
 
 // ─── Editor Panel ─────────────────────────────────────────────────────────────
-function EditorPanel({ banner, onClose, onSaved, showSuccess, setError }) {
+function EditorPanel({ banner, allBanners = [], onClose, onSaved, showSuccess, setError }) {
   const isEdit = !!banner?.id;
   const [form, setForm] = useState(isEdit ? {
     ...banner,
@@ -163,6 +163,11 @@ function EditorPanel({ banner, onClose, onSaved, showSuccess, setError }) {
         overlayOpacity: Number(form.overlayOpacity),
         priority:       Number(form.priority),
       };
+      if (!isEdit) {
+        const samePlacement = allBanners.filter((b) => b.placement === payload.placement);
+        const maxPriority = samePlacement.reduce((max, b) => Math.max(max, Number(b.priority) || 0), -1);
+        payload.priority = maxPriority + 1;
+      }
       if (isEdit) await api.updateAdminBanner(banner.id, payload);
       else        await api.createAdminBanner(payload);
       showSuccess(isEdit ? 'تم تحديث البانر ✅' : 'تم إنشاء البانر 🎉');
@@ -405,7 +410,7 @@ function AdminBannersTab({ showSuccess, setError }) {
             <div className="flex items-start gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3">
               <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-amber-700 dark:text-amber-300 font-medium">
-                تعارض: يوجد أكثر من بانر نشط في نفس الموضع: {[...conflicts].map(p => placementLabel(p)).join('، ')}. سيظهر الأعلى أولوية فقط.
+                يوجد أكثر من بانر نشط في: {[...conflicts].map(p => placementLabel(p)).join('، ')}. ستُعرض جميعها في عرض دوّار تلقائي حسب الأولوية.
               </p>
             </div>
           )}
@@ -489,6 +494,7 @@ function AdminBannersTab({ showSuccess, setError }) {
           <EditorPanel
             key={editorBanner?.id || 'new'}
             banner={editorBanner?.id ? editorBanner : null}
+            allBanners={banners}
             onClose={() => setEditorBanner(null)}
             onSaved={() => { setEditorBanner(null); mutate(); }}
             showSuccess={showSuccess}
