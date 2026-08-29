@@ -766,11 +766,6 @@ const ProductDetailsPage = () => {
             {addedToCart ? "تمت الإضافة" : "أضف للسلة"}
           </button>
         </div>
-
-        {/* ═══════ المنتجات ذات الصلة / Related Products ═══════ */}
-        {product.categoryName && (
-          <RelatedProducts categoryName={product.categoryName} currentId={id} />
-        )}
       </div>
     </Layout>
   );
